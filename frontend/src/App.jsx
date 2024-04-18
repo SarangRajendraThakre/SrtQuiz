@@ -8,8 +8,8 @@ import { Container } from "react-bootstrap";
 import NavBar from "./components/NavBar";
 import { AuthContext } from "./context/AuthContext";
 import MainCompile from "./pages/MainCompile";
-import QuizList from "./components/questiontype/QuizList";
-import QuizIdfetched from "./components/questiontype/QuizIDfetched";
+import QuizList from "./questiontype/QuizList";
+import QuizIdfetched from "./questiontype/QuizIDfetched";
 import Home from "./pages/Home";
 
 const App = () => {

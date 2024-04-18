@@ -422,7 +422,6 @@ button.close {
   color: rgb(178, 178, 178);
 }
 
-
 .maincardcontent {
   height: 93px;
   width: calc(100% - 26px);
@@ -529,6 +528,9 @@ text-overflow: ellipsis
 
 }
 .maincardcontentinneroptioncontainerinner{
+  
+  font-size:4px;
+  
   
   position: relative;
   width: calc(50% - 0.125rem);
@@ -658,4 +660,10 @@ text-overflow: ellipsis
 .button-clicked {
   transform: scale(0.9); /* Adjust the scale value as desired */
   transition: transform 0.2s ease; /* Adjust the transition duration and easing function as desired */
+}
+
+.imgpostinquestincard img {
+  width: fit-content;
+  height: fit-content;
+  object-fit: contain;
 }

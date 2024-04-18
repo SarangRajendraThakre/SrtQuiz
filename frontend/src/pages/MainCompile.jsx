@@ -1,24 +1,114 @@
-import React, { useState, useEffect, useRef,useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './MainCompile.css';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import Questionf from '../components/Questionf';
+import { useQuiz } from "../context/QuizContext"; // Import the useQuiz hook
+
+
+
 
 const MainCompile = () => {
   const [formData, setFormData] = useState({
     title: '',
-    visibility: 'public', // Default to public
+    visibility: 'public',
     folder: 'Your Quiz Folder',
     posterImg: ''
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
-  const [questionType, setQuestionType] = useState(null); // State to store the selected question type
-  const [questionCards, setQuestionCards] = useState([]); // State to store the question cards
 
+  const [questionCards, setQuestionCards] = useState([]);
   const modalRef = useRef(null);
+
+  const { addEmptyQuestion , questionType ,updateQuestionType } = useQuiz(); // Destructure the addEmptyQuestion function from useQuiz
+
+  const handleAddQuestionempty = () => {
+    // Call the addEmptyQuestion function
+    addEmptyQuestion()
+      .then(() => {
+        console.log("Empty question added successfully");
+      })
+      .catch((error) => {
+        console.error("Error adding empty question:", error);
+      });
+  };
+
+
+
+  const handleChange = (e) => {
+    const { name, value, type, checked, files } = e.target;
+    const newValue = type === 'checkbox' ? checked : type === 'file' ? files[0] : value;
+
+    setFormData({
+      ...formData,
+      [name]: newValue
+    });
+  };
+
+  const handleToggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
+
+  const handleAddQuestion = (type) => {
+    setQuestionType(type);
+    setIsModalOpen(false);
+    setQuestionCards([...questionCards, type]);
+  };
+
+  const handleToggleModalSetting = () => {
+    setIsSettingModalOpen(!isSettingModalOpen);
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem('User'));
+  
+      if (!user || !user._id) {
+        console.error('User ID not found in local storage or user object is invalid');
+        return;
+      }
+  
+      const formDataWithUser = {
+        ...formData,
+        userId: user._id
+      };
+  
+      let uploadedImagePath = '';
+  
+      if (formData.posterImg) {
+        const formDataWithImage = new FormData();
+        formDataWithImage.append('image', formData.posterImg);
+  
+        const uploadResponse = await axios.post('http://localhost:5000/api/upload', formDataWithImage);
+  
+        uploadedImagePath = uploadResponse.data.imagePath;
+      }
+  
+      if (uploadedImagePath) {
+        formDataWithUser.posterImg = uploadedImagePath;
+      }
+  
+      const response = await axios.post('http://localhost:5000/api/quizzes', formDataWithUser);
+      const createdQuizId = response.data._id;
+      console.log(response.data);
+      localStorage.setItem('createdQuizId', createdQuizId);
+  
+      setIsSettingModalOpen(false);
+  
+      setFormData({
+        title: '',
+        visibility: 'public',
+        folder: 'Your Quiz Folder',
+        posterImg: uploadedImagePath
+      });
+    } catch (error) {
+      console.error('Error creating quiz:', error);
+    }
+    setIsSettingModalOpen(false);
+  };
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -56,95 +146,123 @@ const MainCompile = () => {
     };
   }, [isSettingModalOpen]);
 
-  const handleChange = (e) => {
-    const { name, value, type, checked, files } = e.target;
-    const newValue = type === 'checkbox' ? checked : type === 'file' ? files[0] : value;
 
-    setFormData({
-      ...formData,
-      [name]: newValue
-    });
+
+
+
+
+
+
+
+  const { addQuestion } = useQuiz(); // Destructure addQuestion function from the context
+
+  const [question, setQuestion] = useState("");
+  const [answers, setAnswers] = useState(["", "", "", ""]);
+  const [correctAnswerIndex, setCorrectAnswerIndex] = useState(null);
+  const [imagePath, setImagePath] = useState("");
+  const [questiontypee, setQuestionTypee] = useState("");
+  const [image, setImage] = useState(null);
+  
+
+  const fileInputRef = useRef(null);
+
+  const handleUploadClick = () => {
+    fileInputRef.current.click();
+  };
+  
+  const handleQuestionChange = (e) => {
+    setQuestion(e.target.value);
+  };
+  
+  const handleAnswerChange = (e, index) => {
+    const newAnswers = [...answers];
+    newAnswers[index] = e.target.innerText;
+    setAnswers(newAnswers);
   };
 
-  const handleToggleModal = () => {
-    setIsModalOpen(!isModalOpen);
+  const handleSelectCorrectAnswer = (index) => {
+    setCorrectAnswerIndex(index);
   };
 
-  const handleAddQuestion = (type) => {
-    setQuestionType(type); // Set the selected question type
-    setIsModalOpen(false);
-
-    // Add the new question type to the questionCards state
-    setQuestionCards([...questionCards, type]);
-  };
-
-  const handleToggleModalSetting = () => {
-
-    setIsSettingModalOpen(!isSettingModalOpen);
-    
-  };
-
-  const handleSubmit = async () => {
+  
+  const handleSubmite = async (type) => {
     try {
-      const user = JSON.parse(localStorage.getItem('User'));
+      let uploadedImagePath = "";
+
+     
+      
+      let createdQuizId = localStorage.getItem('createdQuizId');
   
-      if (!user || !user._id) {
-        console.error('User ID not found in local storage or user object is invalid');
-        return;
+      if (!createdQuizId) {
+        // If quiz ID is not found, create an empty quiz
+        const response = await axios.post('http://localhost:5000/api/quizzes', {
+          title: '',
+          visibility: 'public',
+          folder: 'Your Quiz Folder',
+          posterImg: ''
+        });
+  
+        createdQuizId = response.data._id;
+        console.log('Empty quiz created:', response.data);
+  
+        // Store the created quiz ID in local storage
+        localStorage.setItem('createdQuizId', createdQuizId);
       }
-  
-      const formDataWithUser = {
-        ...formData,
-        userId: user._id
+      const questionData = {
+        question: question,
+        answers: answers,
+        correctAnswerIndex: correctAnswerIndex,
+        questiontype: type,
+        imagePath: uploadedImagePath,
+        quizId: createdQuizId
       };
   
-      let uploadedImagePath = ''; // Initialize imagePath
-  
-      // Check if an image is uploaded
-      if (formData.posterImg) {
-        const formDataWithImage = new FormData();
-        formDataWithImage.append('image', formData.posterImg);
-  
-        // Upload the image to the server
-        const uploadResponse = await axios.post('http://localhost:5000/api/upload', formDataWithImage);
-  
-        // Get the path to the uploaded image from the server response
-        uploadedImagePath = uploadResponse.data.imagePath;
-      }
-  
-      // If imagePath is empty, no image was uploaded, so no need to update formDataWithUser
-      if (uploadedImagePath) {
-        formDataWithUser.posterImg = uploadedImagePath;
-      }
-      console.log(formDataWithUser);
-  
-      const response = await axios.post('http://localhost:5000/api/quizzes', formDataWithUser);
-      console.log('Quiz created successfully!', response.data);
-  
-      const createdQuizId = response.data._id;
-      console.log('Created Quiz ID:', createdQuizId); // Log the created quiz ID
-  
-      localStorage.setItem('createdQuizId', createdQuizId);
-  
-      setIsSettingModalOpen(false);
+      // Add the question using the addQuestion function from the context
+      await addQuestion(questionData);
   
       // Clear form fields after successful submission
-      setFormData({
-        title: '',
-        visibility: 'public',
-        folder: 'Your Quiz Folder',
-        posterImg: uploadedImagePath
-      });
+      setQuestion("");
+      setAnswers(["", "", "", ""]);
+      setCorrectAnswerIndex(null);
+      setImagePath("");
+  
+  
+      // Clear form fields and close modal
+   
+     
     } catch (error) {
       console.error('Error creating quiz:', error);
     }
+
+    updateQuestionType(type);
+    setIsModalOpen(false);
+    setQuestionCards([...questionCards, type]);
   };
   
-  
 
 
-  // Memoize the component rendering to prevent unnecessary re-renders
-  const memoizedComponent = useMemo(() => (
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  return (
     <div className='main'>
       <div className="wrapper">
         <div className='spacer'>
@@ -156,84 +274,74 @@ const MainCompile = () => {
             handleToggleModal={handleToggleModal} 
             addQuestion={handleAddQuestion} 
             questionCards={questionCards} 
-            setQuestionCards={setQuestionCards} // Pass setQuestionCards as a prop
+            setQuestionCards={setQuestionCards}
           />
         </div>
         <div className='maincountainer'>
-          <Questionf questionType={questionType} /> {/* Pass down the selected question type */}
+          <Questionf questionType={questionType} />
         </div>
       </div>
-   
 
-
-   
-
-{isSettingModalOpen && (
-  <div className="modalsetting" ref={modalRef}>
-    <div className="modalinside">
-      <form>
-        <label>
-          Title:
-          <input type="text" name="title" value={formData.title} onChange={handleChange} />
-        </label>
-        <label>
-          Visibility:
-          <select name="visibility" value={formData.visibility} onChange={handleChange}>
-            <option value="public">Public</option>
-            <option value="private">Private</option>
-          </select>
-        </label>
-        <label>
-          Folder:
-          <select name="folder" value={formData.folder} onChange={handleChange}>
-            <option value="Your Quiz Folder">Your Quiz Folder</option>
-          </select>
-        </label>
-        <label>
-          Poster Image:
-          <input type="file" name="posterImg" accept="image/*" onChange={handleChange} />
-        </label>
-      </form>
-      <button onClick={handleSubmit}>Create Quiz</button>
-    </div>
-  </div>
-)}
-
-{isModalOpen && (
-  <div className="modalsetting1" ref={modalRef}>
-    <div className="modalinside">
-      <div className="modalagaininside">
-        <div className="modalmainheader ">
-          <div className="modalheader">
-            <div className="modalheadertext">Select Question Type</div>
+      {isSettingModalOpen && (
+        <div className="modalsetting" ref={modalRef}>
+          <div className="modalinside">
+            <form>
+              <label>
+                Title:
+                <input type="text" name="title" value={formData.title} onChange={handleChange} />
+              </label>
+              <label>
+                Visibility:
+                <select name="visibility" value={formData.visibility} onChange={handleChange}>
+                  <option value="public">Public</option>
+                  <option value="private">Private</option>
+                </select>
+              </label>
+              <label>
+                Folder:
+                <select name="folder" value={formData.folder} onChange={handleChange}>
+                  <option value="Your Quiz Folder">Your Quiz Folder</option>
+                </select>
+              </label>
+              <label>
+                Poster Image:
+                <input type="file" name="posterImg" accept="image/*" onChange={handleChange} />
+              </label>
+            </form>
+            <button onClick={handleSubmit}>Create Quiz</button>
           </div>
         </div>
-        <div className="mma">
-          <div className="modalmainarea">
-            <div className="modalmainareainside">
-              <div className="modalmainareainsideinsdie">
-                <div className="modallsidequestionlist">
-                  <div className="modalquestiontyep">
-                    <div className="testknowtitle">True/False</div>
-                    <div className="questionlist">
-                      <button
-                        className="modalbuttons"
-                        onClick={() => handleAddQuestion("True/False")}
-                      >
-                        True/False
-                      </button>
-                      <button
-                        className="modalbuttons"
-                        onClick={() => handleAddQuestion("MCQ")}
-                      >
-                        MCQ
-                      </button>
-                      <button
-                        className="modalbuttons"
-                        onClick={() => handleAddQuestion("MSQ")}
-                      >
-                        MSQ
-                      </button>
+      )}
+
+      {isModalOpen && (
+        <div className="modalsetting1" ref={modalRef}>
+          <div className="modalinside">
+            <div className="modalagaininside">
+              <div className="modalmainheader ">
+                <div className="modalheader">
+                  <div className="modalheadertext">Select Question Type</div>
+                </div>
+              </div>
+              <div className="mma">
+                <div className="modalmainarea">
+                  <div className="modalmainareainside">
+                    <div className="modalmainareainsideinsdie">
+                      <div className="modallsidequestionlist">
+                        <div className="modalquestiontyep">
+                          <div className="testknowtitle">True/False</div>
+                          <div className="questionlist">
+                            <button className="modalbuttons" onClick={()=>handleSubmite("True/False")}>
+                              True/False
+                            </button>
+                            <button className="modalbuttons" onClick={() => handleSubmite("MCQ")}>
+                              MCQ
+                            </button>
+                            <button className="modalbuttons" onClick={() => handleSubmite("MSQ")}>
+                              MSQ
+                            </button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -241,20 +349,9 @@ const MainCompile = () => {
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
-  </div>
-)}
-
-
-
-
-
-
-    </div>
-  ), [isModalOpen, isSettingModalOpen, questionType, questionCards]);
-
-  return memoizedComponent;
+  );
 };
 
 export default MainCompile;

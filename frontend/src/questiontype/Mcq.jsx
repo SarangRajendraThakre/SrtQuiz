@@ -11,112 +11,109 @@ import { BiSolidImage } from "react-icons/bi";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { BsPlusLg } from "react-icons/bs";
 import { BiCircle } from "react-icons/bi";
+import { useQuiz } from "../context/QuizContext";
 
 
 
 
 const Mcq = () => {
+  const { addQuestion } = useQuiz(); // Destructure addQuestion function from the context
+
   const [question, setQuestion] = useState("");
   const [answers, setAnswers] = useState(["", "", "", ""]);
   const [correctAnswerIndex, setCorrectAnswerIndex] = useState(null);
-  const [imagePath, setImagePath] = useState(""); // Store the image path
+  const [imagePath, setImagePath] = useState("");
   const [questiontype, setQuestionType] = useState("MCQ");
-  const [image, setImage] = useState(null); // Store the selected image file
+  const [image, setImage] = useState(null);
+  const [formData, setFormData] = useState({});
 
   const fileInputRef = useRef(null);
 
-  // Function to handle file input field click
   const handleUploadClick = () => {
-    fileInputRef.current.click(); // Trigger click event of file input field
+    fileInputRef.current.click();
   };
+  
   const handleQuestionChange = (e) => {
     setQuestion(e.target.value);
   };
   
   const handleAnswerChange = (e, index) => {
     const newAnswers = [...answers];
-    newAnswers[index] = e.target.innerText; // Use innerText to get the content
+    newAnswers[index] = e.target.innerText;
     setAnswers(newAnswers);
   };
-  
 
   const handleSelectCorrectAnswer = (index) => {
     setCorrectAnswerIndex(index);
   };
-  
-  // Function to handle image change
+
   const handleImageChange = async (e) => {
     try {
       const file = e.target.files[0];
-      setImage(file); // Store the selected image file
+      setImage(file);
   
-      // Check if there's no imagePath already set
       if (!imagePath) {
-        // If no imagePath exists, upload the image
-        // Create a FormData object
         const formData = new FormData();
         formData.append("image", file);
   
-        // Upload the image file
         const uploadResponse = await axios.post("http://localhost:5000/api/upload", formData);
-  
-        // Set the image path to the uploaded image's path
         setImagePath(uploadResponse.data.imagePath);
       }
     } catch (error) {
       console.error("Error uploading image:", error);
-      // Handle error
     }
   };
   const handleSubmit = async () => {
     try {
-      let uploadedImagePath = ""; // Initialize uploadedImagePath to an empty string
-  
-      // Check if an image is already uploaded and imagePath is not empty
+      let uploadedImagePath = "";
+
       if (imagePath) {
-        // If imagePath is not empty, use the existing image path
         uploadedImagePath = imagePath;
       }
+      
+      let createdQuizId = localStorage.getItem('createdQuizId');
   
-      // Get the createdQuizId from local storage
-      const createdQuizId = localStorage.getItem('createdQuizId');
-  
-      // Check if createdQuizId exists
       if (!createdQuizId) {
-        console.error('Created Quiz ID not found in local storage');
-        return; // Exit the function if createdQuizId is not found
-      }
+        // If quiz ID is not found, create an empty quiz
+        const response = await axios.post('http://localhost:5000/api/quizzes', {
+          title: '',
+          visibility: 'public',
+          folder: 'Your Quiz Folder',
+          posterImg: ''
+        });
   
-      // Send the question data along with the image path and other required fields to the backend
+        createdQuizId = response.data._id;
+        console.log('Empty quiz created:', response.data);
+  
+        // Store the created quiz ID in local storage
+        localStorage.setItem('createdQuizId', createdQuizId);
+      }
       const questionData = {
         question: question,
         answers: answers,
         correctAnswerIndex: correctAnswerIndex,
-        questiontype: questiontype, // Include questiontype field
+        questiontype: questiontype,
         imagePath: uploadedImagePath,
-        quizId: createdQuizId // Include createdQuizId as quizId in the request data
+        quizId: createdQuizId
       };
   
-      // Make the API call to add the question
-      const addQuestionResponse = await axios.post("http://localhost:5000/api/add-question", questionData);
-      
-      // Log the response from the backend
-      console.log("Question added successfully:", addQuestionResponse.data);
+      // Add the question using the addQuestion function from the context
+      await addQuestion(questionData);
   
       // Clear form fields after successful submission
       setQuestion("");
       setAnswers(["", "", "", ""]);
       setCorrectAnswerIndex(null);
       setImagePath("");
+  
+  
+      // Clear form fields and close modal
+   
+     
     } catch (error) {
-      console.error("Error adding question:", error);
-      // Handle error
+      console.error('Error creating quiz:', error);
     }
   };
-  
-  
-  
-  
   
   return (
     <>

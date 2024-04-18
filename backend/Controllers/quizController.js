@@ -101,3 +101,28 @@ exports.addQuestionToQuiz = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
+
+
+exports.deleteQuestionById = async (req, res) => {
+  try {
+    const questionId = req.params.questionId;
+
+    // Find the quiz containing the question
+    const quiz = await Quiz.findOne({ "questions._id": questionId });
+    if (!quiz) {
+      return res.status(404).json({ message: 'Quiz containing the question not found' });
+    }
+
+    // Remove the question from the questions array
+    quiz.questions = quiz.questions.filter(question => question._id.toString() !== questionId);
+
+    // Save the updated quiz to the database
+    await quiz.save();
+
+    res.status(200).json({ message: 'Question deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting question:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};

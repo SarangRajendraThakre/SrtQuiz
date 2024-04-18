@@ -17,4 +17,6 @@ router.post('/quizzes', quizController.createQuiz);
 // POST a new question to a quiz
 router.post('/add-question', quizController.addQuestionToQuiz);
 
+router.delete('/questions/delete/:questionId', quizController.deleteQuestionById);
+
 module.exports = router;
