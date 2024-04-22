@@ -101,19 +101,19 @@ export const AuthContextProvider = ({ children }) => {
   }, []);
 
   
-  useEffect(() => {
-    // Example: Fetch user data from backend when component mounts
-    const fetchUserData = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/api/user'); // Adjust the endpoint URL accordingly
-        setUser(response.data.user);
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      }
-    };
+  // useEffect(() => {
+  //   // Example: Fetch user data from backend when component mounts
+  //   const fetchUserData = async () => {
+  //     try {
+  //       const response = await axios.get('http://localhost:5000/api/user'); // Adjust the endpoint URL accordingly
+  //       setUser(response.data.user);
+  //     } catch (error) {
+  //       console.error('Error fetching user data:', error);
+  //     }
+  //   };
 
-    fetchUserData();
-  }, []);
+  //   fetchUserData();
+  // }, []);
 
   return (
     <AuthContext.Provider

@@ -2,28 +2,24 @@ import React, { useState, useEffect } from "react";
 import { BiImage } from "react-icons/bi";
 import { useQuiz } from "../context/QuizContext";
 
-function QuestionCard({ question, index, isNew ,onClick}) {
+function QuestionCard({ question, index, isNew, onClick }) {
   const [added, setAdded] = useState(false);
 
-  const { quizData, deleteQuestionById } = useQuiz(); // Use the useQuiz hook to get the quizData
+  const { quizData, deleteQuestionById } = useQuiz();
 
   if (!question) {
     return <div>Loading...</div>; // or any other placeholder or loading indicator
   }
 
-  const { questionText, answers, imagePath ,questionType } = question;
+  const { questionText, answers, imagePath, questionType } = question;
 
   const handleClick = () => {
-    // Call the onClick function and pass questionType and index
     onClick(questionType, index, question._id);
   };
-
 
   const handleDelete = () => {
     deleteQuestionById(question._id);
   };
-
-  
 
   useEffect(() => {
     if (isNew) {
@@ -32,7 +28,7 @@ function QuestionCard({ question, index, isNew ,onClick}) {
         setAdded(false);
       }, 1000);
     }
-  }, [isNew,quizData]);
+  }, [isNew, quizData]);
 
   if (!quizData || !quizData.questions) {
     return <div>No questions available</div>;
@@ -43,19 +39,19 @@ function QuestionCard({ question, index, isNew ,onClick}) {
       <div className="question-card" onClick={handleClick}>
         <div className="card-title-container">
           <div className="card-no noofquestion ">{index + 1}</div>
-          <div className="card-title">{question.questionType}</div>
+          <div className="card-title">{ question.questionType}</div>
         </div>
         <div className="cardcontent">
           <div className="maincardcontent">
             <div className="maincardcontentinner">
               <div className="maincardcontentinnerheading">
-                {question.questionText}
+              {quizData ? question.questionText : "Question"}
               </div>
               <div className="maincardcontentinnerimage">
                 <div className="maincardcontentinnerimagecountdown"></div>
                 <div className="maincardcontentinnerimagecontainer">
-                  <div className="maincardcontentinnerimagecontainerinner">
-                    {imagePath ? (
+                  {imagePath ? (
+                    <div className="maincardcontentinnerimagecontainerinnerpath">
                       <span className="imgpostinquestincard">
                         <img
                           className=""
@@ -63,10 +59,12 @@ function QuestionCard({ question, index, isNew ,onClick}) {
                           alt=""
                         />
                       </span>
-                    ) : (
+                    </div>
+                  ) : (
+                    <div className="maincardcontentinnerimagecontainerinner">
                       <BiImage />
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="maincardcontentinneroptioncontainer">
@@ -75,9 +73,7 @@ function QuestionCard({ question, index, isNew ,onClick}) {
                     <div
                       key={optionIndex}
                       className={`maincardcontentinneroptioncontainerinner ${
-                        option === question.correctAnswer
-                          ? "correct-answer"
-                          : ""
+                        option === question.correctAnswer ? "correct-answer" : ""
                       }`}
                     >
                       {option}

@@ -7,6 +7,7 @@ import { AuthContextProvider } from './context/AuthContext'; // Import your Auth
 import { QuizContextProvider } from './context/QuizContext'; // Import your QuizContextProvider
 
 ReactDOM.render(
+  
   <React.StrictMode>
     {/* Wrap your entire application with the context providers */}
     <BrowserRouter>

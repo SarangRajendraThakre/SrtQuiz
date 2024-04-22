@@ -25,17 +25,8 @@ const MainCompile = () => {
 
   const { addEmptyQuestion , questionType ,updateQuestionType } = useQuiz(); // Destructure the addEmptyQuestion function from useQuiz
 
-  const handleAddQuestionempty = () => {
-    // Call the addEmptyQuestion function
-    addEmptyQuestion()
-      .then(() => {
-        console.log("Empty question added successfully");
-      })
-      .catch((error) => {
-        console.error("Error adding empty question:", error);
-      });
-  };
-
+  const [createdquizdatatitle,setCreatedquizDatatitle]=useState("")
+  
 
 
   const handleChange = (e) => {
@@ -95,6 +86,9 @@ const MainCompile = () => {
       const createdQuizId = response.data._id;
       console.log(response.data);
       localStorage.setItem('createdQuizId', createdQuizId);
+
+      setCreatedquizDatatitle(response.data.title);
+      console.log(createdquizdatatitle);
   
       setIsSettingModalOpen(false);
   
@@ -266,7 +260,10 @@ const MainCompile = () => {
     <div className='main'>
       <div className="wrapper">
         <div className='spacer'>
-          <Header handleToggleModalSetting={handleToggleModalSetting} />
+        <Header handleToggleModalSetting={handleToggleModalSetting} createdquizdatatitle={createdquizdatatitle} />
+
+          
+        
         </div>
         <div className='overflowsidebar'>
           <Sidebar 
@@ -338,6 +335,9 @@ const MainCompile = () => {
                             </button>
                             <button className="modalbuttons" onClick={() => handleSubmite("MSQ")}>
                               MSQ
+                            </button>
+                            <button className="modalbuttons" onClick={() => handleSubmite("MSQQ")}>
+                              MSQQ
                             </button>
                           </div>
                         </div>

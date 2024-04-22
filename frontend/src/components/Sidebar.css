@@ -662,8 +662,56 @@ text-overflow: ellipsis
   transition: transform 0.2s ease; /* Adjust the transition duration and easing function as desired */
 }
 
-.imgpostinquestincard img {
+.imgpostinquestincard{
   width: fit-content;
   height: fit-content;
   object-fit: contain;
 }
+
+
+.maincardcontentinnerimagecontainerinnerpath{
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+ 
+  width: 39px;
+  height: 28px;
+}
+
+
+
+
+
+
+@media screen and (max-width: 920px) {
+  .overflowsidebar {
+      bottom: 0px;
+      width: 100%;
+      height: 4.5rem;
+      box-shadow: rgba(0, 0, 0, 0.15) 0px -2px 4px 0px;
+      flex-direction: row;
+  }
+      .sidebar {
+    display: flex;
+    height: 100%;
+    margin: 0px;
+  }
+
+
+
+.card {
+    width: 113px;
+}
+.question-card {
+  display: flex;
+  padding: 8px 16px 8px 8px;
+}
+.maincardcontent {
+  height: 100%;
+}}
+
+

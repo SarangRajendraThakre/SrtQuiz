@@ -126,3 +126,60 @@ exports.deleteQuestionById = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
+
+// Get question by question ID
+exports.getQuestionById = async (req, res) => {
+  try {
+    const questionId = req.params.questionId;
+    // Fetch the question from the database using the questionId
+    const question = await Question.findById(questionId);
+    if (!question) {
+      return res.status(404).json({ message: 'Question not found' });
+    }
+    res.status(200).json({ question });
+  } catch (error) {
+    console.error('Error fetching question:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
+// Update question by question ID
+exports.updateQuestionById = async (req, res) => {
+  try {
+    const questionId = req.params.questionId;
+    const { question, answers, correctAnswerIndex, imagePath, questiontype } = req.body;
+
+    // Find the quiz containing the question
+    const quiz = await Quiz.findOne({ "questions._id": questionId });
+    if (!quiz) {
+      return res.status(404).json({ message: 'Quiz containing the question not found' });
+    }
+
+    // Find and update the question within the quiz
+    const updatedQuestionIndex = quiz.questions.findIndex(question => question._id.toString() === questionId);
+    if (updatedQuestionIndex === -1) {
+      return res.status(404).json({ message: 'Question not found within the quiz' });
+    }
+
+    const updatedQuestion = {
+      questionText: question,
+      options: answers || [],
+      correctAnswers: [answers[correctAnswerIndex]],
+      questionType: questiontype || null,
+      imagePath: imagePath || null
+    };
+
+    // Update the question
+    quiz.questions[updatedQuestionIndex] = updatedQuestion;
+
+    // Save the updated quiz to the database
+    await quiz.save();
+
+    res.status(200).json({ message: 'Question updated successfully', quiz });
+  } catch (error) {
+    console.error('Error updating question:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};

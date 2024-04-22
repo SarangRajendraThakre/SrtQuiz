@@ -5,7 +5,7 @@ import QuestionCard from "./QuestionCard";
 import Questionf from "../components/Questionf"; 
 
 const Sidebar = ({ isModalOpen, handleToggleModal, addQuestion, questionCards, setQuestionCards }) => {
-  const { quizData, addEmptyQuestion ,questionType, updateQuestionType,updateQuestionId,questionId} = useQuiz();
+  const { quizData, addEmptyQuestion ,questionType, updateQuestionType,updateQuestionIdd,questionIdd} = useQuiz();
   const containerRef = useRef(null);
 
 
@@ -21,12 +21,13 @@ const Sidebar = ({ isModalOpen, handleToggleModal, addQuestion, questionCards, s
   };
 
   const handleQuestionCardClick = (questionType, index, questionId) => {
-    // Update the clicked questionType
-   
-    updateQuestionId(questionId);
-     updateQuestionType(questionType);
-    console.log("Clicked on question card:", questionType, index ,  questionId);
+    updateQuestionIdd(questionId);
+    updateQuestionType(questionType);
+    console.log("Clicked on question card:", questionType, index);
   };
+  console.log(questionIdd);
+
+  
   return (
     <>
       <div className="sidebar" ref={containerRef}>

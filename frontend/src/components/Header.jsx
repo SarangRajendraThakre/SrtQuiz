@@ -8,14 +8,14 @@ import { AuthContext } from '../context/AuthContext'
 import { AiOutlineEye } from "react-icons/ai";
 import "./Header.css";
 
-const Header = ({handleToggleModalSetting}) => {
+const Header = ({ handleToggleModalSetting, createdquizdatatitle }) => {
 
   
   const{user,logoutUser,removeCreatedQuizId}=useContext(AuthContext);
   return (
     
-    <div>                
-      <div className=' w-screen fixed  h-[56px] flex z-20 bg-white   justify-items-start   items-center font-sans px-[16px]  '>
+    <>                
+      <div className=' w-screen fixed  h-[56px] flex z-40 bg-white   justify-items-start   items-center font-sans px-[16px]  '>
   
   <span className='pr-[20px]'>
   
@@ -29,7 +29,8 @@ const Header = ({handleToggleModalSetting}) => {
   </svg></span>
   
  <button onClick={handleToggleModalSetting}> <div className='flex h-[42px] justify-between  bg-white rounded-md border-[0.5px] border-[#484848]  justify-center items-center w-[320.4px] h-[42.4px]  text-[#6E6E6E]  font-extrabold'>
-    <span> <span className='pl-4' >Enter kahoot title... </span>
+    <span> <span className='pl-4' ><span> {createdquizdatatitle ? createdquizdatatitle : "Enter kahoot title... "} </span>
+</span>
   </span>
    <span> <div className='bg-[#F2F2F2]    px-[13px] py-[7px] ml-[12px]  text-sm/[16px]    mr-[4px] '>Setting</div>
    </span>
@@ -74,7 +75,7 @@ const Header = ({handleToggleModalSetting}) => {
       </div>
      
   
-      </div>
+      </>
   )
 }
 

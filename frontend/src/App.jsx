@@ -11,10 +11,22 @@ import MainCompile from "./pages/MainCompile";
 import QuizList from "./questiontype/QuizList";
 import QuizIdfetched from "./questiontype/QuizIDfetched";
 import Home from "./pages/Home";
+import Button from "./pages/Button";
 
 const App = () => {
   const { user } = useContext(AuthContext);
+
+  console.error = (message) => {
+    if (message.startsWith('Warning: A component is `contentEditable`')) {
+      // Suppress the specific warning
+      return;
+    }
+    // Log other errors or warnings
+    console.warn(message);
+  };
+  
   return (
+
     <>
     
      
@@ -26,6 +38,8 @@ const App = () => {
           <Route path="/chat" element={<Chat/>} />
           
           <Route path="/quiz" element={<QuizList/>} />
+          <Route path="/btn" element={<Button/>} />
+
 
           <Route path="/quizid" element={<QuizIdfetched/>} />
           <Route path="/home" element={<Home/>} />

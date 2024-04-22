@@ -90,6 +90,28 @@
 
 }
 
+.optioncardselectedtypingbefore{
+  -webkit-box-align: center;
+    align-items: center;
+    width: calc(50% - 3rem);
+    padding: 0.3125rem;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px -0.25rem 0px 0px inset;
+    box-sizing: border-box;
+    position: relative;
+    overflow: visible;
+    -webkit-box-pack: start;
+    justify-content: flex-start;
+    display: flex;
+    flex: 1 0 auto;
+    transition: box-shadow 0.2s ease 0s, background 0.2s ease 0s, opacity 0.2s ease 0s;
+    border-radius: 4px;
+    min-height: 2.25rem;
+    max-width: 100%;
+    background-color: rgb(255, 255, 255);
+    color: rgb(204, 204, 204);
+    fill: rgb(255, 255, 255);
+}
+
 
 .togglebtnforrightanswer{
  

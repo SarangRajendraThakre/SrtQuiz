@@ -11,6 +11,7 @@ import { BiSolidImage } from "react-icons/bi";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { BsPlusLg } from "react-icons/bs";
 import { BiCircle } from "react-icons/bi";
+import Button from "../pages/Button";
 
 const TrueFalse = () => {
   return (
@@ -73,62 +74,8 @@ const TrueFalse = () => {
           <div className="optionmainareainner">
             {" "}
             <div className="optionmainareainnerinner">
-              <div className="optionmainareainnerinnerinner">
-                <div className="optioncard1">
-                  <div className="optioncardinner color1">
-                    <span className="optioncardinnerspan ">
-                      <IoTriangleSharp fontSize="35px" color="white" />
-                    </span>
-                  </div>
-                  <div className="optioncardinnermain">
-                    <span className="ocim">
-                      <div className="ocimh">
-                        <div className="ocimhh">
-                          <div className="answertexthere">
-                            <p
-                              className="ptaganswer" contentEditable="true"
-                            
-                            >True</p>
-                          </div>
-                        </div>
-                      </div>
-                    </span>
-                    <div className="radiobtn">
-                      <input type="radio" name="option" />
-                    </div>
-                    <BiSolidImage size="40px"/>
-                  </div>
-                </div>
-                <div className="optioncard1">
-                  <div className="optioncardinner color2">
-                    <span className="optioncardinnerspan">
-                      <BsDiamondFill fontSize="35px" color="white" />
-                    </span>
-                    <div className="optioncardinnermain">
-                      <div className="optioncardinnermaintext"></div>
-                      <div className="buttonimg"></div>
-                    </div>
-                  </div>
-                  <div className="optioncardinnermain">
-                    <span className="ocim">
-                      <div className="ocimh">
-                        <div className="ocimhh">
-                          <div className="answertexthere">
-                            <p
-                              className="ptaganswer" contentEditable="true"
-                            
-                            >False</p>
-                          </div>
-                        </div>
-                      </div>
-                    </span>
-                    <div className="radiobtn">
-                      <input type="radio" name="option" />
-                    </div>
-                    <BiSolidImage size="40px"/>
-                  </div>
-                </div>
-               
+            <div className="optionmainareainnerinnerinner"> 
+            <Button/> 
             </div>
           </div>
         </div>

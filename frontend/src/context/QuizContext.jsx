@@ -8,15 +8,14 @@ const QuizContext = createContext();
 export const QuizContextProvider = ({ children }) => {
   const [quizData, setQuizData] = useState({ quiz: null, questions: [] }); // Initialize quizData with an empty questions array
   const [questionType, setQuestionType] = useState(null);
-  const [questionId, setQuestionId] = useState(null);
+  const [questionIdd, setQuestionIdd] = useState(null);
 
   const updateQuestionType = (type) => {
     setQuestionType(type);
   };
-  const updateQuestionId = (Id) => {
-    setQuestionType(Id);
+  const updateQuestionIdd = (id) => {
+    setQuestionIdd(id);
   };
-
 
   // Define fetchQuizData function
   const fetchQuizData = async () => {
@@ -42,9 +41,8 @@ export const QuizContextProvider = ({ children }) => {
   useEffect(() => {
     // Fetch quiz data when component mounts
     fetchQuizData();
-
   }, []);
-
+ 
   const addQuestion = async (newQuestionData) => {
     try {
       // Send the new question data to the backend
@@ -52,6 +50,22 @@ export const QuizContextProvider = ({ children }) => {
 
       // Log the response from the backend
       console.log("Question added successfully:", response.data);
+
+      if (response.data.questions && response.data.questions.length > 0) {
+        const questionId = response.data.questions[response.data.questions.length - 1]._id;
+        // Proceed with further operations using questionId
+      setQuestionIdd(questionId);
+
+        
+      } else {
+        console.error("Error: No questions found in the response data.");
+        // Handle the case where no questions are found in the response data
+      }
+      
+
+      
+
+      
 
       // Update the quizData state with the new question
       setQuizData(prevQuizData => ({
@@ -79,20 +93,44 @@ export const QuizContextProvider = ({ children }) => {
     }
   };
 
-  // Function to add an empty question
- // Function to add an empty question
-// Function to add an empty question
+  // Function to get question data by ID
+  const getQuestionById = () => {
+    if (!quizData || !quizData.questions || !questionIdd) {
+      // Return null if quizData, questions array, or questionIdd is not available
+      return null;
+    }
+
+    // Find the question in the questions array by its ID
+    const foundQuestion = quizData.questions.find(question => question._id === questionIdd);
+
+    // Return the found question or null if not found
+    return foundQuestion || null;
+  };
 
 
+  const updateQuestionById = async (questionId, updatedQuestionData) => {
+    try {
+      // Send the updated question data to the backend
+      const response = await axios.put(`http://localhost:5000/api/questions/update/${questionId}`, updatedQuestionData);
+  
+      // Log the response from the backend
+      console.log("Question updated successfully:", response.data);
+  
+      // Refetch the quiz data to get the updated question
+      await fetchQuizData();
+    } catch (error) {
+      console.error("Error updating question:", error);
+      // Handle error
+    }
+  };
 
   // Provide the state and functions to the context
   return (
-    <QuizContext.Provider value={{ quizData, addQuestion,questionType,questionId,updateQuestionId,updateQuestionType, deleteQuestionById, fetchQuizData }}>
+    <QuizContext.Provider value={{ quizData, addQuestion, questionType, questionIdd,updateQuestionIdd, updateQuestionType, deleteQuestionById, fetchQuizData, getQuestionById ,updateQuestionById }}>
       {children}
     </QuizContext.Provider>
   );
 };
-
 
 // Custom hook to consume the context in functional components
 export const useQuiz = () => useContext(QuizContext);

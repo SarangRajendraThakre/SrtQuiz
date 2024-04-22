@@ -37,8 +37,8 @@ app.listen(port, () => {
 
 mongoose
   .connect(uri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+    // useNewUrlParser: true,
+    // useUnifiedTopology: true,
   })
   .then(() => console.log("Database is working"))
   .catch((error) => console.log("MongoDB connection failed:", error.message));
