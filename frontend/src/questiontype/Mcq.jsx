@@ -1,3 +1,4 @@
+
 import "./Mcq.css";
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
@@ -21,36 +22,21 @@ const Mcq = () => {
     questionIdd,
     getQuestionById,
   } = useQuiz();
-  // Other state variables and functions...
-
-  // Function to update question by ID
 
   const [question, setQuestion] = useState("");
   const [answers, setAnswers] = useState(["", "", "", ""]);
-
-  const [correctAnswerIndex, setCorrectAnswerIndex] = useState("");
+  const [correctAnswerIndices, setCorrectAnswerIndices] = useState([]);
   const [imagePath, setImagePath] = useState("");
-  const [questiontype, setQuestionType] = useState("MCQ");
-  const [image, setImage] = useState(null);
-
-  const [formData, setFormData] = useState({});
 
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    // Ensure that questionIdd is set before calling getQuestionById
     if (questionIdd && quizData) {
       const foundQuestion = getQuestionById();
       setQuestion(foundQuestion ? foundQuestion.questionText : "");
-
       setImagePath(foundQuestion ? foundQuestion.imagePath : "");
-
       setAnswers(foundQuestion && Array.isArray(foundQuestion.options) ? foundQuestion.options : ["", "", "", ""]);
-      
-
-      setCorrectAnswerIndex(foundQuestion && Array.isArray(foundQuestion.correctAnswers) ? foundQuestion.correctAnswers : ["", "", "", ""]);
-
-      // Set question text or empty string if question not found
+      setCorrectAnswerIndices(foundQuestion && Array.isArray(foundQuestion.correctAnswers) ? foundQuestion.correctAnswers : []);
     }
   }, [questionIdd, quizData]);
 
@@ -64,117 +50,52 @@ const Mcq = () => {
 
   const handleAnswerChange = (e, index) => {
     const newAnswers = [...answers];
-    newAnswers[index] = e.target.value; // Use e.target.value to get the typed value
+    newAnswers[index] = e.target.value;
     setAnswers(newAnswers);
   };
 
   const handleSelectCorrectAnswer = (index) => {
-    // Toggle the correct answer index
-    const newCorrectAnswerIndex =
-      correctAnswerIndex === index ?  null : index; // Toggle to null if already selected, otherwise set to the current index
-    setCorrectAnswerIndex(newCorrectAnswerIndex);
+    const newCorrectAnswerIndices = correctAnswerIndices.includes(index)
+      ? correctAnswerIndices.filter((i) => i !== index)
+      : [...correctAnswerIndices, index];
+    setCorrectAnswerIndices(newCorrectAnswerIndices);
   };
 
   const handleImageChange = async (e) => {
     try {
       const file = e.target.files[0];
-      setImage(file);
-
-      if (!imagePath) {
-        const formData = new FormData();
-        formData.append("image", file);
-
-        const uploadResponse = await axios.post(
-          "http://localhost:5000/api/upload",
-          formData
-        );
-        setImagePath(uploadResponse.data.imagePath);
-      }
+      const formData = new FormData();
+      formData.append("image", file);
+      const uploadResponse = await axios.post("http://localhost:5000/api/upload", formData);
+      setImagePath(uploadResponse.data.imagePath);
     } catch (error) {
       console.error("Error uploading image:", error);
     }
   };
 
-  const handleSubmit = async () => {
-    try {
-      let uploadedImagePath = "";
-
-      if (imagePath) {
-        uploadedImagePath = imagePath;
-      }
-
-      let createdQuizId = localStorage.getItem("createdQuizId");
-
-      if (!createdQuizId) {
-        // If quiz ID is not found, create an empty quiz
-        const response = await axios.post("http://localhost:5000/api/quizzes", {
-          title: "",
-          visibility: "public",
-          folder: "Your Quiz Folder",
-          posterImg: "",
-        });
-
-        createdQuizId = response.data._id;
-        console.log("Empty quiz created:", response.data);
-
-        // Store the created quiz ID in local storage
-        localStorage.setItem("createdQuizId", createdQuizId);
-      }
-      const questionData = {
-        question: question,
-        answers: answers,
-        correctAnswerIndex: correctAnswerIndex,
-        questiontype: questiontype,
-        imagePath: uploadedImagePath,
-        quizId: createdQuizId,
-      };
-
-      // Add the question using the addQuestion function from the context
-      await addQuestion(questionData);
-
-      // Clear form fields after successful submission
-      setQuestion("");
-      setAnswers(["", "", "", ""]);
-      setCorrectAnswerIndex(null);
-      setImagePath("");
-    } catch (error) {
-      console.error("Error creating quiz:", error);
-    }
-  };
   const handleUpdateQuestion = async () => {
     try {
       if (!questionIdd || !quizData) {
         console.error("Question ID or quiz data not available");
         return;
       }
-  
+
       const updatedQuestionData = {
         question: question,
         answers: answers,
-        correctAnswerIndex: correctAnswerIndex, // Include correctAnswerIndex in the updated data
-        questiontype: questiontype,
+        correctAnswerIndices: correctAnswerIndices,
         imagePath: imagePath,
-        // Assuming quizData contains the quiz object with _id property
       };
-  
-      // Call the updateQuestionById function from the context
+
       await updateQuestionById(questionIdd, updatedQuestionData);
-  
-      // Clear form fields or perform other actions if needed...
     } catch (error) {
       console.error("Error updating question:", error);
     }
   };
-  
+
   return (
     <>
-      <div
-        className="questiontext"
-        style={{
-          objectFit: "contain",
-          backgroundImage: `ul(http://localhost:5000${imagePath})`,
-        }}
-      >
+      <div className="questiontext" style={{ objectFit: "contain", backgroundImage: `url(http://localhost:5000${imagePath})` }}>
         <div className="advertise">
           <div className="advertiseinner"></div>
         </div>
@@ -302,11 +223,15 @@ const Mcq = () => {
       </span>
       {/* Radio button for selecting the correct answer */}
       <div className="radiobtn">
-        <input
-          type="radio"
-          name="option"
-          onClick={() => handleSelectCorrectAnswer(index)}
-        />
+      <input
+  type="checkbox"
+  checked={correctAnswerIndices.includes(index)}
+
+  onChange={(e) => handleSelectCorrectAnswer(index, e)}
+  value={answers[index]} // Pass the value of the answer to the checkbox
+/>
+
+
       </div>
       {/* Image icon */}
       {/* Image icon here */}

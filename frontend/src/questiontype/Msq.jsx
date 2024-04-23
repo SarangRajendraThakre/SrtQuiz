@@ -31,6 +31,7 @@ const Msq = () => {
   const [question, setQuestion] = useState("");
   const [answers, setAnswers] = useState(["", "", "", ""]);
   const [correctAnswerIndex, setCorrectAnswerIndex] = useState("");
+  const [correctAnswers, setCorrectAnswers] = useState([[], [], [], []]);
   const [imagePath, setImagePath] = useState("");
   const [questiontype, setQuestionType] = useState("MSQ");
   const [image, setImage] = useState(null);
@@ -78,19 +79,24 @@ const Msq = () => {
     newAnswers[index] = updatedAnswer; // Update the answer at the specified index
     setAnswers(newAnswers); // Update the state with the new answers
   
-    // If managing state globally using context, you might do something like this:
-    // updateQuestionById(questionIdd, { answers: newAnswers });
+    // Update the correct answer index if the button clicked is the correct answer
+    setCorrectAnswerIndex(updatedAnswer === 'correct' ? index : correctAnswerIndex);
+  };
   
-   
+  const handleCorrectAnswerChange = (index) => {
+    // Toggle the correct answer at the specified index
+    const updatedCorrectAnswers = [...correctAnswers];
+    updatedCorrectAnswers[index] = !correctAnswers[index]; // Toggle the value
+    setCorrectAnswers(updatedCorrectAnswers);
   };
   
 
   const handleSelectCorrectAnswer = (index) => {
     // Toggle the correct answer index
-    const newCorrectAnswerIndex =
-      correctAnswerIndex === index ?  null : index; // Toggle to null if already selected, otherwise set to the current index
+    const newCorrectAnswerIndex = correctAnswerIndex === index ? null : index;
     setCorrectAnswerIndex(newCorrectAnswerIndex);
-  };
+};
+
 
 
   const handleImageChange = async (e) => {
@@ -129,7 +135,7 @@ const Msq = () => {
       // Check if createdQuizId exists
       if (!createdQuizId) {
         console.error('Created Quiz ID not found in local storage');
-        return; // Exit the function if createdQuizId is not found
+        return; // Exit the functionif createdQuizId is not found
       }
   
       // Send the question data along with the image path and other required fields to the backend
@@ -168,6 +174,7 @@ const Msq = () => {
         return;
       }
   
+      console.log(correctAnswerIndex);
       const updatedQuestionData = {
         question: question,
         answers: answers,
@@ -302,8 +309,17 @@ const Msq = () => {
         <div className="optionmainareainnerinnerinner"> 
 
         
-        <ButtonsContainerr answers={answers} onAnswerChange={handleAnswerChange} />
+        <ButtonsContainerr
+  answers={answers}
+  onAnswerChange={handleAnswerChange}
+  onCorrectAnswerChange={handleCorrectAnswerChange}
+  setCorrectAnswerIndex={setCorrectAnswerIndex}
+  correctAnswerIndex={correctAnswerIndex}
+
   
+
+/>
+
 
 
          <button className="addmore">Add more options</button>

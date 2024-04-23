@@ -152,7 +152,7 @@ const MainCompile = () => {
 
   const [question, setQuestion] = useState("");
   const [answers, setAnswers] = useState(["", "", "", ""]);
-  const [correctAnswerIndex, setCorrectAnswerIndex] = useState(null);
+  const [correctAnswerIndex, setCorrectAnswerIndex] = useState(["","","",""]);
   const [imagePath, setImagePath] = useState("");
   const [questiontypee, setQuestionTypee] = useState("");
   const [image, setImage] = useState(null);
@@ -217,7 +217,7 @@ const MainCompile = () => {
       // Clear form fields after successful submission
       setQuestion("");
       setAnswers(["", "", "", ""]);
-      setCorrectAnswerIndex(null);
+      setCorrectAnswerIndex(["", "", "", ""]);
       setImagePath("");
   
   

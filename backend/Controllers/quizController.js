@@ -84,7 +84,7 @@ exports.addQuestionToQuiz = async (req, res) => {
     const newQuestion = {
       questionText: question,
       options: answers || [],
-      correctAnswers: [answers[correctAnswerIndex]],
+      correctAnswers: correctAnswerIndex || [],
       questionType: questiontype || null,
       imagePath: imagePath || null
     };
@@ -149,7 +149,7 @@ exports.getQuestionById = async (req, res) => {
 exports.updateQuestionById = async (req, res) => {
   try {
     const questionId = req.params.questionId;
-    const { question, answers, correctAnswerIndex, imagePath, questiontype } = req.body;
+    const { question, answers, correctAnswerIndices, imagePath, questiontype } = req.body;
 
     // Find the quiz containing the question
     const quiz = await Quiz.findOne({ "questions._id": questionId });
@@ -166,7 +166,7 @@ exports.updateQuestionById = async (req, res) => {
     const updatedQuestion = {
       questionText: question,
       options: answers || [],
-      correctAnswers: [answers[correctAnswerIndex]],
+      correctAnswers: correctAnswerIndices || [],
       questionType: questiontype || null,
       imagePath: imagePath || null
     };
