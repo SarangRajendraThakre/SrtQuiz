@@ -620,11 +620,12 @@ text-overflow: ellipsis
   position: fixed;
   left: 10rem;
   background-color: white;
-  top: 10rem;
+  top: 4rem;
   transform: translate3d(211px, 56px, 0px);
   min-width: max-content;
   z-index: 10000;
   --radix-popper-transform-origin: -8px 350px;/* Ensure the modal appears above other elements */
+  border-radius: 3rem;
 }
 
 .modalinside {

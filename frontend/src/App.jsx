@@ -13,6 +13,7 @@ import QuizIdfetched from "./questiontype/QuizIDfetched";
 import Home from "./pages/Home";
 import Button from "./pages/Button";
 import Header from "./components/Header";
+import Takequiz from "./questiontype/Takequiz";
 
 const App = () => {
   const { user } = useContext(AuthContext);
@@ -44,6 +45,7 @@ const App = () => {
           
           <Route path="/quiz" element={<QuizList/>} />
           <Route path="/btn" element={<Button/>} />
+          <Route path="/join" element={<Takequiz/>} />
 
 
           <Route path="/quizid" element={<QuizIdfetched/>} />

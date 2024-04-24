@@ -1017,7 +1017,17 @@ height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+ 
+
 }
+/* Mcq.css */
+.inputquestion input[type="text"],
+.inputquestion input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+
+
 .ptaganswer{
   outline: none;
   color: black;

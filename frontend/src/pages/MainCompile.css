@@ -588,11 +588,11 @@ button.close {
 .modalsetting {
 
 
-  padding:  10px;
+  padding:  3rem;
   position: fixed;
   left: 0rem;
   background-color: white;
-  top: 4rem;
+  top: 1rem;
   transform: translate3d(211px, 56px, 0px);
 
   z-index: 10000;

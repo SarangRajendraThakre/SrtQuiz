@@ -107,15 +107,16 @@ const Mcq = () => {
             <div className="innerquestiontextinputinner">
               <div className="innerquestiontextinputinnerinner">
                 <div className="innerquestiontextinputinnerinnerinner">
-                  <input
-                    className="inputquestion"
+                  <div className="inputquestion"><input
+                    className=""
                     type="text"
                     name=""
                     id=""
                     placeholder="Type question here"
                     value={question}
                     onChange={handleQuestionChange}
-                  />
+                  /></div>
+                  
                 </div>
               </div>
             </div>
@@ -235,8 +236,7 @@ const Mcq = () => {
 
 
       </div>
-      {/* Image icon */}
-      {/* Image icon here */}
+   
     </div>
   </div>
 ))}

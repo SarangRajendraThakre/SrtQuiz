@@ -13,6 +13,7 @@ import img8 from "../assets/geograph.jpg"
 import img9 from "../assets/movielistquiz.jpg"
 import img10 from "../assets/Maths-Camp-copy-1030x324.png"
 import logo from "../assets/srtlogo.jpg"
+import QuizList from "../questiontype/QuizList";
 
 
 const Home = () => {
@@ -50,6 +51,7 @@ const Home = () => {
   }, []);
 
   return (
+    <> 
     <div className="toolbar_container">
       <div className="toolbar toolbar-active">
         <div className="toolbar__logo">
@@ -152,7 +154,7 @@ const Home = () => {
            
           </a>
 
-          <a href="http://localhost:5173" class="toolbar__buttons__join">
+          <a href="/join" class="toolbar__buttons__join">
             <img
               src="https://kahoot.com/wp-content/themes/kahoot2017/assets/img/enter_pin_logo.png"
               alt=""
@@ -162,6 +164,9 @@ const Home = () => {
         </div>
       </div>
     </div>
+    <main> <QuizList/> </main>
+
+      </>
   );
 };
 

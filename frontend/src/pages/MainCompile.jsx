@@ -282,7 +282,7 @@ const MainCompile = () => {
       </div>
 
       {isSettingModalOpen && (
-        <div className="modalsetting" ref={modalRef}>
+        <div className="modalsetting p-6 rounded-sm modalinside m" ref={modalRef}>
           <div className="modalinside">
             <form>
               <label>
@@ -307,7 +307,7 @@ const MainCompile = () => {
                 <input type="file" name="posterImg" accept="image/*" onChange={handleChange} />
               </label>
             </form>
-            <button onClick={handleSubmit}>Create Quiz</button>
+            <button className='p-2' onClick={handleSubmit}>Create Quiz</button>
           </div>
         </div>
       )}
