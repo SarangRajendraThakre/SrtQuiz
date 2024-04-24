@@ -149,6 +149,13 @@ position: absolute;
 left: 0;
 }
 
+.toolbar__tile{
+  border-radius: 1rem;
+  width: 180px;
+  height: 100px;
+  border-radius: 1rem;
+
+}
 
 
    .toolbar__tile:before {
@@ -187,11 +194,11 @@ left: 0;
 }
 
 
-/* img{
+.toolbar__tile img{
 object-fit: contain;
 
-  width: 120px;
+  width: 180px;
   height: 100px;
-  border-radius: 0.5rem;
+  border-radius: 1rem;
   padding: 1rem;
-} */
+} 

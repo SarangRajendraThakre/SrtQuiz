@@ -27,6 +27,7 @@ const Mcq = () => {
   const [answers, setAnswers] = useState(["", "", "", ""]);
   const [correctAnswerIndices, setCorrectAnswerIndices] = useState([]);
   const [imagePath, setImagePath] = useState("");
+  const [questiontype,setQuestiontype]=useState("MCQ");
 
   const fileInputRef = useRef(null);
 
@@ -52,7 +53,7 @@ const Mcq = () => {
     const newAnswers = [...answers];
     newAnswers[index] = e.target.value;
     setAnswers(newAnswers);
-  };
+  };           
 
   const handleSelectCorrectAnswer = (index) => {
     const newCorrectAnswerIndices = correctAnswerIndices.includes(index)
@@ -85,6 +86,7 @@ const Mcq = () => {
         answers: answers,
         correctAnswerIndices: correctAnswerIndices,
         imagePath: imagePath,
+        questiontype:questiontype
       };
 
       await updateQuestionById(questionIdd, updatedQuestionData);
@@ -95,7 +97,7 @@ const Mcq = () => {
 
   return (
     <>
-      <div className="questiontext" style={{ objectFit: "contain", backgroundImage: `url(http://localhost:5000${imagePath})` }}>
+      <div className="questiontext" style={{ objectFit: "contain", backgroundImage: `url(http://localhost:500${imagePath})` }}>
         <div className="advertise">
           <div className="advertiseinner"></div>
         </div>

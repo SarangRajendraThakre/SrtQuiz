@@ -12,6 +12,7 @@ import QuizList from "./questiontype/QuizList";
 import QuizIdfetched from "./questiontype/QuizIDfetched";
 import Home from "./pages/Home";
 import Button from "./pages/Button";
+import Header from "./components/Header";
 
 const App = () => {
   const { user } = useContext(AuthContext);
@@ -28,14 +29,18 @@ const App = () => {
   return (
 
     <>
+   
+   
     
      
-        <Routes> <Route
+        <Routes> 
+        <Route
                 path="/"
-                element={user ? <MainCompile /> : <Navigate to="/login" />}
+                element={user ? <home /> : <Navigate to="/login" />}
               />
               
           <Route path="/chat" element={<Chat/>} />
+          <Route path="/createquiz" element={<MainCompile/>} />
           
           <Route path="/quiz" element={<QuizList/>} />
           <Route path="/btn" element={<Button/>} />
@@ -45,8 +50,8 @@ const App = () => {
           <Route path="/home" element={<Home/>} />
           
         
-          <Route path="/register" element={user ? <MainCompile /> : <Register />} />
-          <Route path="/login" element={user ? <MainCompile /> : <Login />} />
+          <Route path="/register" element={user ? <Home /> : <Register />} />
+          <Route path="/login" element={user ? <Home /> : <Login />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
     

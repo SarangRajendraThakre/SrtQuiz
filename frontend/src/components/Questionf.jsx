@@ -14,7 +14,7 @@ const Questionf = () => {
   console.log(questionType,questionIdd);
   return (
     <div className="srt">
-      {questionType === null && <Mcq/>}
+      {questionType === null && <Msq/>}
       {questionType === "True/False" && <TrueFalse />}
       {questionType === "MCQ" && <Mcq />}
       {questionType === "MSQ" && <Msq/>}

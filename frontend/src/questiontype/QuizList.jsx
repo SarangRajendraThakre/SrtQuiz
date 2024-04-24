@@ -4,14 +4,15 @@ import axios from 'axios';
 const QuizList = () => {
   const [quizzes, setQuizzes] = useState([]);
   const userId = JSON.parse(localStorage.getItem('User'))._id;
-  
-const createdQuizId = localStorage.getItem('createdQuizId');
 
+  // Log the value of userId
+  console.log('User ID:', userId);
 
   useEffect(() => {
     const fetchQuizzes = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/api/quizzes/${userId}`);
+        console.log('Quizzes response:', response.data); // Log the response data
         setQuizzes(response.data.quizzes);
       } catch (error) {
         console.error('Error fetching quizzes:', error);

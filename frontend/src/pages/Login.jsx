@@ -1,6 +1,8 @@
 import React, { useContext } from "react";
 import { Alert, Button, Form, Row, Col, Stack } from "react-bootstrap";
 import { AuthContext } from "../context/AuthContext";
+import NavBar from "../components/NavBar";
+import Header from "../components/Header";
 
 const Login = () => {
 
@@ -12,6 +14,7 @@ const Login = () => {
     isLoginLoading}= useContext(AuthContext);
   return (
     <>
+    <Header/>
     
       <Form onSubmit={loginUser}>
 

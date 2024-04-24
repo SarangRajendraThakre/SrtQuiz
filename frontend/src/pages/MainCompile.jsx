@@ -64,7 +64,7 @@ const MainCompile = () => {
   
       const formDataWithUser = {
         ...formData,
-        userId: user._id
+        createdBy: user._id
       };
   
       let uploadedImagePath = '';
@@ -96,7 +96,9 @@ const MainCompile = () => {
         title: '',
         visibility: 'public',
         folder: 'Your Quiz Folder',
-        posterImg: uploadedImagePath
+        posterImg: uploadedImagePath,
+       
+
       });
     } catch (error) {
       console.error('Error creating quiz:', error);

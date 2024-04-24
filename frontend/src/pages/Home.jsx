@@ -2,6 +2,18 @@ import React, { useRef, useEffect } from "react";
 import "./home.css";
 import Flickity from "flickity";
 import "flickity/css/flickity.css";
+import img1 from "../assets/Biology-copy.webp"
+import img2 from "../assets/English-Vocabulary-Exercises.jpg"
+import img3 from "../assets/Nature-960x640.jpg"
+import img4 from "../assets/Top-IT-Skills-2030.png"
+import img5 from "../assets/13_5383.jpg"
+import img6 from "../assets/current.jpg"
+import img7 from "../assets/Nature-960x640.jpg"
+import img8 from "../assets/geograph.jpg"
+import img9 from "../assets/movielistquiz.jpg"
+import img10 from "../assets/Maths-Camp-copy-1030x324.png"
+import logo from "../assets/srtlogo.jpg"
+
 
 const Home = () => {
   const flickityRef = useRef(null);
@@ -41,10 +53,12 @@ const Home = () => {
     <div className="toolbar_container">
       <div className="toolbar toolbar-active">
         <div className="toolbar__logo">
-          <img
-            src="https://kahoot.com/wp-content/themes/kahoot2017/assets/img/kahoot_tb_logo.webp"
+         <a href="/"> <img
+            src={logo}
             alt=""
-          />
+          /></a>
+         
+         
         </div>
         <div className="toolbar__switcher">
           <a
@@ -73,109 +87,51 @@ const Home = () => {
                 {/* Carousel items */}
                 <a href="" className="toolbar__tile">
                   <img
-                    src="https://static.toiimg.com/thumb/msid-100991155,width-400,resizemode-4/100991155.jpg"
+                    src={img1}
                     alt=""
                   />
                 </a>
                 <a href="" className="toolbar__tile">
                   <img
-                    src="https://static.toiimg.com/thumb/msid-100991155,width-400,resizemode-4/100991155.jpg"
+                    src={img2}
                     alt=""
                   />
                 </a>
                 <a href="" className="toolbar__tile">
                   <img
-                    src="https://static.toiimg.com/thumb/msid-100991155,width-400,resizemode-4/100991155.jpg"
+                    src={img3}
                     alt=""
                   />
                 </a>
                 <a href="" className="toolbar__tile">
                   <img
-                    src="https://static.toiimg.com/thumb/msid-100991155,width-400,resizemode-4/100991155.jpg"
+                    src={img4}
+                    alt=""
+                  />
+                </a>{" "}
+              
+            
+                <a href="" className="toolbar__tile">
+                  <img
+                    src={img5}
                     alt=""
                   />
                 </a>{" "}
                 <a href="" className="toolbar__tile">
                   <img
-                    src="https://static.toiimg.com/thumb/msid-100991155,width-400,resizemode-4/100991155.jpg"
+                    src={img6}
                     alt=""
                   />
                 </a>{" "}
                 <a href="" className="toolbar__tile">
                   <img
-                    src="https://static.toiimg.com/thumb/msid-100991155,width-400,resizemode-4/100991155.jpg"
+                    src={img7}
                     alt=""
                   />
                 </a>{" "}
                 <a href="" className="toolbar__tile">
                   <img
-                    src="https://static.toiimg.com/thumb/msid-100991155,width-400,resizemode-4/100991155.jpg"
-                    alt=""
-                  />
-                </a>{" "}
-                <a href="" className="toolbar__tile">
-                  <img
-                    src="https://static.toiimg.com/thumb/msid-100991155,width-400,resizemode-4/100991155.jpg"
-                    alt=""
-                  />
-                </a>{" "}
-                <a href="" className="toolbar__tile">
-                  <img
-                    src="https://static.toiimg.com/thumb/msid-100991155,width-400,resizemode-4/100991155.jpg"
-                    alt=""
-                  />
-                </a>{" "}
-                <a href="" className="toolbar__tile">
-                  <img
-                    src="https://static.toiimg.com/thumb/msid-100991155,width-400,resizemode-4/100991155.jpg"
-                    alt=""
-                  />
-                </a>{" "}
-                <a href="" className="toolbar__tile">
-                  <img
-                    src="https://static.toiimg.com/thumb/msid-100991155,width-400,resizemode-4/100991155.jpg"
-                    alt=""
-                  />
-                </a>{" "}
-                <a href="" className="toolbar__tile">
-                  <img
-                    src="https://static.toiimg.com/thumb/msid-100991155,width-400,resizemode-4/100991155.jpg"
-                    alt=""
-                  />
-                </a>{" "}
-                <a href="" className="toolbar__tile">
-                  <img
-                    src="https://static.toiimg.com/thumb/msid-100991155,width-400,resizemode-4/100991155.jpg"
-                    alt=""
-                  />
-                </a>{" "}
-                <a href="" className="toolbar__tile">
-                  <img
-                    src="https://static.toiimg.com/thumb/msid-100991155,width-400,resizemode-4/100991155.jpg"
-                    alt=""
-                  />
-                </a>{" "}
-                <a href="" className="toolbar__tile">
-                  <img
-                    src="https://static.toiimg.com/thumb/msid-100991155,width-400,resizemode-4/100991155.jpg"
-                    alt=""
-                  />
-                </a>{" "}
-                <a href="" className="toolbar__tile">
-                  <img
-                    src="https://static.toiimg.com/thumb/msid-100991155,width-400,resizemode-4/100991155.jpg"
-                    alt=""
-                  />
-                </a>{" "}
-                <a href="" className="toolbar__tile">
-                  <img
-                    src="https://static.toiimg.com/thumb/msid-100991155,width-400,resizemode-4/100991155.jpg"
-                    alt=""
-                  />
-                </a>{" "}
-                <a href="" className="toolbar__tile">
-                  <img
-                    src="https://static.toiimg.com/thumb/msid-100991155,width-400,resizemode-4/100991155.jpg"
+                    src={img8}
                     alt=""
                   />
                 </a>
@@ -188,7 +144,7 @@ const Home = () => {
         </div>
 
         <div className="toolbar__buttons">
-          <a href="http://localhost:5173" class="toolbar__buttons__create">
+          <a href="/createquiz" class="toolbar__buttons__create">
             <img
               src="https://kahoot.com/wp-content/themes/kahoot2017/assets/img/create_icon.png"
               alt=""
