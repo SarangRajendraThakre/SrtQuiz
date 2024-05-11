@@ -1,22 +1,12 @@
-
-import "./Mcq.css";
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
-import { GoPlus } from "react-icons/go";
-import { IoTriangleSharp } from "react-icons/io5";
-import { FaCircle, FaSquareFull } from "react-icons/fa";
-import { Bs0Square, BsDiamondFill } from "react-icons/bs";
-import { FaArrowLeft } from "react-icons/fa";
-import { MdKeyboardArrowLeft } from "react-icons/md";
-import { BiSolidImage } from "react-icons/bi";
-import { MdOutlineKeyboardArrowRight } from "react-icons/md";
-import { BsPlusLg } from "react-icons/bs";
-import { BiCircle } from "react-icons/bi";
 import { useQuiz } from "../context/QuizContext";
+import ButtonsContainerr from "./ButtonsContainerr";
+import { BsPlusLg } from "react-icons/bs";
+
 
 const Mcq = () => {
   const {
-    addQuestion,
     updateQuestionById,
     quizData,
     questionIdd,
@@ -27,7 +17,7 @@ const Mcq = () => {
   const [answers, setAnswers] = useState(["", "", "", ""]);
   const [correctAnswerIndices, setCorrectAnswerIndices] = useState([]);
   const [imagePath, setImagePath] = useState("");
-  const [questiontype,setQuestiontype]=useState("MCQ");
+  const [questiontype, setQuestiontype] = useState("MCQ");
 
   const fileInputRef = useRef(null);
 
@@ -36,8 +26,16 @@ const Mcq = () => {
       const foundQuestion = getQuestionById();
       setQuestion(foundQuestion ? foundQuestion.questionText : "");
       setImagePath(foundQuestion ? foundQuestion.imagePath : "");
-      setAnswers(foundQuestion && Array.isArray(foundQuestion.options) ? foundQuestion.options : ["", "", "", ""]);
-      setCorrectAnswerIndices(foundQuestion && Array.isArray(foundQuestion.correctAnswers) ? foundQuestion.correctAnswers : []);
+      setAnswers(
+        foundQuestion && Array.isArray(foundQuestion.options)
+          ? foundQuestion.options
+          : ["", "", "", ""]
+      );
+      setCorrectAnswerIndices(
+        foundQuestion && Array.isArray(foundQuestion.correctAnswers)
+          ? foundQuestion.correctAnswers
+          : []
+      );
     }
   }, [questionIdd, quizData]);
 
@@ -49,25 +47,39 @@ const Mcq = () => {
     setQuestion(e.target.value);
   };
 
-  const handleAnswerChange = (e, index) => {
+  const handleAnswerChange = (index, updatedAnswer) => {
     const newAnswers = [...answers];
-    newAnswers[index] = e.target.value;
+    newAnswers[index] = updatedAnswer;
     setAnswers(newAnswers);
-  };           
+  };
 
   const handleSelectCorrectAnswer = (index) => {
-    const newCorrectAnswerIndices = correctAnswerIndices.includes(index)
-      ? correctAnswerIndices.filter((i) => i !== index)
-      : [...correctAnswerIndices, index];
-    setCorrectAnswerIndices(newCorrectAnswerIndices);
+    // Check if the index is already in the array
+    const indexExists = correctAnswerIndices.includes(index);
+  
+    // If the index exists and there's only one correct answer selected,
+    // remove it from the array
+    if (indexExists && correctAnswerIndices.length === 1) {
+      setCorrectAnswerIndices([]);
+      // Show notification to the user
+      alert("Only one correct answer can be selected for this question.");
+    } else {
+      // Otherwise, deselect all previously selected correct answers
+      setCorrectAnswerIndices([index]);
+    }
   };
+  
+  
 
   const handleImageChange = async (e) => {
     try {
       const file = e.target.files[0];
       const formData = new FormData();
       formData.append("image", file);
-      const uploadResponse = await axios.post("http://localhost:5000/api/upload", formData);
+      const uploadResponse = await axios.post(
+        "http://localhost:5000/api/upload",
+        formData
+      );
       setImagePath(uploadResponse.data.imagePath);
     } catch (error) {
       console.error("Error uploading image:", error);
@@ -86,7 +98,7 @@ const Mcq = () => {
         answers: answers,
         correctAnswerIndices: correctAnswerIndices,
         imagePath: imagePath,
-        questiontype:questiontype
+        questiontype: questiontype,
       };
 
       await updateQuestionById(questionIdd, updatedQuestionData);
@@ -97,7 +109,13 @@ const Mcq = () => {
 
   return (
     <>
-      <div className="questiontext" style={{ objectFit: "contain", backgroundImage: `url(http://localhost:500${imagePath})` }}>
+      <div
+        className="questiontext"
+        style={{
+          objectFit: "contain",
+          backgroundImage: `url(http://localhost:5000${quizData.posterImg})`,
+        }}
+      >
         <div className="advertise">
           <div className="advertiseinner"></div>
         </div>
@@ -107,21 +125,22 @@ const Mcq = () => {
             <div className="innerquestiontextinputinner">
               <div className="innerquestiontextinputinnerinner">
                 <div className="innerquestiontextinputinnerinnerinner">
-                  <div className="inputquestion"><input
-                    className=""
-                    type="text"
-                    name=""
-                    id=""
-                    placeholder="Type question here"
-                    value={question}
-                    onChange={handleQuestionChange}
-                  /></div>
-                  
+                 
+                    <input
+                      className=""
+                      type="text"
+                      name=""
+                      id=""
+                      placeholder="Type question here"
+                      value={question}
+                      onChange={handleQuestionChange}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+       
 
         <div className="mainmiddlearea">
           <div className="mainmiddleareainner">
@@ -201,45 +220,12 @@ const Mcq = () => {
           <div className="optionmainareainner">
             <div className="optionmainareainnerinner">
               <div className="optionmainareainnerinnerinner">
-                {/* Render each option card */}
-                {answers.map((answer, index) => (
-  <div className="optioncard" key={index}>
-    {/* Render icon based on index */}
-    <div className={`optioncardinner color${index + 1}`}>
-      {/* Icons here */}
-    </div>
-    {/* Input field for the answer */}
-    <div className="optioncardinnermain">
-      <span className="ocim">
-        <div className="ocimh">
-          <div className="ocimhh">
-            <div className="answertexthere">
-              <textarea 
-                 className="answertexthereinner"
-                placeholder={`Add answer ${index + 1}`}
-                value={answer}
-                onChange={(e) => handleAnswerChange(e, index)}
-              ></textarea>
-            </div>
-          </div>
-        </div>
-      </span>
-      {/* Radio button for selecting the correct answer */}
-      <div className="radiobtn">
-      <input
-  type="checkbox"
-  checked={correctAnswerIndices.includes(index)}
-
-  onChange={(e) => handleSelectCorrectAnswer(index, e)}
-  value={answers[index]} // Pass the value of the answer to the checkbox
-/>
-
-
-      </div>
-   
-    </div>
-  </div>
-))}
+                {/* Render the ButtonsContainerr component */}
+                <ButtonsContainerr
+                  answers={answers}
+                  onAnswerChange={handleAnswerChange}
+                  onCorrectAnswerChange={handleSelectCorrectAnswer}
+                />
                 {/* Button for adding more options */}
                 <button className="addmore">Add more options</button>
                 {/* Button for submitting the question */}
@@ -248,7 +234,7 @@ const Mcq = () => {
             </div>
           </div>
         </div>
-      </div>{" "}
+      </div>
     </>
   );
 };

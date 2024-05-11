@@ -125,7 +125,7 @@ const ButtonCard = ({ icon, colorClass }) => {
 
         {isTyping && (
           <button
-            aria-label="Toggle answer 1 correct."
+           
             aria-checked={isChecked}
             role="switch"
             data-functional-selector="question-answer__toggle-button"

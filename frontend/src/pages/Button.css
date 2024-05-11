@@ -200,6 +200,7 @@
     z-index: 160;
 }.hUNSrl {
     height: 100%;
+    width: 100%;
     display: flex;
     -webkit-box-align: center;
     align-items: center;
@@ -423,6 +424,7 @@
 }.cNAlhn {
     height: 100%;
     display: flex;
+    width: 100%;
     -webkit-box-align: center;
     align-items: center;
     padding: clamp(8px, 1.2vmin, 16px);

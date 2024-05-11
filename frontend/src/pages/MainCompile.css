@@ -513,7 +513,7 @@ button.close {
   display: flex;
   flex-direction: row-reverse;
   flex: 1 1 0%;
-  width: 176px;
+  width: 166px;
   height: 93px;
 }
 .maincardcontent {

@@ -24,7 +24,7 @@ const Takequiz = () => {
     const fetchQuizData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/quizzes/quiz/6627ec58eeb832bfabf626a3"
+          "http://localhost:5000/api/quizzes/quiz/663fbc99734078223c61b589"
         );
         setQuizData(response.data.quiz);
       } catch (error) {
@@ -148,12 +148,12 @@ const Takequiz = () => {
         backgroundPosition: "center",
       }}
     >
-      <div className="max-w-lg bg-white p-8 rounded-lg shadow-xl relative">
-        <h1 className="text-3xl mb-6 font-bold text-center">
+      <div className="max-w-lg bg-transparent p-8 rounded-lg shadow-xl relative">
+        <h1 className="text-3xl mb-6 font-bold text-blue-200 text-center">
           {quizData.title}
         </h1>
-        <div className="question-container bg-gray-100 p-6 rounded-lg shadow-md mb-6 relative">
-          <h2 className="text-xl mb-4">{currentQuestion.questionText}</h2>
+        <div className="question-container bg-transparent p-6 rounded-lg shadow-md mb-6 relative">
+          <h2 className="text-xl text-white  mb-4">{currentQuestion.questionText}</h2>
           <div className="timer-container mb-4 text-center">
             <p className="font-bold text-lg">Time Left: {timer} seconds</p>
           </div>

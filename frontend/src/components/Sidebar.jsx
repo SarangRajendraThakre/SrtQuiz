@@ -5,9 +5,10 @@ import QuestionCard from "./QuestionCard";
 import Questionf from "../components/Questionf"; 
 
 const Sidebar = ({ isModalOpen, handleToggleModal, addQuestion, questionCards, setQuestionCards }) => {
-  const { quizData, addEmptyQuestion ,questionType, updateQuestionType,updateQuestionIdd,questionIdd} = useQuiz();
+  const { quizData, addEmptyQuestion, questionType, updateQuestionType, updateQuestionIdd, questionIdd } = useQuiz();
   const containerRef = useRef(null);
-
+  const [selectedQuestionIndex, setSelectedQuestionIndex] = useState(null); // Manage selected question index
+  const [newlyAddedQuestionId, setNewlyAddedQuestionId] = useState(null); // Keep track of the newly added question ID
 
   useEffect(() => {
     if (containerRef.current) {
@@ -23,24 +24,37 @@ const Sidebar = ({ isModalOpen, handleToggleModal, addQuestion, questionCards, s
   const handleQuestionCardClick = (questionType, index, questionId) => {
     updateQuestionIdd(questionId);
     updateQuestionType(questionType);
+    setSelectedQuestionIndex(index); // Update selected question index
     console.log("Clicked on question card:", questionType, index);
   };
-  console.log(questionIdd);
 
-  
+  useEffect(() => {
+    // Set the newly added question ID
+    if (questionIdd) {
+      setNewlyAddedQuestionId(questionIdd);
+    }
+  }, [questionIdd]);
+
   return (
     <>
       <div className="sidebar" ref={containerRef}>
         {quizData &&
           quizData.questions &&
-          quizData.questions.map((question, index) => (
-            <QuestionCard
-              key={index}
-              question={question}
-              index={index}
-              onClick={handleQuestionCardClick}
-            />
-          ))}
+          quizData.questions.map((question, index) => {
+            const isNew = question._id === newlyAddedQuestionId; // Check if the question ID matches the newly added question ID
+            return (
+              <QuestionCard
+                key={index}
+                question={question}
+                index={index}
+                isSelected={selectedQuestionIndex === index} // Pass isSelected prop based on selection state
+                onClick={(questionType, index, questionId) =>
+                  handleQuestionCardClick(questionType, index, questionId)
+                }
+                isNew={isNew} // Pass isNew prop
+              />
+            );
+          })}
       </div>
       <div id="buttonContainer">
         <div className="outerbutton">
@@ -58,7 +72,6 @@ const Sidebar = ({ isModalOpen, handleToggleModal, addQuestion, questionCards, s
           </div>
         </div>
       </div>
-  
     </>
   );
 };

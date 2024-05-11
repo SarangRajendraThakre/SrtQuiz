@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { BiImage } from "react-icons/bi";
 import { useQuiz } from "../context/QuizContext";
+import "./Sidebar.css"
 
-function QuestionCard({ question, index, isNew, onClick }) {
+function QuestionCard({ question, index, isNew, isSelected, onClick }) {
   const [added, setAdded] = useState(false);
 
   const { quizData, deleteQuestionById } = useQuiz();
@@ -34,18 +35,20 @@ function QuestionCard({ question, index, isNew, onClick }) {
     return <div>No questions available</div>;
   }
 
+  console.log("isNew:", isNew, "isSelected:", isSelected); // Log isNew and isSelected
+
   return (
-    <div className={`card ${added ? "bounce" : ""}`}>
+    <div className={`card ${added ? "bounce" : ""} `}>
       <div className="question-card" onClick={handleClick}>
         <div className="card-title-container">
           <div className="card-no noofquestion ">{index + 1}</div>
-          <div className="card-title">{ question.questionType}</div>
+          <div className="card-title">{question.questionType}</div>
         </div>
         <div className="cardcontent">
           <div className="maincardcontent">
-            <div className="maincardcontentinner">
+            <div className={`maincardcontentinner ${isSelected ? "maincardcontentselection" : ""}`}>
               <div className="maincardcontentinnerheading">
-              {quizData ? question.questionText : "Question"}
+                {quizData ? question.questionText : "Question"}
               </div>
               <div className="maincardcontentinnerimage">
                 <div className="maincardcontentinnerimagecountdown"></div>
@@ -74,7 +77,7 @@ function QuestionCard({ question, index, isNew, onClick }) {
                       key={optionIndex}
                       className={`maincardcontentinneroptioncontainerinner ${
                         option === question.correctAnswer ? "correct-answer" : ""
-                      }`}
+                        }`}
                     >
                       {option}
                     </div>

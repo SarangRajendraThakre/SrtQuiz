@@ -437,10 +437,15 @@ button.close {
 
   user-select: none;
   
+ 
+}
+.maincardcontent:hover{
+
   outline: 0px;
-  box-shadow: rgb(19, 104, 206) 0px 0px 0px 3px;
+  box-shadow: rgb(174, 175, 175) 0px 0px 0px 3px;
   border-radius: 0.25rem;
 }
+
 
 .maincardcontentinner{
   
@@ -641,13 +646,13 @@ text-overflow: ellipsis
     transform: translateY(0);
   }
   25% {
-    transform: translateY(-10px);
+    transform: translateY(-50px);
   }
   50% {
     transform: translateY(0);
   }
   75% {
-    transform: translateY(-5px);
+    transform: translateY(-30px);
   }
   100% {
     transform: translateY(0);
@@ -715,4 +720,10 @@ text-overflow: ellipsis
   height: 100%;
 }}
 
+
+.maincardcontentselection{
+  outline: 0px;
+  box-shadow: rgb(19, 104, 206) 0px 0px 0px 3px;
+  border-radius: 0.25rem;
+}
 

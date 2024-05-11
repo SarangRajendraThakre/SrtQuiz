@@ -1,56 +1,45 @@
 import React, { useState } from "react";
 import "../pages/Button.css";
 
-const ButtonCardd = ({ icon, colorClass, answer, onAnswerChange })=> {
+const ButtonCardd = ({ icon, colorClass, answer, onAnswerChange, index, onCorrectAnswerChange }) => {
   const [isTyping, setIsTyping] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [isButtonHovered, setIsButtonHovered] = useState(false);
-  const [isSpanVisible, setIsSpanVisible] = useState(false);
   const [buttonClass, setButtonClass] = useState(
     "icon-button__IconButton-sc-12q2f5v-0 kCpRMI selected-tick__CheckIcon-sc-1g1pllh-0 bJukWO styles__SelectedTick-sc-1i18fz0-4 hMqSGt"
   );
 
-  
-  console.log(answer);
-  
   const handleTyping = (e) => {
-    const updatedAnswer = e.target.innerText.trim(); // Get the updated answer
-    setIsTyping(updatedAnswer.length > 0);
-    // Call the function passed via props to update the answer in the parent component
-    onAnswerChange(updatedAnswer);
+    const updatedAnswer = e.target.value.trim(); // Use e.target.value to get the typed value
+    setIsTyping(updatedAnswer.length > 0); // Update isTyping based on the length of the typed value
+    onAnswerChange(updatedAnswer); // Call the onAnswerChange function to update the answer
   };
+  
 
   const handleButtonClick = () => {
     setIsChecked(!isChecked);
     setButtonClass(
       isChecked
-        ? "icon-button__IconButton-sc-12q2f5v-0 kCpRMI selected-tick__CheckIcon-sc-1g1pllh-0 bJukWO  styles__SelectedTick-sc-1i18fz0-4 hMqSGt"
+        ? "icon-button__IconButton-sc-12q2f5v-0 kCpRMI selected-tick__CheckIcon-sc-1g1pllh-0 bJukWO styles__SelectedTick-sc-1i18fz0-4 hMqSGt"
         : "icon-button__IconButton-sc-12q2f5v-0 kCpRMI buttonc selected-tick__CheckIcon-sc-1g1pllh-0 bJukWO styles__SelectedTick-sc-1i18fz0-4 hMqSGt"
     );
+    // Toggle the correctness of the answer at the specified index
+    onCorrectAnswerChange(index);
   };
 
   const handleButtonHover = (isHovered) => {
-    if (!isChecked) {
-      setIsButtonHovered(isHovered);
-      setIsSpanVisible(isHovered);
-    }
-  };
-
-  const handleSpanClick = () => {
-    setIsSpanVisible(false);
+    setIsButtonHovered(isHovered);
   };
 
   return (
     <div
-    className={
-      (answer && answer.trim().length > 0) // Check if answer is defined and contains more than 0 characters
-        ? `card__Card-sc-1bp5dip-0 hkxZCz styles__StyledCard-sc-1i18fz0-9 ${colorClass} pd dUftrB`
-        : isTyping // If no data in answer prop, use isTyping state to determine class
-          ? `card__Card-sc-1bp5dip-0 hkxZCz styles__StyledCard-sc-1i18fz0-9 ${colorClass} pd dUftrB`
-          : `card__Card-sc-1bp5dip-0 eABDCX styles__StyledCard-sc-1i18fz0-9 backgroundcolorbeforetyping pd kDnVIK`
-    }
-    
-    
+      className={
+        answer && answer.trim().length > 0 // Check if answer is defined and contains more than 0 characters
+          ? ` hkxZCz  ${colorClass} pd dUftrB`
+          : isTyping // If no data in answer prop, use isTyping state to determine class
+          ? ` hkxZCz  ${colorClass} pd dUftrB`
+          : ` eABDCX  backgroundcolorbeforetyping pd kDnVIK`
+      }
     >
       <div className={`optioncardinner ${colorClass} `}>
         <span className="optioncardinnerspan">{icon}</span>
@@ -60,36 +49,47 @@ const ButtonCardd = ({ icon, colorClass, answer, onAnswerChange })=> {
           <div className="styles__Container-sc-1nn2em3-0 hJlEGR">
             <div className="styles__Wrapper-sc-x56dkc-0 jsnnYH">
               <div
-                aria-label="Add answer 1"
                 className={
-                  (answer && typeof answer === 'string' && answer.trim().length > 0) // Check if answer is defined, a string, and contains more than 0 characters
-                    ? 'styles__ContentEditable-sc-x56dkc-1 hUNSrl'
-                    : isTyping // If no data in answer prop, use isTyping state to determine class
-                      ? 'styles__ContentEditable-sc-x56dkc-1 hUNSrl'
-                      : 'styles__ContentEditable-sc-x56dkc-1 cNAlhn'
+                  answer &&
+                  typeof answer === "string" &&
+                  answer.trim().length > 0
+                    ? " hUNSrl"
+                    : isTyping
+                    ? " hUNSrl"
+                    : " cNAlhn"
                 }
-                
-
-              
-                contentEditable="true"
-                id="question-choice-0"
-                role="textbox"
-                spellCheck="true"
-                data-lexical-editor="true"
-                data-editor-value=""
-                data-functional-selector="question-answer__input"
-                style={{
-                  userSelect: "text",
-                  whiteSpace: "pre-wrap",
-                  wordBreak: "break-word",
-                }}
-                onInput={handleTyping}
               >
-                <p dir="ltr">
-                  <span data-lexical-text="true">{answer}</span>
-                </p>
+                <textarea
+                  className={
+                    answer &&
+                    typeof answer === "string" &&
+                    answer.trim().length > 0
+                      ? `hUNSrl ${colorClass}`
+                      : isTyping
+                      ? `${colorClass} hUNSrl `
+                      : " cNAlhn"
+                  }
+                  id="question-choice-0"
+                  spellCheck="true"
+                  data-lexical-editor="true"
+                  data-editor-value=""
+                  data-functional-selector="question-answer__input"
+                  style={{
+                    userSelect: "text",
+                    whiteSpace: "pre-wrap",
+                    wordBreak: "break-word",
+                    border: "none"
+                  }}
+                  value={answer} // Set the value of the textarea
+                  onChange={handleTyping} // Use onChange event to handle typing
+                />
               </div>
             </div>
+             
+             
+
+
+            
           </div>
         </span>
 
@@ -122,36 +122,35 @@ const ButtonCardd = ({ icon, colorClass, answer, onAnswerChange })=> {
           </div>
         )}
 
-{( (isTyping || answer)) && (
-  <button
-    aria-label="Toggle answer 1 correct."
-    aria-checked={isChecked}
-    role="switch"
-    data-functional-selector="question-answer__toggle-button"
-    data-onboarding-step=""
-    tabIndex="0"
-    className={buttonClass}
-    onClick={handleButtonClick}
-    onMouseEnter={() => handleButtonHover(true)}
-    onMouseLeave={() => handleButtonHover(false)}
-  >
-    {isChecked && isButtonHovered && (
-      <span
-        tabIndex="-1"
-        className="icon-button__IconSpan-sc-12q2f5v-2 ftJDBB"
-        onClick={handleSpanClick}
-      >
-        <img
-          src="//assets-cdn.kahoot.it/builder/v2/assets/check-icon-fe2a6a3d.svg"
-          alt="checkmark"
-          className="icon-button__CheckIcon-sc-12q2f5v-3 bCsMwL"
-        />
-      </span>
-    )}
-  </button>
-)}
 
 
+
+        {(isTyping || answer) && (
+          <button
+            aria-label={`Toggle answer ${index + 1} correct.`}
+            aria-checked={isChecked}
+            role="switch"
+            data-functional-selector="question-answer__toggle-button"
+            data-onboarding-step=""
+            tabIndex="0"
+            className={buttonClass}
+            onClick={handleButtonClick}
+            onMouseEnter={() => handleButtonHover(true)}
+            onMouseLeave={() => handleButtonHover(false)}
+          >
+            {isChecked && (
+              <span
+                className="icon-button__IconSpan-sc-12q2f5v-2 ftJDBB"
+              >
+                <img
+                  src="//assets-cdn.kahoot.it/builder/v2/assets/check-icon-fe2a6a3d.svg"
+                  alt="checkmark"
+                  className="icon-button__CheckIcon-sc-12q2f5v-3 bCsMwL"
+                />
+              </span>
+            )}
+          </button>
+        )}
       </div>
     </div>
   );

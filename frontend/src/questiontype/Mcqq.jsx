@@ -291,10 +291,13 @@ const Mcqq = () => {
 
             </div>
           </div>
-        </div>
+           
+        </div><button onClick={handleUpdateQuestion}>Submit</button>
       </div>{" "}
+     
     </>
   );
+  
 };
 
 export default Mcqq;
