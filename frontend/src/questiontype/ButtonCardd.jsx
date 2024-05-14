@@ -10,10 +10,11 @@ const ButtonCardd = ({ icon, colorClass, answer, onAnswerChange, index, onCorrec
   );
 
   const handleTyping = (e) => {
-    const updatedAnswer = e.target.value.trim(); // Use e.target.value to get the typed value
-    setIsTyping(updatedAnswer.length > 0); // Update isTyping based on the length of the typed value
+    const updatedAnswer = e.target.value.replace(/\s/g, "\u00a0"); // Replace spaces with non-breaking spaces
+    setIsTyping(updatedAnswer.trim().length > 0); // Update isTyping based on the length of the typed value
     onAnswerChange(updatedAnswer); // Call the onAnswerChange function to update the answer
   };
+  
   
 
   const handleButtonClick = () => {

@@ -11,8 +11,8 @@ router.get('/quizzes/quiz/:quizId', quizController.getQuizById);
 // GET quiz by title
 router.get('/quizzes/title/:title', quizController.getQuizByTitle);
 
-// GET question by question ID
-router.get('/questions/:questionId', quizController.getQuestionById);
+// GET all quizzes without visibility
+router.get('/quizzes/all', quizController.getAllQuizzes);
 
 // POST a new quiz
 router.post('/quizzes', quizController.createQuiz);
@@ -22,6 +22,9 @@ router.post('/add-question', quizController.addQuestionToQuiz);
 
 // PUT (update) a question by question ID
 router.put('/questions/update/:questionId', quizController.updateQuestionById);
+
+// PUT (update) a quiz by quiz ID
+router.put('/quizzes/update/:quizId', quizController.updateQuizById);
 
 // DELETE a question by question ID
 router.delete('/questions/delete/:questionId', quizController.deleteQuestionById);

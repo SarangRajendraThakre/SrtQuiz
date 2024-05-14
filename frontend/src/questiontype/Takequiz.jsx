@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 import Lottie from "lottie-react";
 import quizAnimation from "../assets/quiz.json";
 import lotty2Animation from "../assets/lotty2.json";
@@ -9,6 +10,7 @@ import correctSound from "../assets/sound/correct1.wav";
 import wrongSound from "../assets/sound/fail.mp3";
 
 const Takequiz = () => {
+  const { quizId } = useParams();
   const [quizData, setQuizData] = useState(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOptionIndex, setSelectedOptionIndex] = useState(null);
@@ -23,9 +25,7 @@ const Takequiz = () => {
   useEffect(() => {
     const fetchQuizData = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:5000/api/quizzes/quiz/663fbc99734078223c61b589"
-        );
+        const response = await axios.get(`http://localhost:5000/api/quizzes/quiz/${quizId}`);
         setQuizData(response.data.quiz);
       } catch (error) {
         console.error("Error fetching quiz data:", error);
@@ -33,7 +33,7 @@ const Takequiz = () => {
     };
 
     fetchQuizData();
-  }, []);
+  }, [quizId]);
 
   useEffect(() => {
     const animations = [

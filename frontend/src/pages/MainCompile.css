@@ -125,6 +125,8 @@ div{
 
 
 .modalinside {
+  display: flex;
+  flex-direction: column;
   width: 660px;
   height: 623.2px;
   margin: 8px 16px 8px 0px;
@@ -649,4 +651,51 @@ button.close {
   z-index: 10000;
   --radix-popper-transform-origin: -8px 350px;
 
+}
+
+.modalsetting {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.modalinside {
+  width: 300px; /* Adjust width as needed */
+}
+
+.modalsetting label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.modalsetting input[type="text"],
+.modalsetting select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-top: 4px;
+}
+
+.modalsetting input[type="file"] {
+  margin-top: 4px;
+}
+
+.modalsetting button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.modalsetting button:hover {
+  background-color: #0056b3;
 }

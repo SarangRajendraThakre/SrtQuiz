@@ -3,7 +3,7 @@ import axios from "axios";
 import { useQuiz } from "../context/QuizContext";
 import ButtonsContainerr from "./ButtonsContainerr";
 import { BsPlusLg } from "react-icons/bs";
-
+import './Mcq.css';
 
 const Mcq = () => {
   const {
@@ -122,7 +122,7 @@ const Mcq = () => {
 
         <div className="questiontextinput">
           <div className="innerquestiontextinput">
-            <div className="innerquestiontextinputinner">
+           
               <div className="innerquestiontextinputinnerinner">
                 <div className="innerquestiontextinputinnerinnerinner">
                  
@@ -139,7 +139,7 @@ const Mcq = () => {
                 </div>
               </div>
             </div>
-          </div>
+          
        
 
         <div className="mainmiddlearea">

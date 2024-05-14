@@ -2,6 +2,7 @@
 .quiz-button {
   opacity: 0;
   transition: opacity 0.5s ease-in-out;
+  
 }
 
 .quiz-button.show {

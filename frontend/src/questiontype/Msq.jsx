@@ -124,7 +124,7 @@ const Msq = () => {
 
         <div className="questiontextinput">
           <div className="innerquestiontextinput">
-            <div className="innerquestiontextinputinner">
+        
               <div className="innerquestiontextinputinnerinner">
                 <div className="innerquestiontextinputinnerinnerinner">
                   
@@ -138,7 +138,7 @@ const Msq = () => {
                       onChange={handleQuestionChange}
                     />
                 
-                </div>
+               
               </div>
             </div>
           </div>

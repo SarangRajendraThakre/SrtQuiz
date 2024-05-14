@@ -8,7 +8,7 @@ import { Container } from "react-bootstrap";
 import NavBar from "./components/NavBar";
 import { AuthContext } from "./context/AuthContext";
 import MainCompile from "./pages/MainCompile";
-import QuizList from "./questiontype/QuizList";
+import QuizList from "./questiontype/QuizListPrivate";
 import QuizIdfetched from "./questiontype/QuizIDfetched";
 import Home from "./pages/Home";
 import Button from "./pages/Button";
@@ -19,44 +19,34 @@ const App = () => {
   const { user } = useContext(AuthContext);
 
   console.error = (message) => {
-    if (message.startsWith('Warning: A component is `contentEditable`')) {
+    if (message.startsWith("Warning: A component is `contentEditable`")) {
       // Suppress the specific warning
       return;
     }
     // Log other errors or warnings
     console.warn(message);
   };
-  
+
   return (
-
     <>
-   
-   
-    
-     
-        <Routes> 
+      <Routes>
         <Route
-                path="/"
-                element={user ? <home /> : <Navigate to="/login" />}
-              />
-              
-          <Route path="/chat" element={<Chat/>} />
-          <Route path="/createquiz" element={<MainCompile/>} />
-          
-          <Route path="/quiz" element={<QuizList/>} />
-          <Route path="/btn" element={<Button/>} />
-          <Route path="/join" element={<Takequiz/>} />
-
-
-          <Route path="/quizid" element={<QuizIdfetched/>} />
-          <Route path="/home" element={<Home/>} />
-          
-        
-          <Route path="/register" element={user ? <Home /> : <Register />} />
-          <Route path="/login" element={user ? <Home /> : <Login />} />
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-    
+          path="/"
+          element={user ? <Home /> : <Navigate to="/login" />}
+        />
+        <Route path="/chat" element={<Chat />} />
+        <Route path="/createquiz" element={<MainCompile />} />
+        <Route path="/quiz" element={<QuizList />} />
+        <Route path="/btn" element={<Button />} />
+        <Route path="/takequiz" element={<Takequiz />} />
+        <Route path="/takequiz/:quizId" element={<Takequiz />} />
+        <Route path="/createquiz/:quizId" element={<MainCompile />} />
+        <Route path="/quizid" element={<QuizIdfetched />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/register" element={user ? <Home /> : <Register />} />
+        <Route path="/login" element={user ? <Home /> : <Login />} />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
     </>
   );
 };

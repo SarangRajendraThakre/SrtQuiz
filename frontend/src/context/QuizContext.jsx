@@ -9,6 +9,7 @@ export const QuizContextProvider = ({ children }) => {
   const [quizData, setQuizData] = useState({ quiz: null, questions: [] }); // Initialize quizData with an empty questions array
   const [questionType, setQuestionType] = useState(null);
   const [questionIdd, setQuestionIdd] = useState(null);
+  const [createdQuizId, setCreatedQuizId] = useState(null); // State to hold the createdQuizId
 
   const updateQuestionType = (type) => {
     setQuestionType(type);
@@ -41,8 +42,8 @@ export const QuizContextProvider = ({ children }) => {
   useEffect(() => {
     // Fetch quiz data when component mounts
     fetchQuizData();
-  }, []);
- 
+  }, [createdQuizId]); // Add createdQuizId to the dependency array
+
   const addQuestion = async (newQuestionData) => {
     try {
       // Send the new question data to the backend
@@ -54,18 +55,11 @@ export const QuizContextProvider = ({ children }) => {
       if (response.data.questions && response.data.questions.length > 0) {
         const questionId = response.data.questions[response.data.questions.length - 1]._id;
         // Proceed with further operations using questionId
-      setQuestionIdd(questionId);
-
-        
+        setQuestionIdd(questionId);
       } else {
         console.error("Error: No questions found in the response data.");
         // Handle the case where no questions are found in the response data
       }
-      
-
-      
-
-      
 
       // Update the quizData state with the new question
       setQuizData(prevQuizData => ({
@@ -126,7 +120,7 @@ export const QuizContextProvider = ({ children }) => {
 
   // Provide the state and functions to the context
   return (
-    <QuizContext.Provider value={{ quizData, addQuestion, questionType, questionIdd,updateQuestionIdd, updateQuestionType, deleteQuestionById, fetchQuizData, getQuestionById ,updateQuestionById }}>
+    <QuizContext.Provider value={{ quizData, addQuestion, questionType, questionIdd, updateQuestionIdd, updateQuestionType, deleteQuestionById, fetchQuizData, getQuestionById, updateQuestionById }}>
       {children}
     </QuizContext.Provider>
   );
