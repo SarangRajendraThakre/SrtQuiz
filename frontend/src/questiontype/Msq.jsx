@@ -1,17 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { useQuiz } from "../context/QuizContext";
-import ButtonsContainerr from "./ButtonsContainerr";
+import ButtonsContainerr from "../components/options/ButtonsContainerr";
 import { BsPlusLg } from "react-icons/bs";
-import './Mcq.css';
+import "./Mcq.css";
 
 const Msq = () => {
-  const {
-    updateQuestionById,
-    quizData,
-    questionIdd,
-    getQuestionById,
-  } = useQuiz();
+  const { updateQuestionById, quizData, questionIdd, getQuestionById } =
+    useQuiz();
 
   const [question, setQuestion] = useState("");
   const [answers, setAnswers] = useState(["", "", "", ""]);
@@ -29,12 +25,12 @@ const Msq = () => {
       setAnswers(
         foundQuestion && Array.isArray(foundQuestion.options)
           ? foundQuestion.options
-          : ["","","",""]
+          : ["", "", "", ""]
       );
       setCorrectAnswerIndices(
         foundQuestion && Array.isArray(foundQuestion.correctAnswers)
           ? foundQuestion.correctAnswers
-          : ["","","",""]
+          : ["", "", "", ""]
       );
     }
   }, [questionIdd, quizData]);
@@ -56,10 +52,10 @@ const Msq = () => {
   const handleSelectCorrectAnswer = (index) => {
     // Initialize a new array to store the correct answer indices
     let newCorrectAnswerIndices;
-  
+
     // Check if the index is already in the array
     const indexExists = correctAnswerIndices.includes(index);
-  
+
     // If the index exists, remove it from the array
     if (indexExists) {
       newCorrectAnswerIndices = correctAnswerIndices.filter((i) => i !== index);
@@ -67,11 +63,10 @@ const Msq = () => {
       // If the index doesn't exist, add it to the array
       newCorrectAnswerIndices = [...correctAnswerIndices, index];
     }
-  
+
     // Set the updated array of correct answer indices
     setCorrectAnswerIndices(newCorrectAnswerIndices);
   };
-  
 
   const handleImageChange = async (e) => {
     try {
@@ -124,21 +119,17 @@ const Msq = () => {
 
         <div className="questiontextinput">
           <div className="innerquestiontextinput">
-        
-              <div className="innerquestiontextinputinnerinner">
-                <div className="innerquestiontextinputinnerinnerinner">
-                  
-                    <input
-                      className=""
-                      type="text"
-                      name=""
-                      id=""
-                      placeholder="Type question here"
-                      value={question}
-                      onChange={handleQuestionChange}
-                    />
-                
-               
+            <div className="innerquestiontextinputinnerinner">
+              <div className="innerquestiontextinputinnerinnerinner">
+                <input
+                  className=""
+                  type="text"
+                  name=""
+                  id=""
+                  placeholder="Type question here"
+                  value={question}
+                  onChange={handleQuestionChange}
+                />
               </div>
             </div>
           </div>
@@ -227,6 +218,7 @@ const Msq = () => {
                   answers={answers}
                   onAnswerChange={handleAnswerChange}
                   onCorrectAnswerChange={handleSelectCorrectAnswer}
+                  questiontype={questiontype}
                 />
                 {/* Button for adding more options */}
                 <button className="addmore">Add more options</button>

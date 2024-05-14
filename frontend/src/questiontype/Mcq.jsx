@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { useQuiz } from "../context/QuizContext";
-import ButtonsContainerr from "./ButtonsContainerr";
+import ButtonsContainerr from "../components/options/ButtonsContainerr";
 import { BsPlusLg } from "react-icons/bs";
 import './Mcq.css';
 
@@ -220,12 +220,15 @@ const Mcq = () => {
           <div className="optionmainareainner">
             <div className="optionmainareainnerinner">
               <div className="optionmainareainnerinnerinner">
-                {/* Render the ButtonsContainerr component */}
-                <ButtonsContainerr
-                  answers={answers}
-                  onAnswerChange={handleAnswerChange}
-                  onCorrectAnswerChange={handleSelectCorrectAnswer}
-                />
+                {/* Render the ButtonsContainerr component if options are available */}
+                {answers.length > 0 && (
+                  <ButtonsContainerr
+                    answers={answers}
+                    onAnswerChange={handleAnswerChange}
+                    onCorrectAnswerChange={handleSelectCorrectAnswer}
+                    questiontype={questiontype}
+                  />
+                )}
                 {/* Button for adding more options */}
                 <button className="addmore">Add more options</button>
                 {/* Button for submitting the question */}

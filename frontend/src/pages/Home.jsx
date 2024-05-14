@@ -13,9 +13,9 @@ import img8 from "../assets/geograph.jpg";
 import img9 from "../assets/movielistquiz.jpg";
 import img10 from "../assets/Maths-Camp-copy-1030x324.png";
 import logo from "../assets/srtlogo.jpg";
-import QuizListPrivate from "../questiontype/QuizListPrivate";
-import QuizListPublic from "../questiontype/QuizListPublic";
-import { Link } from 'react-router-dom';
+import QuizListPrivate from "../components/QuizList/QuizListPrivate";
+import QuizListPublic from "../components/QuizList/QuizListPublic";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   const flickityRef = useRef(null);
@@ -61,7 +61,10 @@ const Home = () => {
             </Link>
           </div>
           <div className="toolbar__switcher">
-            <Link to="/" className="toolbar__switcher__item toolbar__switcher__item--active">
+            <Link
+              to="/"
+              className="toolbar__switcher__item toolbar__switcher__item--active"
+            >
               For all
             </Link>
             <Link to="/atwork" className="toolbar__switcher__item ">

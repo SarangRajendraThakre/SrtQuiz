@@ -11,6 +11,7 @@ const questionSchema = new mongoose.Schema({
 
 const quizSchema = new mongoose.Schema({
   title: String,
+  description: String, // Adding a description field
   visibility: { type: String, enum: ["public", "private"], default: "public" },
   posterImg: String,
   questions: [questionSchema],

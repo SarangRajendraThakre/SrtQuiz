@@ -1,15 +1,15 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import App from './App';
-import "./index.css"
+import './index.css';
 import { BrowserRouter } from 'react-router-dom';
-import { AuthContextProvider } from './context/AuthContext'; // Import your AuthContextProvider
-import { QuizContextProvider } from './context/QuizContext'; // Import your QuizContextProvider
+import { AuthContextProvider } from './context/AuthContext';
+import { QuizContextProvider } from './context/QuizContext';
 
-ReactDOM.render(
-  
+const root = createRoot(document.getElementById('root'));
+
+root.render(
   <React.StrictMode>
-    {/* Wrap your entire application with the context providers */}
     <BrowserRouter>
       <AuthContextProvider>
         <QuizContextProvider>
@@ -17,6 +17,5 @@ ReactDOM.render(
         </QuizContextProvider>
       </AuthContextProvider>
     </BrowserRouter>
-  </React.StrictMode>,
-  document.getElementById('root')
+  </React.StrictMode>
 );

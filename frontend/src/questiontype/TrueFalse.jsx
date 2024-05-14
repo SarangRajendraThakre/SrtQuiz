@@ -1,53 +1,47 @@
-import "./Mcq.css";
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
-import { GoPlus } from "react-icons/go";
-import { IoTriangleSharp } from "react-icons/io5";
-import { FaCircle, FaSquareFull } from "react-icons/fa";
-import { Bs0Square, BsDiamondFill } from "react-icons/bs";
-import { FaArrowLeft } from "react-icons/fa";
-import { MdKeyboardArrowLeft } from "react-icons/md";
-import { BiSolidImage } from "react-icons/bi";
-import { MdOutlineKeyboardArrowRight } from "react-icons/md";
-import { BsPlusLg } from "react-icons/bs";
-import { BiCircle } from "react-icons/bi";
 import { useQuiz } from "../context/QuizContext";
+import ButtonsContainerr from "../components/options/ButtonsContainerr";
+import { BsPlusLg } from "react-icons/bs";
+import "./Mcq.css";
 
 const TrueFalse = () => {
-  const {
-    addQuestion,
-    updateQuestionById,
-    quizData,
-    questionIdd,
-    getQuestionById,
-  } = useQuiz();
+  const { updateQuestionById, quizData, questionIdd, getQuestionById } = useQuiz();
 
   const [question, setQuestion] = useState("");
   const [answers, setAnswers] = useState(["", "", "", ""]);
   const [correctAnswerIndices, setCorrectAnswerIndices] = useState([]);
   const [imagePath, setImagePath] = useState("");
-  const [questiontype, setQuestiontype] = useState("MCQ");
+  const [questiontype, setQuestiontype] = useState("True/False");
 
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    if (questionIdd && quizData) {
-      const foundQuestion = getQuestionById();
-      setQuestion(foundQuestion ? foundQuestion.questionText : "");
-      setImagePath(foundQuestion ? foundQuestion.imagePath : "");
-      setAnswers(
-        foundQuestion && Array.isArray(foundQuestion.options)
-          ? foundQuestion.options
-          : ["", "", "", ""]
-      );
-      setCorrectAnswerIndices(
-        foundQuestion && Array.isArray(foundQuestion.correctAnswers)
-          ? foundQuestion.correctAnswers
-          : []
-      );
-    }
-  }, [questionIdd, quizData]);
-
+    const fetchData = async () => {
+      if (questionIdd && quizData) {
+        try {
+          const foundQuestion = await getQuestionById(questionIdd);
+          setQuestion(foundQuestion ? foundQuestion.questionText : "");
+          setImagePath(foundQuestion ? foundQuestion.imagePath : "");
+          setAnswers(
+            foundQuestion && Array.isArray(foundQuestion.options)
+              ? foundQuestion.options
+              : ["", "", "", ""]
+          );
+          setCorrectAnswerIndices(
+            foundQuestion && Array.isArray(foundQuestion.correctAnswers)
+              ? foundQuestion.correctAnswers
+              : ["", "", "", ""]
+          );
+        } catch (error) {
+          console.error("Error fetching question data:", error);
+        }
+      }
+    };
+  
+    fetchData();
+  }, [questionIdd, quizData]); // Include questionIdd as a dependency
+  
   const handleUploadClick = () => {
     fileInputRef.current.click();
   };
@@ -56,16 +50,26 @@ const TrueFalse = () => {
     setQuestion(e.target.value);
   };
 
-  const handleAnswerChange = (e, index) => {
+  const handleAnswerChange = (index, updatedAnswer) => {
     const newAnswers = [...answers];
-    newAnswers[index] = e.target.value;
+    newAnswers[index] = updatedAnswer;
     setAnswers(newAnswers);
   };
 
   const handleSelectCorrectAnswer = (index) => {
-    const newCorrectAnswerIndices = correctAnswerIndices.includes(index)
-      ? correctAnswerIndices.filter((i) => i !== index)
-      : [...correctAnswerIndices, index];
+    let newCorrectAnswerIndices;
+  
+    if (questiontype === "True/False") {
+      newCorrectAnswerIndices = [index];
+    } else {
+      const indexExists = correctAnswerIndices.includes(index);
+      if (indexExists) {
+        newCorrectAnswerIndices = correctAnswerIndices.filter((i) => i !== index);
+      } else {
+        newCorrectAnswerIndices = [...correctAnswerIndices, index];
+      }
+    }
+  
     setCorrectAnswerIndices(newCorrectAnswerIndices);
   };
 
@@ -90,20 +94,27 @@ const TrueFalse = () => {
         console.error("Question ID or quiz data not available");
         return;
       }
-
+  
+      const updatedAnswers = [...answers];
+      updatedAnswers[0] = "True";
+      updatedAnswers[1] = "False";
+  
+      const updatedCorrectAnswerIndices = correctAnswerIndices.length > 0 ? [0] : [];
+  
       const updatedQuestionData = {
         question: question,
-        answers: answers,
-        correctAnswerIndices: correctAnswerIndices,
+        answers: updatedAnswers,
+        correctAnswerIndices: updatedCorrectAnswerIndices,
         imagePath: imagePath,
         questiontype: questiontype,
       };
-
+  
       await updateQuestionById(questionIdd, updatedQuestionData);
     } catch (error) {
       console.error("Error updating question:", error);
     }
   };
+  
 
   return (
     <>
@@ -111,7 +122,7 @@ const TrueFalse = () => {
         className="questiontext"
         style={{
           objectFit: "contain",
-          backgroundImage: `url(http://localhost:500${imagePath})`,
+          backgroundImage: `url(http://localhost:5000${quizData.posterImg})`,
         }}
       >
         <div className="advertise">
@@ -120,21 +131,17 @@ const TrueFalse = () => {
 
         <div className="questiontextinput">
           <div className="innerquestiontextinput">
-            <div className="innerquestiontextinputinner">
-              <div className="innerquestiontextinputinnerinner">
-                <div className="innerquestiontextinputinnerinnerinner">
-                  <div className="inputquestion">
-                    <input
-                      className=""
-                      type="text"
-                      name=""
-                      id=""
-                      placeholder="Type question here"
-                      value={question}
-                      onChange={handleQuestionChange}
-                    />
-                  </div>
-                </div>
+            <div className="innerquestiontextinputinnerinner">
+              <div className="innerquestiontextinputinnerinnerinner">
+                <input
+                  className=""
+                  type="text"
+                  name=""
+                  id=""
+                  placeholder="Type question here"
+                  value={question}
+                  onChange={handleQuestionChange}
+                />
               </div>
             </div>
           </div>
@@ -175,7 +182,6 @@ const TrueFalse = () => {
                         <div className="uploadinnercontent">
                           <div className="uploadimg">
                             <div className="uploadimgurl"></div>
-                            {/* Trigger file input field click on icon click */}
                             <label htmlFor="fileInput" className="uploadbtn">
                               <div className="uploadbtninner">
                                 <span className="spanicon">
@@ -183,7 +189,6 @@ const TrueFalse = () => {
                                 </span>
                               </div>
                             </label>
-                            {/* Hidden file input field */}
                             <input
                               ref={fileInputRef}
                               id="fileInput"
@@ -218,50 +223,19 @@ const TrueFalse = () => {
           <div className="optionmainareainner">
             <div className="optionmainareainnerinner">
               <div className="optionmainareainnerinnerinner">
-                {/* Render each option card */}
-                {answers.map((answer, index) => (
-                  <div className="optioncard" key={index}>
-                    {/* Render icon based on index */}
-                    <div className={`optioncardinner color${index + 1}`}>
-                      {/* Icons here */}
-                    </div>
-                    {/* Input field for the answer */}
-                    <div className="optioncardinnermain">
-                      <span className="ocim">
-                        <div className="ocimh">
-                          <div className="ocimhh">
-                            <div className="answertexthere">
-                              <textarea
-                                className="answertexthereinner"
-                                placeholder={`Add answer ${index + 1}`}
-                                value={answer}
-                                onChange={(e) => handleAnswerChange(e, index)}
-                              ></textarea>
-                            </div>
-                          </div>
-                        </div>
-                      </span>
-                      {/* Radio button for selecting the correct answer */}
-                      <div className="radiobtn">
-                        <input
-                          type="checkbox"
-                          checked={correctAnswerIndices.includes(index)}
-                          onChange={(e) => handleSelectCorrectAnswer(index, e)}
-                          value={answers[index]} // Pass the value of the answer to the checkbox
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                {/* Button for adding more options */}
+                <ButtonsContainerr
+                  answers={answers}
+                  onAnswerChange={handleAnswerChange}
+                  onCorrectAnswerChange={handleSelectCorrectAnswer}
+                  questiontype={questiontype}
+                />
                 <button className="addmore">Add more options</button>
-                {/* Button for submitting the question */}
                 <button onClick={handleUpdateQuestion}>Submit</button>
               </div>
             </div>
           </div>
         </div>
-      </div>{" "}
+      </div>
     </>
   );
 };

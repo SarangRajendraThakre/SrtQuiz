@@ -5,15 +5,14 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Container } from "react-bootstrap";
-import NavBar from "./components/NavBar";
+
 import { AuthContext } from "./context/AuthContext";
-import MainCompile from "./pages/MainCompile";
-import QuizList from "./questiontype/QuizListPrivate";
-import QuizIdfetched from "./questiontype/QuizIDfetched";
+import Createquiz from "./pages/Createquiz";
+import QuizList from "./components/QuizList/QuizListPrivate";
+
 import Home from "./pages/Home";
-import Button from "./pages/Button";
-import Header from "./components/Header";
-import Takequiz from "./questiontype/Takequiz";
+
+import Takequiz from "./pages/Takequiz";
 
 const App = () => {
   const { user } = useContext(AuthContext);
@@ -30,18 +29,15 @@ const App = () => {
   return (
     <>
       <Routes>
-        <Route
-          path="/"
-          element={user ? <Home /> : <Navigate to="/login" />}
-        />
+        <Route path="/" element={user ? <Home /> : <Navigate to="/login" />} />
         <Route path="/chat" element={<Chat />} />
-        <Route path="/createquiz" element={<MainCompile />} />
+        <Route path="/createquiz" element={<Createquiz />} />
         <Route path="/quiz" element={<QuizList />} />
-        <Route path="/btn" element={<Button />} />
+
         <Route path="/takequiz" element={<Takequiz />} />
         <Route path="/takequiz/:quizId" element={<Takequiz />} />
-        <Route path="/createquiz/:quizId" element={<MainCompile />} />
-        <Route path="/quizid" element={<QuizIdfetched />} />
+        <Route path="/createquiz/:quizId" element={<Createquiz />} />
+
         <Route path="/home" element={<Home />} />
         <Route path="/register" element={user ? <Home /> : <Register />} />
         <Route path="/login" element={user ? <Home /> : <Login />} />

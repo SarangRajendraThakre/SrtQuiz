@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
 import { Alert, Button, Form, Row, Col, Stack } from "react-bootstrap";
 import { AuthContext } from "../context/AuthContext";
-import NavBar from "../components/NavBar";
-import Header from "../components/Header";
+
+import Header from "../components/Header/Header";
 
 const Register = () => {
   const { registerInfo, updateRegisterInfo ,registerUser,registerError,isRegisterLoading} = useContext(AuthContext);
