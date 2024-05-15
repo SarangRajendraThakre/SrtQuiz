@@ -7,6 +7,7 @@ import { Link, useLocation } from "react-router-dom";
 import logo from "../../assets/logoofcreatequiz.jpg";
 import { AuthContext } from "../../context/AuthContext";
 
+
 const Header = ({ handleToggleModalSetting, createdquizdatatitle }) => {
   const { user, logoutUser, removeCreatedQuizId } = useContext(AuthContext);
   const location = useLocation();

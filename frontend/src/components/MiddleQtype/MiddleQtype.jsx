@@ -7,6 +7,8 @@ import Msq from "../../questiontype/Msq.jsx";
 
 import { useQuiz } from "../../context/QuizContext.jsx"; // Import the QuizContext
 
+import Mtp from "../../questiontype/Mtp.jsx";
+
 const MiddleQtype = () => {
   // Use useContext to access the context
   const { questionType, questionIdd } = useQuiz();
@@ -18,6 +20,7 @@ const MiddleQtype = () => {
       {questionType === "True/False" && <TrueFalse />}
       {questionType === "MCQ" && <Mcq />}
       {questionType === "MSQ" && <Msq />}
+      {questionType === "MTP" && <Mtp/>}
 
       <Rightside />
     </div>

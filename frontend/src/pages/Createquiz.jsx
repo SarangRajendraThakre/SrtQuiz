@@ -340,7 +340,12 @@ const Createquiz = () => {
                             >
                               MSQ
                             </button>
-                            
+                            <button
+                              className="modalbuttons"
+                              onClick={() => handleSubmite("MTP")}
+                            >
+                              MTP
+                            </button>
                           </div>
                         </div>
                       </div>

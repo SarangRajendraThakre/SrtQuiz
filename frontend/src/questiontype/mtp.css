@@ -1,0 +1,15 @@
+.droppable-area {
+  min-height: 100px;
+}
+
+.item {
+  background-color: #f8f9fa;
+  border: 1px solid #ced4da;
+  border-radius: 3px;
+  padding: 8px;
+  margin-bottom: 8px;
+}
+
+.item.dragging {
+  background-color: #cce5ff;
+}

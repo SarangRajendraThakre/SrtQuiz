@@ -1126,3 +1126,43 @@ height: 100%;
 
 
 }
+
+
+
+.container-sort__wrapper {
+  display: flex;
+  justify-content: space-around;
+  width: 80%;
+}
+
+.container-sort__column {
+  width: 45%;
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+
+.container-sort__column h5 {
+  margin-bottom: 10px;
+}
+
+.container-sort__items {
+  min-height: 100px;
+  padding: 8px;
+}
+
+.list-item-draggable {
+  display: flex;
+  align-items: center;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 8px;
+  margin-bottom: 8px;
+}
+
+.list-item-draggable i {
+  margin-right: 8px;
+}
+
+.list-item-draggable:hover {
+  background-color: #eaeaea;
+}

@@ -155,7 +155,7 @@ const Takequiz = () => {
         <div className="question-container bg-transparent p-6 rounded-lg shadow-md mb-6 relative">
           <h2 className="text-xl text-white  mb-4">{currentQuestion.questionText}</h2>
           <div className="timer-container mb-4 text-center">
-            <p className="font-bold text-lg">Time Left: {timer} seconds</p>
+            <p className="font-bold text-lg text-blue-200 ">Time Left: {timer} seconds</p>
           </div>
           <div className="options-list">
             {options.map((option, index) => (

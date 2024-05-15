@@ -13,6 +13,7 @@ import QuizList from "./components/QuizList/QuizListPrivate";
 import Home from "./pages/Home";
 
 import Takequiz from "./pages/Takequiz";
+import Machingthepairs from "./questiontype/Matching.jsx";
 
 const App = () => {
   const { user } = useContext(AuthContext);
@@ -33,6 +34,7 @@ const App = () => {
         <Route path="/chat" element={<Chat />} />
         <Route path="/createquiz" element={<Createquiz />} />
         <Route path="/quiz" element={<QuizList />} />
+        <Route path="/mtp" element={<Machingthepairs />} />
 
         <Route path="/takequiz" element={<Takequiz />} />
         <Route path="/takequiz/:quizId" element={<Takequiz />} />

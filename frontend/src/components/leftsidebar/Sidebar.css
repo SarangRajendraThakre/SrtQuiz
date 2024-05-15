@@ -425,7 +425,7 @@ button.close {
 .maincardcontent {
   height: 93px;
   width: calc(100% - 26px);
-  background-color: rgb(242, 242, 242);
+  background-color: rgb(235 233 233);
   border-radius: 0.25rem;
   position: relative;
   z-index: 1;
@@ -436,8 +436,6 @@ button.close {
   margin-left: 0px;
 
   user-select: none;
-  
- 
 }
 .maincardcontent:hover{
 
@@ -478,7 +476,7 @@ text-overflow: ellipsis
 }
 .maincardcontentinnerimage{
   
-  color: rgb(178, 178, 178);
+  color: rgb(142, 140, 140);
   margin: auto 0px;
   display: flex;
   -webkit-box-pack: center;
@@ -727,3 +725,25 @@ text-overflow: ellipsis
   border-radius: 0.25rem;
 }
 
+.maincardcontentselected {
+  background-color: white;
+  outline: 0px;
+  box-shadow: rgb(19, 104, 206) 0px 0px 0px 3px;
+  border-radius: 0.25rem;
+}
+
+.maincardcontentnot-selected {
+  background-color: rgb(235, 233, 233);
+  outline: 0px;
+  box-shadow: rgb(167, 166, 166) 0px 0px 0px 3px;
+  border-radius: 0.25rem;
+}
+
+.questioncardselected{
+  background-color: rgb(212, 226, 245);
+
+}
+.questioncardnotselected{
+  background-color: rgb(255, 255, 255);
+
+}

@@ -39,14 +39,18 @@ function QuestionCard({ question, index, isNew, isSelected, onClick }) {
 
   return (
     <div className={`card ${added ? "bounce" : ""} `}>
-      <div className="question-card" onClick={handleClick}>
+     <div
+  className={`question-card ${isSelected ? "questioncardselected" : "questioncardnotselected"}`}
+  onClick={handleClick}
+>
         <div className="card-title-container">
           <div className="card-no noofquestion ">{index + 1}</div>
           <div className="card-title">{question.questionType}</div>
         </div>
         <div className="cardcontent">
           <div className="maincardcontent">
-            <div className={`maincardcontentinner ${isSelected ? "maincardcontentselection" : ""}`}>
+          <div className={`maincardcontentinner ${isSelected ? "maincardcontentselected" : "maincardcontentnot-selected"}`}>
+          
               <div className="maincardcontentinnerheading">
                 {quizData ? question.questionText : "Question"}
               </div>
