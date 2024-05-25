@@ -58,6 +58,7 @@ div{
   
   box-sizing: border-box;
   left: 0px;
+  z-index: 100;
 
   overflow: hidden;
   display: flex;
@@ -310,18 +311,7 @@ div{
   max-height: clamp(24px, 4vmin, 56px);
 }
 
-.questiontext {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  overflow-x: hidden;
-  background: url(//assets-cdn.kahoot.it/builder/v2/assets/business_default-da04c7ff.jpg)
-    center center / cover no-repeat rgb(242, 242, 242);
-  flex: 1 1 calc(100% - 2 * clamp(16px, 2vmin, 48px));
-  padding: 32px clamp(16px, 2vmin, 48px) 48px;
-  max-height: calc(100% - 2 * clamp(16px, 2vmin, 48px));
-  margin-left: 12rem;
-}
+
 .iconmodal {
   flex: 0 0 auto;
   display: flex;
@@ -368,9 +358,6 @@ button {
   cursor: pointer;
 }
 
-button:hover {
-  background-color: #0056b3;
-}
 
 button:focus {
   outline: none;
@@ -699,3 +686,32 @@ button.close {
 .modalsetting button:hover {
   background-color: #0056b3;
 }
+
+@media screen and (max-width: 920px) {
+
+      .maincountainer {
+          padding: 32px 16px 16px;
+          flex: 1 1 calc(100% - 2* clamp(16px, 2vmin, 48px));
+          margin: 0px;
+      }
+  }
+
+  @media screen and (max-width: 920px) {
+  
+        .buttonContainer {
+            min-width: unset;
+            padding: 0px;
+            flex-direction: row;
+        }
+    }
+
+    @media screen and (max-width: 920px) {
+    
+          .maincountainer {
+              height: calc(100% - 56px - 4.5rem);
+          }
+      }
+
+    
+
+      

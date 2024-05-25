@@ -19,7 +19,7 @@ const Header = ({ handleToggleModalSetting, createdquizdatatitle }) => {
 
   return (
     <>
-      <div className="w-full fixed h-14 flex z-40 bg-white justify-between items-center font-sans px-4">
+      <div className="w-full fixed h-14 flex z-[200] bg-white justify-between items-center font-sans px-4">
         <Link to="/" className="pr-4">
           <img className="w-40" src={logo} alt="Logo" />
         </Link>
@@ -46,7 +46,7 @@ const Header = ({ handleToggleModalSetting, createdquizdatatitle }) => {
         <div className="flex-grow"></div>
         {!isLoginOrRegisterPage() && (
           <>
-            <button className="flex items-center justify-center text-green-600 pt-2 pr-4 pb-1 font-semibold ">
+            <button className="flex items-center justify-center  text-green-600 pt-2 pr-4 pb-1 font-semibold ">
               <MdStars color="#028282" size="24px" />
               <span className="mx-2">Upgrade</span>
             </button>

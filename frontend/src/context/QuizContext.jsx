@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import axios from 'axios';
+import { baseUrl1 } from "../utils/services";
 
 // Create a context to hold the state
 const QuizContext = createContext();
@@ -29,7 +30,7 @@ export const QuizContextProvider = ({ children }) => {
       }
 
       // Fetch the quiz data from the backend
-      const response = await axios.get(`http://localhost:5000/api/quizzes/quiz/${quizId}`);
+      const response = await axios.get(`${baseUrl1}/api/quizzes/quiz/${quizId}`);
       console.log('Response:', response);
 
       // Set the quiz data state with the fetched data
@@ -47,7 +48,7 @@ export const QuizContextProvider = ({ children }) => {
   const addQuestion = async (newQuestionData) => {
     try {
       // Send the new question data to the backend
-      const response = await axios.post("http://localhost:5000/api/add-question", newQuestionData);
+      const response = await axios.post(`${baseUrl1}/api/add-question`, newQuestionData);
 
       // Log the response from the backend
       console.log("Question added successfully:", response.data);
@@ -77,7 +78,7 @@ export const QuizContextProvider = ({ children }) => {
   const deleteQuestionById = async (questionId) => {
     try {
       // Send a request to delete the question from the backend
-      await axios.delete(`http://localhost:5000/api/questions/delete/${questionId}`);
+      await axios.delete(`${baseUrl1}/api/questions/delete/${questionId}`);
       console.log('Question deleted successfully');
       // Refetch the quiz data
       await fetchQuizData();
@@ -105,7 +106,7 @@ export const QuizContextProvider = ({ children }) => {
   const updateQuestionById = async (questionId, updatedQuestionData) => {
     try {
       // Send the updated question data to the backend
-      const response = await axios.put(`http://localhost:5000/api/questions/update/${questionId}`, updatedQuestionData);
+      const response = await axios.put(`${baseUrl1}/api/questions/update/${questionId}`, updatedQuestionData);
   
       // Log the response from the backend
       console.log("Question updated successfully:", response.data);

@@ -3,12 +3,13 @@ import axios from "axios";
 import { useQuiz } from "../context/QuizContext";
 import ButtonsContainerr from "../components/options/ButtonsContainerr";
 import { BsPlusLg } from "react-icons/bs";
-import "./Mcq.css";
+import "./mtp.css";
 import Matching from "./Matching";
+import { baseUrl1 } from "../utils/services";
 
-const Msq = () => {
-  const { updateQuestionById, quizData, questionIdd, getQuestionById } =
-    useQuiz();
+
+const Mtp = () => {
+  const { updateQuestionById, quizData, questionIdd, getQuestionById } = useQuiz();
 
   const [question, setQuestion] = useState("");
   const [answers, setAnswers] = useState(["", "", "", ""]);
@@ -31,7 +32,7 @@ const Msq = () => {
       setCorrectAnswerIndices(
         foundQuestion && Array.isArray(foundQuestion.correctAnswers)
           ? foundQuestion.correctAnswers
-          : ["", "", "", ""]
+          : []
       );
     }
   }, [questionIdd, quizData]);
@@ -51,21 +52,16 @@ const Msq = () => {
   };
 
   const handleSelectCorrectAnswer = (index) => {
-    // Initialize a new array to store the correct answer indices
     let newCorrectAnswerIndices;
 
-    // Check if the index is already in the array
     const indexExists = correctAnswerIndices.includes(index);
 
-    // If the index exists, remove it from the array
     if (indexExists) {
       newCorrectAnswerIndices = correctAnswerIndices.filter((i) => i !== index);
     } else {
-      // If the index doesn't exist, add it to the array
       newCorrectAnswerIndices = [...correctAnswerIndices, index];
     }
 
-    // Set the updated array of correct answer indices
     setCorrectAnswerIndices(newCorrectAnswerIndices);
   };
 
@@ -74,10 +70,7 @@ const Msq = () => {
       const file = e.target.files[0];
       const formData = new FormData();
       formData.append("image", file);
-      const uploadResponse = await axios.post(
-        "http://localhost:5000/api/upload",
-        formData
-      );
+      const uploadResponse = await axios.post(`${baseUrl1}/api/upload`, formData);
       setImagePath(uploadResponse.data.imagePath);
     } catch (error) {
       console.error("Error uploading image:", error);
@@ -111,7 +104,7 @@ const Msq = () => {
         className="questiontext"
         style={{
           objectFit: "contain",
-          backgroundImage: `url(http://localhost:5000${quizData.posterImg})`,
+          backgroundImage: `url(${baseUrl1}${quizData.posterImg})`,
         }}
       >
         <div className="advertise">
@@ -123,10 +116,7 @@ const Msq = () => {
             <div className="innerquestiontextinputinnerinner">
               <div className="innerquestiontextinputinnerinnerinner">
                 <input
-                  className=""
                   type="text"
-                  name=""
-                  id=""
                   placeholder="Type question here"
                   value={question}
                   onChange={handleQuestionChange}
@@ -136,98 +126,47 @@ const Msq = () => {
           </div>
         </div>
 
-        <div className="mainmiddlearea">
-          <div className="mainmiddleareainner">
-            <div className="mainmiddleareainnerinner">
-              <div
-                className={`${
-                  imagePath
-                    ? "mainmiddleareainnerinnerinnerimg"
-                    : "mainmiddleareainnerinnerinner"
-                }`}
+        <div className="options-container">
+          {answers.map((answer, index) => (
+            <div key={index} className="option">
+              <input
+                type="text"
+                placeholder={`Add answer ${index + 1}`}
+                value={answer}
+                onChange={(e) => handleAnswerChange(index, e.target.value)}
+              />
+              <button
+                type="button"
+                onClick={() => handleSelectCorrectAnswer(index)}
+                className={correctAnswerIndices.includes(index) ? "selected" : ""}
               >
-                {imagePath ? (
-                  <div
-                    className={`${
-                      imagePath
-                        ? "mainmiddleareainnerinnerinnerimg"
-                        : "mainmiddleareainnerinnerinner"
-                    }`}
-                  >
-                    <img
-                      className={` ${
-                        imagePath && "mainmiddleareainnerinnerinnerimg"
-                      }`}
-                      src={`http://localhost:5000${imagePath}`}
-                      alt=""
-                    />
-                  </div>
-                ) : (
-                  <div className="mainmiddleareainnerinnerinner">
-                    <div className="mainmiddleareainnerinnerinnerinner">
-                      {imagePath ? (
-                        <div className="uploadinnercontent"></div>
-                      ) : (
-                        <div className="uploadinnercontent">
-                          <div className="uploadimg">
-                            <div className="uploadimgurl"></div>
-                            {/* Trigger file input field click on icon click */}
-                            <label htmlFor="fileInput" className="uploadbtn">
-                              <div className="uploadbtninner">
-                                <span className="spanicon">
-                                  <BsPlusLg fontSize="25px" />
-                                </span>
-                              </div>
-                            </label>
-                            {/* Hidden file input field */}
-                            <input
-                              ref={fileInputRef}
-                              id="fileInput"
-                              type="file"
-                              accept="image/*"
-                              onChange={handleImageChange}
-                              style={{ display: "none" }}
-                            />
-                            <button onClick={handleUploadClick}>
-                              Select Image
-                            </button>
-                          </div>
-                          <div className="uploadingmessage">
-                            <p className="uploaddrag">
-                              <button className="buttonupload">
-                                Upload file
-                              </button>{" "}
-                              or drag here to upload
-                            </p>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
+                {correctAnswerIndices.includes(index) ? "Deselect" : "Select"}
+              </button>
             </div>
-          </div>
+          ))}
         </div>
 
-        <div className="optionmainarea">
-          <div className="optionmainareainner">
-            <div className="optionmainareainnerinner">
-              <div className="optionmainareainnerinnerinner">
-               
-
-
-               <Matching/>
-                <button className="addmore">Add more options</button>
-                {/* Button for submitting the question */}
-                <button onClick={handleUpdateQuestion}>Submit</button>
-              </div>
-            </div>
-          </div>
+        <div className="upload-image">
+          <button onClick={handleUploadClick}>
+            <BsPlusLg />
+            Upload Image
+          </button>
+          <input
+            type="file"
+            ref={fileInputRef}
+            style={{ display: "none" }}
+            onChange={handleImageChange}
+          />
+          {imagePath && <img src={`${baseUrl1}${imagePath}`} alt="Uploaded" />}
         </div>
+
+        
+
+      
+
       </div>
     </>
   );
 };
 
-export default Msq;
+export default Mtp;

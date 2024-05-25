@@ -2,7 +2,6 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const userRoute = require("./Routes/userRoute");
-const chatRoute = require("./Routes/chatRoute");
 const quizRoutes = require("./Routes/quizRoutes");
 const uploadRoute = require("./Routes/uploadRoute"); // Import the upload route
 const retrievRoute = require("./Routes/retrivequiz");
@@ -12,17 +11,29 @@ const app = express();
 require("dotenv").config();
 
 app.use(express.json());
-app.use(cors()); // Use cors middleware
+
+const allowedOrigins = ["http://srtcoder.com", "http://localhost:5173",'http://192.168.8.188:5173'];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  }
+}));
 
 app.use("/api/users", userRoute);
-app.use("/api/chats", chatRoute);
+app.use("/api", userRoute);
 app.use("/api", quizRoutes);
 app.use('/api/quizzes', quizRoutes);
 
 app.use("/api/upload", uploadRoute); // Mount the upload route
-app.use("/api/getquiz",retrievRoute);
+app.use("/api/getquiz", retrievRoute);
 app.use('/uploads', express.static('uploads'));
-
 
 app.get("/", (req, res) => {
   res.send("Welcome to our chat");

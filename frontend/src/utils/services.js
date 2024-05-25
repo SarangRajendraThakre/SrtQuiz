@@ -1,4 +1,9 @@
-export const baseUrl = "http://localhost:5000/api";
+
+// export const baseUrl1 = "http://myquiz.srtcoder.com";
+
+export const baseUrl1 = "http://localhost:5000";
+
+
 export const postRequest = async (url, body) => {
   console.log("body", body);
   const response = await fetch(url, {

@@ -202,7 +202,6 @@ exports.getAllQuizzes = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
-
 // Update an existing quiz
 exports.updateQuizById = async (req, res) => {
   try {
@@ -215,11 +214,16 @@ exports.updateQuizById = async (req, res) => {
       return res.status(404).json({ message: 'Quiz not found' });
     }
 
+    // Validate input data
+    if (!title && !visibility && !folder && !posterImg) {
+      return res.status(400).json({ message: 'At least one field must be provided for updating' });
+    }
+
     // Update the quiz properties
-    quiz.title = title || quiz.title;
-    quiz.visibility = visibility || quiz.visibility;
-    quiz.folder = folder || quiz.folder;
-    quiz.posterImg = posterImg || quiz.posterImg;
+    if (title) quiz.title = title;
+    if (visibility) quiz.visibility = visibility;
+    if (folder) quiz.folder = folder;
+    if (posterImg) quiz.posterImg = posterImg;
 
     // Save the updated quiz to the database
     const updatedQuiz = await quiz.save();

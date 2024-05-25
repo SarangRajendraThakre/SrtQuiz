@@ -7,6 +7,8 @@ import Sidebar from "../components/leftsidebar/Sidebar";
 import { useQuiz } from "../context/QuizContext"; // Import the useQuiz hook
 import Middle from "../components/MiddleQtype/MiddleQtype";
 
+import {  baseUrl1 } from "../utils/services";
+
 const Createquiz = () => {
   const [formData, setFormData] = useState({
     title: "",
@@ -53,50 +55,56 @@ const Createquiz = () => {
   const handleSubmit = async () => {
     try {
       const user = JSON.parse(localStorage.getItem("User"));
-
+  
       if (!user || !user._id) {
         console.error(
           "User ID not found in local storage or user object is invalid"
         );
         return;
       }
-
+  
       const formDataWithUser = {
         ...formData,
         createdBy: user._id,
       };
-
+  
       let uploadedImagePath = "";
-
+  
       if (formData.posterImg) {
         const formDataWithImage = new FormData();
         formDataWithImage.append("image", formData.posterImg);
-
+  
         const uploadResponse = await axios.post(
-          "http://localhost:5000/api/upload",
+          `${baseUrl1}/api/upload`,
           formDataWithImage
         );
-
+  
         uploadedImagePath = uploadResponse.data.imagePath;
       }
-
+  
       if (uploadedImagePath) {
         formDataWithUser.posterImg = uploadedImagePath;
       }
-
-      const response = await axios.post(
-        "http://localhost:5000/api/quizzes",
-        formDataWithUser
-      );
-      const createdQuizId = response.data._id;
-      console.log(response.data);
-      localStorage.setItem("createdQuizId", createdQuizId);
-
+  
+      let response;
+      let createdQuizId = localStorage.getItem("createdQuizId");
+  
+      if (createdQuizId && createdQuizId !== "null") {
+        // If quiz ID param exists and is valid, update the existing quiz
+        response = await axios.put(
+          `${baseUrl1}/api/quizzes/update/${createdQuizId}`,
+          formDataWithUser
+        );
+      } else {
+        // If quiz ID param doesn't exist or is invalid, create a new quiz
+        response = await axios.post(`${baseUrl1}/api/quizzes`, formDataWithUser);
+        createdQuizId = response.data._id;
+        localStorage.setItem("createdQuizId", createdQuizId);
+      }
+  
       setCreatedquizDatatitle(response.data.title);
-      console.log(createdquizdatatitle);
-
       setIsSettingModalOpen(false);
-
+  
       setFormData({
         title: "",
         visibility: "public",
@@ -104,11 +112,12 @@ const Createquiz = () => {
         posterImg: uploadedImagePath,
       });
     } catch (error) {
-      console.error("Error creating quiz:", error);
+      console.error("Error creating/updating quiz:", error);
     }
-    setIsSettingModalOpen(false);
   };
-
+  
+  
+  
   useEffect(() => {
     const handleOutsideClick = (event) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
@@ -187,7 +196,7 @@ const Createquiz = () => {
 
       if (!createdQuizId) {
         // If quiz ID is not found, create an empty quiz
-        const response = await axios.post("http://localhost:5000/api/quizzes", {
+        const response = await axios.post(`${baseUrl1}/api/quizzes`, {
           title: "",
           visibility: "public",
           folder: "Your Quiz Folder",
@@ -248,62 +257,62 @@ const Createquiz = () => {
         </div>
         <div className="maincountainer">
           <Middle questionType={questionType} />
+
         </div>
+        
       </div>
 
       {isSettingModalOpen && (
-        <div
-          className="modalsetting p-6 rounded-sm modalinside m"
-          ref={modalRef}
-        >
-          <div className="modalinside">
-            <form>
-              <label>
-                Title:
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleChange}
-                />
-              </label>
-              <label>
-                Visibility:
-                <select
-                  name="visibility"
-                  value={formData.visibility}
-                  onChange={handleChange}
-                >
-                  <option value="public">Public</option>
-                  <option value="private">Private</option>
-                </select>
-              </label>
-              <label>
-                Folder:
-                <select
-                  name="folder"
-                  value={formData.folder}
-                  onChange={handleChange}
-                >
-                  <option value="Your Quiz Folder">Your Quiz Folder</option>
-                </select>
-              </label>
-              <label>
-                Poster Image:
-                <input
-                  type="file"
-                  name="posterImg"
-                  accept="image/*"
-                  onChange={handleChange}
-                />
-              </label>
-            </form>
-            <button className="p-2" onClick={handleSubmit}>
-              Create Quiz
-            </button>
-          </div>
-        </div>
-      )}
+  <div className="modalsetting p-6 rounded-sm modalinside m" ref={modalRef}>
+    <div className="modalinside">
+      <form>
+        <label>
+          Title:
+          <input
+            type="text"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+          />
+        </label>
+        <label>
+          Visibility:
+          <select
+            name="visibility"
+            value={formData.visibility}
+            onChange={handleChange}
+          >
+            <option value="public">Public</option>
+            <option value="private">Private</option>
+          </select>
+        </label>
+        <label>
+          Folder:
+          <select
+            name="folder"
+            value={formData.folder}
+            onChange={handleChange}
+          >
+            <option value="Your Quiz Folder">Your Quiz Folder</option>
+          </select>
+        </label>
+        <label>
+          Poster Image:
+          <input
+            type="file"
+            name="posterImg"
+            accept="image/*"
+            onChange={handleChange}
+          />
+        </label>
+      </form>
+      <button className="p-2" onClick={handleSubmit}>
+        {window.location.pathname.includes("/createquiz/") ? "Update Quiz" : "Create Quiz"}
+      </button>
+    </div>
+  </div>
+)}
+
 
       {isModalOpen && (
         <div className="modalsetting1" ref={modalRef}>

@@ -65,6 +65,13 @@
     border-radius: 4px;
     font-size: 0.75rem;
 }
+@media (max-width: 500px) {
+  
+  .advertiseinner {
+      flex-direction: column;
+  }
+}
+
 .advertise{
   
   margin-bottom: 16px;
@@ -99,23 +106,7 @@
   
 
 
-.questiontext {
- 
- 
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden;
-    overflow-y: auto; /* Add this line to enable vertical scrollbar */
-    background: url(//assets-cdn.kahoot.it/builder/v2/assets/business_default-da04c7ff.jpg) center center /  no-repeat rgb(242, 242, 242);
-    flex: 1 1 calc(100% - 2* clamp(16px, 2vmin, 48px));
-    padding: 32px clamp(16px, 2vmin, 48px) 48px;
-   
-    margin-left: 12rem;
-    overflow-y: auto; /* Enable vertical scrolling */
-    max-height: 686px;
-  }
-  
+
  
 
 .questiontextinput {
@@ -659,8 +650,7 @@ p::after{
   max-height: 100%;
   overflow: hidden auto;
 }
-p {
-}
+
 .uploadfilebox {
   width: 1465.78px;
   height: 260px;
@@ -1023,10 +1013,14 @@ height: 100%;
  
 
 }
-/* Mcq.css */
-.inputquestion input[type="text"],
-.inputquestion input[type="number"] {
-  -moz-appearance: textfield;
+.input-field:focus::placeholder {
+  display: none;
+}
+
+
+
+.empty-question::after {
+  display: none; /* Hide the caret */
 }
 
 
@@ -1165,4 +1159,176 @@ height: 100%;
 
 .list-item-draggable:hover {
   background-color: #eaeaea;
+}
+
+/* Spinner overlay */
+.spinner-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Spinner animation */
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.3); /* Light gray border */
+  border-top: 4px solid #007bff; /* Blue top border */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite; /* Spin animation */
+}
+
+/* Spin animation keyframes */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+.question-title__Container{
+  
+    width: 100%;
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    flex: 0 0 auto;
+
+
+}
+
+.question-text-field__TitleWrapper{
+  
+    width: 100%;
+    height: auto;
+    position: relative;
+    background: rgb(255, 255, 255);
+    padding-bottom: 4px;
+    border-radius: 0.25rem;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px -4px 0px 0px inset;
+    z-index: 1;
+
+}
+
+.question-text-field__Editor{
+
+  
+    display: flex;
+    text-align: center;
+
+
+}
+
+.question-text-field__Editor > div {
+  height: 100%;
+  padding: clamp(0.5rem, 1.2vmin, 1rem) 2rem;
+  min-height: calc(clamp(0.5rem, 3.2vmin, 3rem)* 1);
+  max-height: calc(clamp(0.5rem, 3.2vmin, 3rem)* 4 + clamp(0.5rem, 1.2vmin, 1rem)* 2);
+}
+
+.question-text-field__Editor > div > div[data-lexical-editor="true"] {
+  color: rgb(51, 51, 51);
+  caret-color: rgb(51, 51, 51);
+  font-size: clamp(1.25rem, 3.2vmin, 3rem);
+  padding: unset;
+}
+
+.styles__ContentEditable {
+  
+    height: 100%;
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    padding: clamp(8px, 1.2vmin, 16px);
+    -webkit-box-pack: center;
+    justify-content: center;
+    text-align: center;
+    font-family: Montserrat, "Noto Sans Arabic", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: clamp(1rem, 1.8vmin, 1.375rem);
+    color: rgb(0, 0, 0);
+    caret-color: rgb(0, 0, 0);
+    line-height: 1.25;
+
+}
+.styles__ContentEditable p {
+  position: relative;
+  width: 100%;
+  user-select: text; white-space: pre-wrap; word-break: break-word;
+}
+
+.question-text-field__Editor > div > div[data-lexical-editor="true"] [data-placeholder]::after {
+  font-size: clamp(0.5rem, 3.2vmin, 3rem);
+}
+.styles__ContentEditable p[data-placeholder]::before {
+  width: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: rgb(110, 110, 110);
+  content: attr(data-placeholder);
+  text-shadow: none;
+}
+.styles__ContentEditable p[data-placeholder]::after {
+  width: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: rgb(110, 110, 110);
+ 
+  text-shadow: none;
+}
+.ActionMenu {
+  position: relative;
+  margin-left: 0.5rem;
+}
+.ActionMenu1{
+  line-height: 1;
+  font-size: 1rem;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  color: rgb(51, 51, 51);
+}
+
+.ActionMenu > button:first-child {
+  position: relative;
+  margin-left: 0.5rem;
+  background: rgb(255, 255, 255);
+  border-radius: 16px;
+  filter: drop-shadow(rgba(0, 0, 0, 0.15) 0px 2px 4px);
+}
+.ActionMenu button {
+  padding: 0px;
+}
+.icon-button__ {
+  position: relative;
+  z-index: 90;
+  padding: 0.5rem;
+  margin: 0px;
+}
+
+.IconButton {
+  padding: 0px;
+  border: none;
+  width: auto;
+  color: white;
+  background: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+.icon__Icon{
+  display: inline-block;
+    vertical-align: middle;
+    width: 32px;
+    height: 32px;
+    align-items: center;
+    display: flex;
+    justify-content: center;
 }

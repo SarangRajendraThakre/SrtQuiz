@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { createContext } from "react";
-import { baseUrl, postRequest } from "../utils/services";
+import { baseUrl1, postRequest } from "../utils/services";
 import axios from 'axios';
 
 export const AuthContext = createContext();
@@ -61,7 +61,7 @@ export const AuthContextProvider = ({ children }) => {
 
       setRegisterError(null);
       const response = await postRequest(
-        `${baseUrl}/users/register`,
+        `${baseUrl1}/api/users/register`,
         JSON.stringify(registerInfo)
       );
 
@@ -82,7 +82,7 @@ export const AuthContextProvider = ({ children }) => {
       setIsLoginLoading(true);
       setLoginError(null);
       const response = await postRequest(
-        `${baseUrl}/users/login`,
+        `${baseUrl1}/api/users/login`,
         JSON.stringify(loginInfo)
       );
       setIsLoginLoading(false);

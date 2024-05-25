@@ -15,17 +15,11 @@ import Home from "./pages/Home";
 import Takequiz from "./pages/Takequiz";
 import Machingthepairs from "./questiontype/Matching.jsx";
 
+import Foroffice from "./pages/Foroffice.jsx";
+
 const App = () => {
   const { user } = useContext(AuthContext);
 
-  console.error = (message) => {
-    if (message.startsWith("Warning: A component is `contentEditable`")) {
-      // Suppress the specific warning
-      return;
-    }
-    // Log other errors or warnings
-    console.warn(message);
-  };
 
   return (
     <>
@@ -35,12 +29,14 @@ const App = () => {
         <Route path="/createquiz" element={<Createquiz />} />
         <Route path="/quiz" element={<QuizList />} />
         <Route path="/mtp" element={<Machingthepairs />} />
+   
 
         <Route path="/takequiz" element={<Takequiz />} />
         <Route path="/takequiz/:quizId" element={<Takequiz />} />
         <Route path="/createquiz/:quizId" element={<Createquiz />} />
 
         <Route path="/home" element={<Home />} />
+     
         <Route path="/register" element={user ? <Home /> : <Register />} />
         <Route path="/login" element={user ? <Home /> : <Login />} />
         <Route path="*" element={<Navigate to="/" />} />

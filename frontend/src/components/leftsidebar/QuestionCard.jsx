@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { BiImage } from "react-icons/bi";
 import { useQuiz } from "../../context/QuizContext";
 import "./Sidebar.css"
+import {baseUrl1 } from "../../utils/services";
 
 function QuestionCard({ question, index, isNew, isSelected, onClick }) {
   const [added, setAdded] = useState(false);
@@ -62,7 +63,7 @@ function QuestionCard({ question, index, isNew, isSelected, onClick }) {
                       <span className="imgpostinquestincard">
                         <img
                           className=""
-                          src={`http://localhost:5000${imagePath}`}
+                          src={`${baseUrl1}${imagePath}`}
                           alt=""
                         />
                       </span>

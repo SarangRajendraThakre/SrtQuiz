@@ -4,7 +4,8 @@ import { useQuiz } from "../context/QuizContext";
 import ButtonsContainerr from "../components/options/ButtonsContainerr";
 import { BsPlusLg } from "react-icons/bs";
 import "./Mcq.css";
-
+import {  baseUrl1 } from "../utils/services";
+import Menudots from "../components/MiddleQtype/Menudots";
 const Msq = () => {
   const { updateQuestionById, quizData, questionIdd, getQuestionById } =
     useQuiz();
@@ -16,6 +17,24 @@ const Msq = () => {
   const [questiontype, setQuestiontype] = useState("MSQ");
 
   const fileInputRef = useRef(null);
+
+ 
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    // Cleanup function to remove the event listener
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []); //
+  const showmenudots = windowWidth < 900;
+
 
   useEffect(() => {
     if (questionIdd && quizData) {
@@ -74,7 +93,7 @@ const Msq = () => {
       const formData = new FormData();
       formData.append("image", file);
       const uploadResponse = await axios.post(
-        "http://localhost:5000/api/upload",
+        `${baseUrl1}/api/upload`,
         formData
       );
       setImagePath(uploadResponse.data.imagePath);
@@ -106,34 +125,103 @@ const Msq = () => {
 
   return (
     <>
-      <div
+    <div
         className="questiontext"
         style={{
           objectFit: "contain",
-          backgroundImage: `url(http://localhost:5000${quizData.posterImg})`,
+          backgroundImage: `urls( ${baseUrl1}${quizData.posterImg})`,
         }}
       >
         <div className="advertise">
           <div className="advertiseinner"></div>
         </div>
 
-        <div className="questiontextinput">
-          <div className="innerquestiontextinput">
-            <div className="innerquestiontextinputinnerinner">
-              <div className="innerquestiontextinputinnerinnerinner">
+         
+
+        <div className="question-title__Container">
+          <div className="question-text-field__TitleWrapper">
+            <div className="question-text-field__Editor">
+             
+               
                 <input
-                  className=""
+                  className="styles__Wrapper innerquestiontextinput styles__ContentEditable styles__Wrapper "
                   type="text"
                   name=""
                   id=""
                   placeholder="Type question here"
                   value={question}
                   onChange={handleQuestionChange}
-                />
+                /></div>
+               
+            
+          
+          </div>
+        { showmenudots && <Menudots /> } 
+        </div>
+
+
+        {/* <div class="question-title__Container">
+          <div
+            aria-label="Add question title"
+            class="question-text-field__TitleWrapper"
+          >
+            <div class="question-text-field__Editor ">
+              <div class="styles__Wrapper ">
+                <div
+                  aria-label="Question title. Click to add the title."
+                  class="styles__ContentEditable "
+                  contenteditable="true"
+                  role="textbox"
+                  spellcheck="true"
+                  data-lexical-editor="true"
+              
+                  data-editor-value=""
+                  data-functional-selector="question-title__input"
+                >
+                  <p data-placeholder="Start typing your question"></p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+          <div
+            class="ActionMenu"
+            aria-haspopup="true"
+          >
+            <button
+              id="action-menu__toggle-question-action-menu"
+              aria-label="Duplicate, delete question or add additional features."
+              aria-expanded="false"
+              data-functional-selector="action-menu__toggle"
+              data-onboarding-step="action-menu__toggle-question-action-menu"
+              tabindex="0"
+              class="icon-button__ IconButton"
+            >
+              <span
+                class="icon__Icon"
+                data-functional-selector="icon"
+              
+              >
+                <svg
+                  viewBox="0 0 32 32"
+                  focusable="false"
+                  stroke="none"
+                  stroke-width="0"
+                  aria-labelledby="label-47dafd1c-89f8-40c3-bf95-9fda8cace1f1"
+                  aria-hidden="true"
+                  class="icon__Svg-sc-xvsbpg-1" 
+                >
+                  <title id="label-47dafd1c-89f8-40c3-bf95-9fda8cace1f1">
+                    Icon
+                  </title>
+                  <path
+                    d="M16,10 C17.1045695,10 18,9.1045695 18,8 C18,6.8954305 17.1045695,6 16,6 C14.8954305,6 14,6.8954305 14,8 C14,9.1045695 14.8954305,10 16,10 Z M16,18 C17.1045695,18 18,17.1045695 18,16 C18,14.8954305 17.1045695,14 16,14 C14.8954305,14 14,14.8954305 14,16 C14,17.1045695 14.8954305,18 16,18 Z M16,26 C17.1045695,26 18,25.1045695 18,24 C18,22.8954305 17.1045695,22 16,22 C14.8954305,22 14,22.8954305 14,24 C14,25.1045695 14.8954305,26 16,26 Z"
+                    style="fill: rgb(51, 51, 51);"
+                  ></path>
+                </svg>
+              </span>
+            </button>
+          </div>
+        </div> */}
 
         <div className="mainmiddlearea">
           <div className="mainmiddleareainner">
@@ -157,7 +245,7 @@ const Msq = () => {
                       className={` ${
                         imagePath && "mainmiddleareainnerinnerinnerimg"
                       }`}
-                      src={`http://localhost:5000${imagePath}`}
+                      src={`${baseUrl1}${imagePath}`}
                       alt=""
                     />
                   </div>

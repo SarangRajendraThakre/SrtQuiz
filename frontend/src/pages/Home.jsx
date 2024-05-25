@@ -12,7 +12,7 @@ import img7 from "../assets/Nature-960x640.jpg";
 import img8 from "../assets/geograph.jpg";
 import img9 from "../assets/movielistquiz.jpg";
 import img10 from "../assets/Maths-Camp-copy-1030x324.png";
-import logo from "../assets/srtlogo.jpg";
+import logo from "../assets/SRTLL.png";
 import QuizListPrivate from "../components/QuizList/QuizListPrivate";
 import QuizListPublic from "../components/QuizList/QuizListPublic";
 import { Link } from "react-router-dom";
@@ -50,6 +50,10 @@ const Home = () => {
       flickityInstance.off("dragEnd", handleDragEnd);
     };
   }, []);
+
+  const handleClearLocalStorage = () => {
+    localStorage.removeItem("createdQuizId");
+  };
 
   return (
     <>
@@ -118,7 +122,11 @@ const Home = () => {
           </div>
 
           <div className="toolbar__buttons">
-            <Link to="/createquiz" className="toolbar__buttons__create">
+            <Link
+              to="/createquiz"
+              className="toolbar__buttons__create"
+              onClick={handleClearLocalStorage}
+            >
               <img
                 src="https://kahoot.com/wp-content/themes/kahoot2017/assets/img/create_icon.png"
                 alt=""

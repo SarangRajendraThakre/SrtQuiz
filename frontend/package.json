@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "http://srtcoder.com",
   "scripts": {
     "dev": "vite",
     "host": "vite --host",
@@ -15,6 +16,7 @@
     "bootstrap": "^5.3.3",
     "flickity": "^3.0.0",
     "lottie-react": "^2.4.0",
+    "lottie-web": "^5.12.2",
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",
     "react-bootstrap": "^2.10.2",

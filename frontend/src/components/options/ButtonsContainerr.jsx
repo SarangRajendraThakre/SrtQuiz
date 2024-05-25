@@ -4,7 +4,7 @@ import { BsDiamondFill } from "react-icons/bs";
 import { FaCircle, FaSquareFull } from "react-icons/fa";
 import ButtonCard from "./ButtonCard";
 
-const ButtonsContainerr = ({ answers, onAnswerChange, onCorrectAnswerChange, questiontype }) => {
+const ButtonsContainerr = ({ answers, onAnswerChange, onCorrectAnswerChange, correctAnswerIndices, questiontype }) => {
   // Define the array of icons based on question type
   const icons = questiontype === "True/False" ? 
     [
@@ -30,7 +30,8 @@ const ButtonsContainerr = ({ answers, onAnswerChange, onCorrectAnswerChange, que
           answer={answers[index]}
           onAnswerChange={(updatedAnswer) => onAnswerChange(index, updatedAnswer)}
           onCorrectAnswerChange={onCorrectAnswerChange}
-          questiontype={questiontype} // Pass the questiontype to ButtonCard component
+          correctAnswerIndices={correctAnswerIndices} // Pass the correctAnswerIndices to ButtonCard component
+          questiontype={questiontype}
         />
       ))}
     </>

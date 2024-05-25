@@ -3,23 +3,48 @@ import axios from "axios";
 import { useQuiz } from "../context/QuizContext";
 import ButtonsContainerr from "../components/options/ButtonsContainerr";
 import { BsPlusLg } from "react-icons/bs";
-import './Mcq.css';
+import "./Mcq.css";
+import { baseUrl1 } from "../utils/services";
+import { PiDotsThreeOutlineVerticalFill } from "react-icons/pi";
+import Menudots from "../components/MiddleQtype/Menudots";
 
 const Mcq = () => {
-  const {
-    updateQuestionById,
-    quizData,
-    questionIdd,
-    getQuestionById,
-  } = useQuiz();
+  const { updateQuestionById, quizData, questionIdd, getQuestionById } = useQuiz();
 
   const [question, setQuestion] = useState("");
-  const [answers, setAnswers] = useState(["", "", "", ""]);
+  const [answers, setAnswers] = useState([]);
   const [correctAnswerIndices, setCorrectAnswerIndices] = useState([]);
   const [imagePath, setImagePath] = useState("");
   const [questiontype, setQuestiontype] = useState("MCQ");
 
   const fileInputRef = useRef(null);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [isFocused, setIsFocused] = useState(false);
+
+  const handleFocus = () => {
+    setIsFocused(true);
+  };
+
+  const handleBlur = (e) => {
+    setIsFocused(false);
+    if (!e.target.value.trim()) {
+      setIsFocused(false);
+    }
+  };
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  const showmenudots = windowWidth < 900;
 
   useEffect(() => {
     if (questionIdd && quizData) {
@@ -29,16 +54,17 @@ const Mcq = () => {
       setAnswers(
         foundQuestion && Array.isArray(foundQuestion.options)
           ? foundQuestion.options
-          : ["", "", "", ""]
-      );
-      setCorrectAnswerIndices(
-        foundQuestion && Array.isArray(foundQuestion.correctAnswers)
-          ? foundQuestion.correctAnswers
           : []
       );
+      
+      // Filter out empty values from the correctAnswers array
+      const filteredCorrectAnswers = (foundQuestion && Array.isArray(foundQuestion.correctAnswers))
+        ? foundQuestion.correctAnswers.filter(answer => answer !== "")
+        : [];
+      setCorrectAnswerIndices(filteredCorrectAnswers);
     }
   }, [questionIdd, quizData]);
-
+  
   const handleUploadClick = () => {
     fileInputRef.current.click();
   };
@@ -54,21 +80,19 @@ const Mcq = () => {
   };
 
   const handleSelectCorrectAnswer = (index) => {
-    // Check if the index is already in the array
+    // Check if the index is already in the array of correct answers
     const indexExists = correctAnswerIndices.includes(index);
   
-    // If the index exists and there's only one correct answer selected,
-    // remove it from the array
-    if (indexExists && correctAnswerIndices.length === 1) {
-      setCorrectAnswerIndices([]);
-      // Show notification to the user
-      alert("Only one correct answer can be selected for this question.");
+    if (indexExists) {
+      // If the index exists, remove it from the array
+      const updatedCorrectAnswers = correctAnswerIndices.filter((idx) => idx !== index);
+      setCorrectAnswerIndices(updatedCorrectAnswers);
     } else {
-      // Otherwise, deselect all previously selected correct answers
-      setCorrectAnswerIndices([index]);
+      // If the index does not exist, add it to the array
+      const updatedCorrectAnswers = [...correctAnswerIndices, index];
+      setCorrectAnswerIndices(updatedCorrectAnswers);
     }
   };
-  
   
 
   const handleImageChange = async (e) => {
@@ -77,7 +101,7 @@ const Mcq = () => {
       const formData = new FormData();
       formData.append("image", file);
       const uploadResponse = await axios.post(
-        "http://localhost:5000/api/upload",
+        `${baseUrl1}/api/upload`,
         formData
       );
       setImagePath(uploadResponse.data.imagePath);
@@ -92,7 +116,7 @@ const Mcq = () => {
         console.error("Question ID or quiz data not available");
         return;
       }
-
+  
       const updatedQuestionData = {
         question: question,
         answers: answers,
@@ -100,47 +124,47 @@ const Mcq = () => {
         imagePath: imagePath,
         questiontype: questiontype,
       };
-
+  
+      // Clear previous correct answers
+      setCorrectAnswerIndices([]);
+      
+      // Update the question
       await updateQuestionById(questionIdd, updatedQuestionData);
     } catch (error) {
       console.error("Error updating question:", error);
     }
   };
-
+  
   return (
     <>
       <div
         className="questiontext"
         style={{
           objectFit: "contain",
-          backgroundImage: `url(http://localhost:5000${quizData.posterImg})`,
+          backgroundImage: `urls( ${baseUrl1}${quizData.posterImg})`,
         }}
       >
         <div className="advertise">
           <div className="advertiseinner"></div>
         </div>
 
-        <div className="questiontextinput">
-          <div className="innerquestiontextinput">
-           
-              <div className="innerquestiontextinputinnerinner">
-                <div className="innerquestiontextinputinnerinnerinner">
-                 
-                    <input
-                      className=""
-                      type="text"
-                      name=""
-                      id=""
-                      placeholder="Type question here"
-                      value={question}
-                      onChange={handleQuestionChange}
-                    />
-                  </div>
-                </div>
+        <div className="question-container">
+          <div className="question-title__Container">
+            <div className="question-text-field__TitleWrapper">
+              <div className="question-text-field__Editor">
+                <input
+                  className="styles__Wrapper innerquestiontextinput styles__ContentEditable styles__Wrapper "
+                  type="text"
+                  placeholder={!isFocused ? "Type question here" : ""}
+                  value={question}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                  onChange={handleQuestionChange}
+                />
               </div>
             </div>
-          
-       
+          </div>
+        </div>
 
         <div className="mainmiddlearea">
           <div className="mainmiddleareainner">
@@ -164,7 +188,7 @@ const Mcq = () => {
                       className={` ${
                         imagePath && "mainmiddleareainnerinnerinnerimg"
                       }`}
-                      src={`http://localhost:5000${imagePath}`}
+                      src={`${baseUrl1}${imagePath}`}
                       alt=""
                     />
                   </div>
@@ -177,7 +201,6 @@ const Mcq = () => {
                         <div className="uploadinnercontent">
                           <div className="uploadimg">
                             <div className="uploadimgurl"></div>
-                            {/* Trigger file input field click on icon click */}
                             <label htmlFor="fileInput" className="uploadbtn">
                               <div className="uploadbtninner">
                                 <span className="spanicon">
@@ -185,7 +208,6 @@ const Mcq = () => {
                                 </span>
                               </div>
                             </label>
-                            {/* Hidden file input field */}
                             <input
                               ref={fileInputRef}
                               id="fileInput"
@@ -220,18 +242,16 @@ const Mcq = () => {
           <div className="optionmainareainner">
             <div className="optionmainareainnerinner">
               <div className="optionmainareainnerinnerinner">
-                {/* Render the ButtonsContainerr component if options are available */}
                 {answers.length > 0 && (
                   <ButtonsContainerr
                     answers={answers}
                     onAnswerChange={handleAnswerChange}
                     onCorrectAnswerChange={handleSelectCorrectAnswer}
+                    correctAnswerIndices={correctAnswerIndices}  // Add this line
                     questiontype={questiontype}
                   />
                 )}
-                {/* Button for adding more options */}
                 <button className="addmore">Add more options</button>
-                {/* Button for submitting the question */}
                 <button onClick={handleUpdateQuestion}>Submit</button>
               </div>
             </div>
