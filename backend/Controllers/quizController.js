@@ -4,12 +4,10 @@ const Quiz = require("../Models/quiz");
 exports.getQuizzesByUserId = async (req, res) => {
   try {
     const userId = req.params.userId;
-    // Check if userId is "all", if so, fetch all quizzes without filtering
     if (userId === "all") {
       const quizzes = await Quiz.find();
       return res.status(200).json({ quizzes });
     }
-    // Otherwise, proceed with filtering by userId
     const quizzes = await Quiz.find({ createdBy: userId });
     res.status(200).json({ quizzes });
   } catch (error) {
@@ -17,7 +15,6 @@ exports.getQuizzesByUserId = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
-
 
 // Get quiz by quiz ID
 exports.getQuizById = async (req, res) => {
@@ -56,17 +53,17 @@ exports.getQuizByTitle = async (req, res) => {
 // Create a new quiz
 exports.createQuiz = async (req, res) => {
   try {
-    // Extract quiz data from request body
-    const { title, visibility, folder, posterImg, createdBy } = req.body;
+    const { title, visibility, folder, posterImg, createdBy, tags, category } = req.body;
     const quiz = new Quiz({
       title,
       visibility,
       folder,
       posterImg,
-      createdBy
+      createdBy,
+      tags,
+      category
     });
 
-    // Save the new quiz to the database
     const newQuiz = await quiz.save();
     res.status(201).json(newQuiz);
   } catch (error) {
@@ -78,16 +75,13 @@ exports.createQuiz = async (req, res) => {
 // Add a new question to a quiz
 exports.addQuestionToQuiz = async (req, res) => {
   try {
-    // Extract question data from request body
     const { quizId, question, answers, correctAnswerIndex, imagePath, questiontype } = req.body;
 
-    // Find the quiz by ID
     const quiz = await Quiz.findById(quizId);
     if (!quiz) {
       return res.status(404).json({ message: 'Quiz not found' });
     }
 
-    // Create a new question object
     const newQuestion = {
       questionText: question,
       options: answers || [],
@@ -96,10 +90,7 @@ exports.addQuestionToQuiz = async (req, res) => {
       imagePath: imagePath || null
     };
 
-    // Add the new question to the questions array of the quiz
     quiz.questions.push(newQuestion);
-
-    // Save the updated quiz to the database
     await quiz.save();
 
     res.status(201).json({ message: 'Question added successfully', quiz });
@@ -109,22 +100,17 @@ exports.addQuestionToQuiz = async (req, res) => {
   }
 };
 
-
-
+// Delete question by question ID
 exports.deleteQuestionById = async (req, res) => {
   try {
     const questionId = req.params.questionId;
 
-    // Find the quiz containing the question
     const quiz = await Quiz.findOne({ "questions._id": questionId });
     if (!quiz) {
       return res.status(404).json({ message: 'Quiz containing the question not found' });
     }
 
-    // Remove the question from the questions array
     quiz.questions = quiz.questions.filter(question => question._id.toString() !== questionId);
-
-    // Save the updated quiz to the database
     await quiz.save();
 
     res.status(200).json({ message: 'Question deleted successfully' });
@@ -134,16 +120,21 @@ exports.deleteQuestionById = async (req, res) => {
   }
 };
 
-
 // Get question by question ID
 exports.getQuestionById = async (req, res) => {
   try {
     const questionId = req.params.questionId;
-    // Fetch the question from the database using the questionId
-    const question = await Question.findById(questionId);
+
+    const quiz = await Quiz.findOne({ "questions._id": questionId });
+    if (!quiz) {
+      return res.status(404).json({ message: 'Quiz containing the question not found' });
+    }
+
+    const question = quiz.questions.id(questionId);
     if (!question) {
       return res.status(404).json({ message: 'Question not found' });
     }
+
     res.status(200).json({ question });
   } catch (error) {
     console.error('Error fetching question:', error);
@@ -151,20 +142,17 @@ exports.getQuestionById = async (req, res) => {
   }
 };
 
-
 // Update question by question ID
 exports.updateQuestionById = async (req, res) => {
   try {
     const questionId = req.params.questionId;
     const { question, answers, correctAnswerIndices, imagePath, questiontype } = req.body;
 
-    // Find the quiz containing the question
     const quiz = await Quiz.findOne({ "questions._id": questionId });
     if (!quiz) {
       return res.status(404).json({ message: 'Quiz containing the question not found' });
     }
 
-    // Find and update the question within the quiz
     const updatedQuestionIndex = quiz.questions.findIndex(question => question._id.toString() === questionId);
     if (updatedQuestionIndex === -1) {
       return res.status(404).json({ message: 'Question not found within the quiz' });
@@ -178,10 +166,7 @@ exports.updateQuestionById = async (req, res) => {
       imagePath: imagePath || null
     };
 
-    // Update the question
     quiz.questions[updatedQuestionIndex] = updatedQuestion;
-
-    // Save the updated quiz to the database
     await quiz.save();
 
     res.status(200).json({ message: 'Question updated successfully', quiz });
@@ -192,7 +177,6 @@ exports.updateQuestionById = async (req, res) => {
 };
 
 // Get all quizzes without visibility
-// Get all quizzes without visibility
 exports.getAllQuizzes = async (req, res) => {
   try {
     const quizzes = await Quiz.find({ visibility: { $exists: false } });
@@ -202,11 +186,65 @@ exports.getAllQuizzes = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
 // Update an existing quiz
 exports.updateQuizById = async (req, res) => {
   try {
     const quizId = req.params.quizId;
-    const { title, visibility, folder, posterImg } = req.body;
+    const { title, visibility, folder, posterImg, tags, category } = req.body;
+
+    const quiz = await Quiz.findById(quizId);
+    if (!quiz) {
+      return res.status(404).json({ message: 'Quiz not found' });
+    }
+
+    if (!title && !visibility && !folder && !posterImg && !tags && !category) {
+      return res.status(400).json({ message: 'At least one field must be provided for updating' });
+    }
+
+    if (title) quiz.title = title;
+    if (visibility) quiz.visibility = visibility;
+    if (folder) quiz.folder = folder;
+    if (posterImg) quiz.posterImg = posterImg;
+    if (tags) quiz.tags = tags;
+    if (category) quiz.category = category;
+
+    const updatedQuiz = await quiz.save();
+
+    res.status(200).json({ message: 'Quiz updated successfully', quiz: updatedQuiz });
+  } catch (error) {
+    console.error('Error updating quiz:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
+exports.deleteQuizById = async (req, res) => {
+  try {
+    const quizId = req.params.quizId;
+
+    const deletedQuiz = await Quiz.findByIdAndDelete(quizId);
+    if (!deletedQuiz) {
+      return res.status(404).json({ message: 'Quiz not found' });
+    }
+
+    res.status(200).json({ message: 'Quiz deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting quiz:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+// Add a new question to a quiz
+exports.addQuestionssToQuiz = async (req, res) => {
+  try {
+    const { quizId, question } = req.body;
+    console.log('Received request to add question:', req.body); // Log incoming request
+
+    // Validate required fields
+    if (!quizId || !question || !question.questionText || !Array.isArray(question.options) || !Array.isArray(question.correctAnswers)) {
+      return res.status(400).json({ message: 'Missing required fields or invalid question format' });
+    }
 
     // Find the quiz by ID
     const quiz = await Quiz.findById(quizId);
@@ -214,23 +252,22 @@ exports.updateQuizById = async (req, res) => {
       return res.status(404).json({ message: 'Quiz not found' });
     }
 
-    // Validate input data
-    if (!title && !visibility && !folder && !posterImg) {
-      return res.status(400).json({ message: 'At least one field must be provided for updating' });
-    }
+    // Create the new question object
+    const newQuestion = {
+      questionText: question.questionText,
+      options: question.options,
+      correctAnswers: question.correctAnswers,
+      questionType: question.questionType || null,
+      imagePath: question.imagePath || null,
+    };
 
-    // Update the quiz properties
-    if (title) quiz.title = title;
-    if (visibility) quiz.visibility = visibility;
-    if (folder) quiz.folder = folder;
-    if (posterImg) quiz.posterImg = posterImg;
+    // Add the new question to the quiz
+    quiz.questions.push(newQuestion);
+    await quiz.save();
 
-    // Save the updated quiz to the database
-    const updatedQuiz = await quiz.save();
-
-    res.status(200).json({ message: 'Quiz updated successfully', quiz: updatedQuiz });
+    res.status(201).json({ message: 'Question added successfully', quiz });
   } catch (error) {
-    console.error('Error updating quiz:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error('Error adding question:', error);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };

@@ -46,11 +46,7 @@ const Msq = () => {
           ? foundQuestion.options
           : ["", "", "", ""]
       );
-      setCorrectAnswerIndices(
-        foundQuestion && Array.isArray(foundQuestion.correctAnswers)
-          ? foundQuestion.correctAnswers
-          : ["", "", "", ""]
-      );
+    
     }
   }, [questionIdd, quizData]);
 
@@ -67,25 +63,22 @@ const Msq = () => {
     newAnswers[index] = updatedAnswer;
     setAnswers(newAnswers);
   };
-
   const handleSelectCorrectAnswer = (index) => {
-    // Initialize a new array to store the correct answer indices
-    let newCorrectAnswerIndices;
-
     // Check if the index is already in the array
     const indexExists = correctAnswerIndices.includes(index);
-
+  
     // If the index exists, remove it from the array
     if (indexExists) {
-      newCorrectAnswerIndices = correctAnswerIndices.filter((i) => i !== index);
+      const newCorrectAnswerIndices = correctAnswerIndices.filter((i) => i !== index);
+      setCorrectAnswerIndices(newCorrectAnswerIndices);
     } else {
       // If the index doesn't exist, add it to the array
-      newCorrectAnswerIndices = [...correctAnswerIndices, index];
+      const newCorrectAnswerIndices = [...correctAnswerIndices, index];
+      setCorrectAnswerIndices(newCorrectAnswerIndices);
     }
-
-    // Set the updated array of correct answer indices
-    setCorrectAnswerIndices(newCorrectAnswerIndices);
   };
+  
+  
 
   const handleImageChange = async (e) => {
     try {
@@ -108,20 +101,24 @@ const Msq = () => {
         console.error("Question ID or quiz data not available");
         return;
       }
-
+  
+      // Filter out empty correct answer indices
+      const filteredCorrectAnswerIndices = correctAnswerIndices.filter(index => index !== "");
+  
       const updatedQuestionData = {
         question: question,
         answers: answers,
-        correctAnswerIndices: correctAnswerIndices,
+        correctAnswerIndices: filteredCorrectAnswerIndices,
         imagePath: imagePath,
         questiontype: questiontype,
       };
-
+  
       await updateQuestionById(questionIdd, updatedQuestionData);
     } catch (error) {
       console.error("Error updating question:", error);
     }
   };
+  
 
   return (
     <>

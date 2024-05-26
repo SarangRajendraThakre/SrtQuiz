@@ -6,6 +6,7 @@ import Msq from "../../questiontype/Msq.jsx";
 import Mtp from "../../questiontype/Mtp.jsx";
 import Rightside from "../Rightsidebar/Rightside.jsx";
 import { useQuiz } from "../../context/QuizContext.jsx"; // Import the QuizContext
+import Nat from "../../questiontype/Nat.jsx";
 
 const MiddleQtype = () => {
   const { questionType, questionIdd } = useQuiz();
@@ -30,7 +31,7 @@ const MiddleQtype = () => {
     <div className="srt">
       {questionType === null && <Msq />}
       {questionType === "True/False" && <TrueFalse />}
-      {questionType === "MCQ" && <Mcq />}
+      {questionType === "NAT" && <Nat />}
       {questionType === "MSQ" && <Msq />}
       {questionType === "MTP" && <Mtp />}
 

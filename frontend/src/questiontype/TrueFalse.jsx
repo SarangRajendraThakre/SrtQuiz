@@ -4,17 +4,17 @@ import { useQuiz } from "../context/QuizContext";
 import ButtonsContainerr from "../components/options/ButtonsContainerr";
 import { BsPlusLg } from "react-icons/bs";
 import "./Mcq.css";
-import {  baseUrl1 } from "../utils/services";
+import { baseUrl1 } from "../utils/services";
 
 const TrueFalse = () => {
   const { updateQuestionById, quizData, questionIdd, getQuestionById } = useQuiz();
+  const fileInputRef = useRef(null); // Define fileInputRef here
+
 
   const [question, setQuestion] = useState("");
-  const [answers, setAnswers] = useState(["", "", "", ""]);
   const [correctAnswerIndices, setCorrectAnswerIndices] = useState([]);
   const [imagePath, setImagePath] = useState("");
   const [questiontype, setQuestiontype] = useState("True/False");
-  const fileInputRef = useRef(null);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   useEffect(() => {
@@ -31,7 +31,6 @@ const TrueFalse = () => {
   }, []); //
   const showmenudots = windowWidth < 900;
 
-
   useEffect(() => {
     const fetchData = async () => {
       if (questionIdd && quizData) {
@@ -39,25 +38,26 @@ const TrueFalse = () => {
           const foundQuestion = await getQuestionById(questionIdd);
           setQuestion(foundQuestion ? foundQuestion.questionText : "");
           setImagePath(foundQuestion ? foundQuestion.imagePath : "");
-          setAnswers(
-            foundQuestion && Array.isArray(foundQuestion.options)
-              ? foundQuestion.options
-              : ["", "", "", ""]
-          );
           setCorrectAnswerIndices(
             foundQuestion && Array.isArray(foundQuestion.correctAnswers)
               ? foundQuestion.correctAnswers
-              : ["", "", "", ""]
+              : []
           );
         } catch (error) {
           console.error("Error fetching question data:", error);
         }
       }
     };
-  
+
     fetchData();
   }, [questionIdd, quizData]); // Include questionIdd as a dependency
-  
+
+
+  const handleAnswerChange = (index, updatedAnswer) => {
+    const newAnswers = [...answers];
+    newAnswers[index] = updatedAnswer;
+    setAnswers(newAnswers);
+  };
   const handleUploadClick = () => {
     fileInputRef.current.click();
   };
@@ -66,15 +66,9 @@ const TrueFalse = () => {
     setQuestion(e.target.value);
   };
 
-  const handleAnswerChange = (index, updatedAnswer) => {
-    const newAnswers = [...answers];
-    newAnswers[index] = updatedAnswer;
-    setAnswers(newAnswers);
-  };
-
   const handleSelectCorrectAnswer = (index) => {
     let newCorrectAnswerIndices;
-  
+
     if (questiontype === "True/False") {
       newCorrectAnswerIndices = [index];
     } else {
@@ -85,7 +79,7 @@ const TrueFalse = () => {
         newCorrectAnswerIndices = [...correctAnswerIndices, index];
       }
     }
-  
+
     setCorrectAnswerIndices(newCorrectAnswerIndices);
   };
 
@@ -110,127 +104,48 @@ const TrueFalse = () => {
         console.error("Question ID or quiz data not available");
         return;
       }
-  
-      const updatedAnswers = [...answers];
-      updatedAnswers[0] = "True";
-      updatedAnswers[1] = "False";
-  
-      const updatedCorrectAnswerIndices = correctAnswerIndices.length > 0 ? [0] : [];
-  
+
+      const updatedCorrectAnswerIndices =
+        correctAnswerIndices.length > 0 ? [0] : [];
+
       const updatedQuestionData = {
         question: question,
-        answers: updatedAnswers,
+        answers: ["True", "False"], // Pre-fill answers with "True" and "False"
         correctAnswerIndices: updatedCorrectAnswerIndices,
         imagePath: imagePath,
         questiontype: questiontype,
       };
-  
+
       await updateQuestionById(questionIdd, updatedQuestionData);
     } catch (error) {
       console.error("Error updating question:", error);
     }
   };
-  
 
   return (
     <>
-     <div
-        className="questiontext"
-        style={{
-          objectFit: "contain",
-          backgroundImage: `urls( ${baseUrl1}${quizData.posterImg})`,
-        }}
-      >
+      <div className="questiontext">
         <div className="advertise">
           <div className="advertiseinner"></div>
         </div>
 
-         
-
         <div className="question-title__Container">
           <div className="question-text-field__TitleWrapper">
             <div className="question-text-field__Editor">
-             
-               
-                <input
-                  className="styles__Wrapper innerquestiontextinput styles__ContentEditable styles__Wrapper "
-                  type="text"
-                  name=""
-                  id=""
-                  placeholder="Type question here"
-                  value={question}
-                  onChange={handleQuestionChange}
-                /></div>
-               
-            
-          
-          </div>
-        { showmenudots && <Menudots/> } 
-        </div>
-
-
-        {/* <div class="question-title__Container">
-          <div
-            aria-label="Add question title"
-            class="question-text-field__TitleWrapper"
-          >
-            <div class="question-text-field__Editor ">
-              <div class="styles__Wrapper ">
-                <div
-                  aria-label="Question title. Click to add the title."
-                  class="styles__ContentEditable "
-                  contenteditable="true"
-                  role="textbox"
-                  spellcheck="true"
-                  data-lexical-editor="true"
-              
-                  data-editor-value=""
-                  data-functional-selector="question-title__input"
-                >
-                  <p data-placeholder="Start typing your question"></p>
-                </div>
-              </div>
+              <input
+                className="styles__Wrapper innerquestiontextinput styles__ContentEditable styles__Wrapper"
+                type="text"
+                name=""
+                id=""
+                placeholder="Type question here"
+                value={question}
+                onChange={handleQuestionChange}
+              />
             </div>
           </div>
-          <div
-            class="ActionMenu"
-            aria-haspopup="true"
-          >
-            <button
-              id="action-menu__toggle-question-action-menu"
-              aria-label="Duplicate, delete question or add additional features."
-              aria-expanded="false"
-              data-functional-selector="action-menu__toggle"
-              data-onboarding-step="action-menu__toggle-question-action-menu"
-              tabindex="0"
-              class="icon-button__ IconButton"
-            >
-              <span
-                class="icon__Icon"
-                data-functional-selector="icon"
-              
-              >
-                <svg
-                  viewBox="0 0 32 32"
-                  focusable="false"
-                  stroke="none"
-                  stroke-width="0"
-                  aria-labelledby="label-47dafd1c-89f8-40c3-bf95-9fda8cace1f1"
-                  aria-hidden="true"
-                  class="icon__Svg-sc-xvsbpg-1" 
-                >
-                  <title id="label-47dafd1c-89f8-40c3-bf95-9fda8cace1f1">
-                    Icon
-                  </title>
-                  <path
-                    d="M16,10 C17.1045695,10 18,9.1045695 18,8 C18,6.8954305 17.1045695,6 16,6 C14.8954305,6 14,6.8954305 14,8 C14,9.1045695 14.8954305,10 16,10 Z M16,18 C17.1045695,18 18,17.1045695 18,16 C18,14.8954305 17.1045695,14 16,14 C14.8954305,14 14,14.8954305 14,16 C14,17.1045695 14.8954305,18 16,18 Z M16,26 C17.1045695,26 18,25.1045695 18,24 C18,22.8954305 17.1045695,22 16,22 C14.8954305,22 14,22.8954305 14,24 C14,25.1045695 14.8954305,26 16,26 Z"
-                    style="fill: rgb(51, 51, 51);"
-                  ></path>
-                </svg>
-              </span>
-            </button>
-          </div>
-        </div> */}
+          {showmenudots && <Menudots />}
+        </div>
+
         <div className="mainmiddlearea">
           <div className="mainmiddleareainner">
             <div className="mainmiddleareainnerinner">
@@ -266,7 +181,10 @@ const TrueFalse = () => {
                         <div className="uploadinnercontent">
                           <div className="uploadimg">
                             <div className="uploadimgurl"></div>
-                            <label htmlFor="fileInput" className="uploadbtn">
+                            <label
+                              htmlFor="fileInput"
+                              className="uploadbtn"
+                            >
                               <div className="uploadbtninner">
                                 <span className="spanicon">
                                   <BsPlusLg fontSize="25px" />
@@ -308,12 +226,13 @@ const TrueFalse = () => {
             <div className="optionmainareainnerinner">
               <div className="optionmainareainnerinnerinner">
                 <ButtonsContainerr
-                  answers={answers}
+                  answers={["True", "False"]} // Pre-fill answers with "True" and "False"
                   onAnswerChange={handleAnswerChange}
                   onCorrectAnswerChange={handleSelectCorrectAnswer}
                   questiontype={questiontype}
                 />
                 <button className="addmore">Add more options</button>
+               
                 <button onClick={handleUpdateQuestion}>Submit</button>
               </div>
             </div>

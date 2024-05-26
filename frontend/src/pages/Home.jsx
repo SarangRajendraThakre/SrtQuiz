@@ -58,7 +58,7 @@ const Home = () => {
   return (
     <>
       <div className="toolbar_container">
-        <div className="toolbar toolbar-active">
+        <div className="toolbar toolbar-active toolbarc1">
           <div className="toolbar__logo">
             <Link to="/">
               <img src={logo} alt="" />
@@ -71,14 +71,14 @@ const Home = () => {
             >
               For all
             </Link>
-            <Link to="/atwork" className="toolbar__switcher__item ">
-              At work
+            <Link to="/edu" className="toolbar__switcher__item ">
+              Knowledge
             </Link>
-            <Link to="/atschool" className="toolbar__switcher__item ">
-              At School
+            <Link to="/fun" className="toolbar__switcher__item ">
+              Fun
             </Link>
-            <Link to="/athome" className="toolbar__switcher__item ">
-              At Home
+            <Link to="/motivation" className="toolbar__switcher__item ">
+             Motivation
             </Link>
           </div>
           <div className="toolbar__section">
@@ -88,33 +88,17 @@ const Home = () => {
                   className="carousel slide_container_inner "
                   ref={flickityRef}
                 >
-                  {/* Carousel items */}
+                 
                   <Link to="/" className="toolbar__tile">
                     <img src={img1} alt="" />
                   </Link>
-                  <Link to="/" className="toolbar__tile">
-                    <img src={img2} alt="" />
-                  </Link>
-                  <Link to="/" className="toolbar__tile">
-                    <img src={img3} alt="" />
-                  </Link>
-                  <Link to="/" className="toolbar__tile">
-                    <img src={img4} alt="" />
-                  </Link>{" "}
-                  <Link to="/" className="toolbar__tile">
-                    <img src={img5} alt="" />
-                  </Link>{" "}
-                  <Link to="/" className="toolbar__tile">
-                    <img src={img6} alt="" />
-                  </Link>{" "}
-                  <Link to="/" className="toolbar__tile">
-                    <img src={img7} alt="" />
-                  </Link>{" "}
-                  <Link to="/" className="toolbar__tile">
-                    <img src={img8} alt="" />
-                  </Link>
-                  {/* Add more carousel items as needed */}
+                  
+
+
                 </div>
+
+
+
               </div>
             </div>
             <div className="toolbar__section__box-shadow--left"></div>

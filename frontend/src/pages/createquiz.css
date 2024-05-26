@@ -714,4 +714,27 @@ button.close {
 
     
 
+      .image-container {
+        position: relative;
+        display: inline-block;
+      }
+      
+      .uploaded-image {
+        max-width: 100%;
+        height: auto;
+      }
+      
+     
+      .delete-button {
+        background-color: #f44336;
+        color: white;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+      
+      .delete-button:hover {
+        background-color: #d32f2f;
+      }
       

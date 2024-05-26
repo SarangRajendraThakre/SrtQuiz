@@ -5,19 +5,29 @@ import { FaCircle, FaSquareFull } from "react-icons/fa";
 import ButtonCard from "./ButtonCard";
 
 const ButtonsContainerr = ({ answers, onAnswerChange, onCorrectAnswerChange, correctAnswerIndices, questiontype }) => {
+  let icons = [];
+  let colorClass;
+
   // Define the array of icons based on question type
-  const icons = questiontype === "True/False" ? 
-    [
+  if (questiontype === "True/False") {
+    icons = [
       <FaSquareFull fontSize="20px" color="white" />,
       <FaSquareFull fontSize="20px" color="white" />
-    ]
-  :
-    [
+    ];
+  } else if (questiontype === "Nat") {
+    icons = [
+      <FaSquareFull fontSize="20px" color="white" />
+    ];
+    // Set colorClass to 4 for Numerical questions
+    colorClass = "color4";
+  } else {
+    icons = [
       <IoTriangleSharp fontSize="35px" color="white" />,
       <FaSquareFull fontSize="20px" color="white" />,
       <BsDiamondFill fontSize="35px" color="white" />,
       <FaCircle fontSize="35px" color="white" />
     ];
+  }
 
   return (
     <>
@@ -26,7 +36,7 @@ const ButtonsContainerr = ({ answers, onAnswerChange, onCorrectAnswerChange, cor
           key={index}
           index={index}
           icon={icon}
-          colorClass={`color${index + 1}`}
+          colorClass={questiontype === "Nat" ? colorClass : `color${index + 1}`}
           answer={answers[index]}
           onAnswerChange={(updatedAnswer) => onAnswerChange(index, updatedAnswer)}
           onCorrectAnswerChange={onCorrectAnswerChange}

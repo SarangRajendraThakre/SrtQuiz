@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Card, Col, Row, Button, Spinner } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './QuizList.css';
 import { baseUrl1 } from "../../utils/services";
 
@@ -9,6 +9,7 @@ const QuizListPublic = () => {
   const [quizzes, setQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showButtonId, setShowButtonId] = useState(null);
+  const navigate = useNavigate(); // Hook for navigation
 
   useEffect(() => {
     const fetchPublicQuizzes = async () => {
@@ -27,7 +28,6 @@ const QuizListPublic = () => {
         console.error('Error fetching public quizzes:', error);
       }
     };
-    
 
     fetchPublicQuizzes();
   }, []);
@@ -35,6 +35,60 @@ const QuizListPublic = () => {
   const handleCardClick = (quizId) => {
     setShowButtonId(quizId);
   };
+  const handleEditClick = async (quizId) => {
+    try {
+      const response = await axios.get(`${baseUrl1}/api/quizzes/quiz/${quizId}`);
+      const originalQuiz = response.data.quiz;
+  
+      const user = JSON.parse(localStorage.getItem('User'));
+      if (!user || !user._id) {
+        console.error("User ID not found in local storage or user object is invalid");
+        return;
+      }
+  
+      const newQuizData = {
+        ...originalQuiz,
+        _id: undefined,
+        createdBy: user._id,
+        title: `${originalQuiz.title} (Copy)`,
+      };
+  
+      const newQuizResponse = await axios.post(`${baseUrl1}/api/quizzes`, newQuizData);
+      const newQuiz = newQuizResponse.data;
+      const newquizid = newQuiz._id; // Adjusted here to access correct property
+  
+      for (const question of originalQuiz.questions) {
+        try {
+          const { questionText, options, correctAnswers, questionType, imagePath } = question;
+  
+          await axios.post(`${baseUrl1}/api/add-questionss`, {
+            quizId: newquizid,
+            question: {
+              questionText,
+              options,
+              correctAnswers,
+              questionType,
+              imagePath,
+            }
+          });
+        } catch (error) {
+          console.error('Error adding question:', error);
+        }
+      }
+  
+      navigate(`/createquiz/${newquizid}`);
+    } 
+   catch (error) {
+      console.error('Error creating copy of quiz:', error);
+    }
+  };
+  
+  
+  
+  
+  
+  
+  
 
   return (
     <div className='mt-3 p-4'>
@@ -54,9 +108,7 @@ const QuizListPublic = () => {
                   <p>Created By: {quiz.creatorName}</p>
                   <p>Number of Questions: {quiz.questions.length}</p>
                   <div className='bottombuttons'>
-                    <Link to={`/createquiz/${quiz._id}`}>
-                      <Button className={`quiz-button ${showButtonId === quiz._id ? 'show' : ''}`} variant="primary">Edit</Button>
-                    </Link>
+                    <Button className={`quiz-button ${showButtonId === quiz._id ? 'show' : ''}`} variant="primary" onClick={() => handleEditClick(quiz._id)}>Edit</Button>
                     <Link to={`/takequiz/${quiz._id}`}>
                       <Button className={`quiz-button ${showButtonId === quiz._id ? 'show' : ''}`} variant="primary">Play</Button>
                     </Link>

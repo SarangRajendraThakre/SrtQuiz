@@ -9,7 +9,7 @@ import { PiDotsThreeOutlineVerticalFill } from "react-icons/pi";
 import Menudots from "../components/MiddleQtype/Menudots";
 
 const Mcq = () => {
-  const { updateQuestionById, quizData, questionIdd, getQuestionById } = useQuiz();
+  const { updateQuestionById, quizData, questionIdd, getQuestionById,selectedImage } = useQuiz();
 
   const [question, setQuestion] = useState("");
   const [answers, setAnswers] = useState([]);
@@ -30,6 +30,10 @@ const Mcq = () => {
     if (!e.target.value.trim()) {
       setIsFocused(false);
     }
+  };
+
+  const backgroundStyle = {
+    backgroundImage: `url(${selectedImage})`,
   };
 
   useEffect(() => {
@@ -139,10 +143,7 @@ const Mcq = () => {
     <>
       <div
         className="questiontext"
-        style={{
-          objectFit: "contain",
-          backgroundImage: `urls( ${baseUrl1}${quizData.posterImg})`,
-        }}
+        style={backgroundStyle}
       >
         <div className="advertise">
           <div className="advertiseinner"></div>

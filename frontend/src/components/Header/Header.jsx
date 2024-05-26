@@ -6,13 +6,13 @@ import { AiOutlineEye } from "react-icons/ai";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../../assets/logoofcreatequiz.jpg";
 import { AuthContext } from "../../context/AuthContext";
-
+import { useQuiz } from "../../context/QuizContext"; // Import the QuizContext
 
 const Header = ({ handleToggleModalSetting, createdquizdatatitle }) => {
   const { user, logoutUser, removeCreatedQuizId } = useContext(AuthContext);
   const location = useLocation();
+  const { toggleRightsideVisibility } = useQuiz(); // Access the toggle function from the QuizContext
 
-  // Function to check if current path is login or register
   const isLoginOrRegisterPage = () => {
     return location.pathname === "/login" || location.pathname === "/register";
   };
@@ -50,7 +50,7 @@ const Header = ({ handleToggleModalSetting, createdquizdatatitle }) => {
               <MdStars color="#028282" size="24px" />
               <span className="mx-2">Upgrade</span>
             </button>
-            <button className="bg-blue-600 flex items-center text-white font-semibold rounded-md px-2 mx-1">
+            <button onClick={toggleRightsideVisibility} className="bg-blue-600 flex items-center text-white font-semibold rounded-md px-2 mx-1">
               <IoIosColorPalette />
               <span className="flex items-center justify-center w-24">
                 Themes

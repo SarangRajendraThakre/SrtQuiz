@@ -2,21 +2,29 @@ import React, { createContext, useState, useContext, useEffect } from "react";
 import axios from 'axios';
 import { baseUrl1 } from "../utils/services";
 
-// Create a context to hold the state
 const QuizContext = createContext();
 
-// Create a provider component to manage the state
 export const QuizContextProvider = ({ children }) => {
-  const [quizData, setQuizData] = useState({ quiz: null, questions: [] }); // Initialize quizData with an empty questions array
+  const [quizData, setQuizData] = useState({ quiz: null, questions: [] });
   const [questionType, setQuestionType] = useState(null);
   const [questionIdd, setQuestionIdd] = useState(null);
-  const [createdQuizId, setCreatedQuizId] = useState(null); // State to hold the createdQuizId
+  const [createdQuizId, setCreatedQuizId] = useState(null);
+  const [isRightsideVisible, setIsRightsideVisible] = useState(true); // New state for visibility
 
+  const toggleRightsideVisibility = () => {
+    setIsRightsideVisible(!isRightsideVisible);
+  };
   const updateQuestionType = (type) => {
     setQuestionType(type);
   };
   const updateQuestionIdd = (id) => {
     setQuestionIdd(id);
+  };
+
+  const [selectedImage, setSelectedImage] = useState(null); // State to store the selected image
+
+  const selectImage = (image) => {
+    setSelectedImage(image);
   };
 
   // Define fetchQuizData function
@@ -119,13 +127,27 @@ export const QuizContextProvider = ({ children }) => {
     }
   };
 
-  // Provide the state and functions to the context
+
   return (
-    <QuizContext.Provider value={{ quizData, addQuestion, questionType, questionIdd, updateQuestionIdd, updateQuestionType, deleteQuestionById, fetchQuizData, getQuestionById, updateQuestionById }}>
+    <QuizContext.Provider value={{ 
+      quizData, 
+      addQuestion, 
+      questionType, 
+      questionIdd, 
+      updateQuestionIdd, 
+      updateQuestionType, 
+      deleteQuestionById, 
+      fetchQuizData, 
+      getQuestionById, 
+      updateQuestionById,
+      isRightsideVisible, // Include the visibility state
+      toggleRightsideVisibility // Include the function to toggle visibility
+,
+      selectedImage, selectImage
+    }}>
       {children}
     </QuizContext.Provider>
   );
 };
 
-// Custom hook to consume the context in functional components
 export const useQuiz = () => useContext(QuizContext);

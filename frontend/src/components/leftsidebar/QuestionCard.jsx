@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { BiImage } from "react-icons/bi";
 import { useQuiz } from "../../context/QuizContext";
-import "./Sidebar.css"
-import {baseUrl1 } from "../../utils/services";
+import "./Sidebar.css";
+import { baseUrl1 } from "../../utils/services";
 
 function QuestionCard({ question, index, isNew, isSelected, onClick }) {
   const [added, setAdded] = useState(false);
-
-  const { quizData, deleteQuestionById } = useQuiz();
+  const { quizData, deleteQuestionById, addQuestion } = useQuiz();
 
   if (!question) {
     return <div>Loading...</div>; // or any other placeholder or loading indicator
@@ -23,6 +22,31 @@ function QuestionCard({ question, index, isNew, isSelected, onClick }) {
     deleteQuestionById(question._id);
   };
 
+  const handleCopy = () => {
+    console.log('Copying question:', question); // Log the data of the question being copied
+
+    const createdQuizId = localStorage.getItem("createdQuizId") || "defaultQuizId"; // Get the quizId from localStorage
+
+    const newQuestion = { 
+      ...question, 
+      _id: new Date().getTime().toString(), // Generate a unique ID for the new question
+      quizId: createdQuizId // Include the quizId
+    };
+
+    const questionData = {
+      question: newQuestion.questionText,
+      answers: newQuestion.options,
+      correctAnswerIndex: newQuestion.correctAnswers,
+      questiontype: newQuestion.questionType,
+      imagePath: newQuestion.imagePath,
+      quizId: newQuestion.quizId
+    };
+
+    console.log('New question data:', questionData); // Log the new question data
+
+    addQuestion(questionData); // Add the new question to the context
+  };
+
   useEffect(() => {
     if (isNew) {
       setAdded(true);
@@ -36,22 +60,19 @@ function QuestionCard({ question, index, isNew, isSelected, onClick }) {
     return <div>No questions available</div>;
   }
 
-  console.log("isNew:", isNew, "isSelected:", isSelected); // Log isNew and isSelected
-
   return (
-    <div className={`card ${added ? "bounce" : ""} `}>
-     <div
-  className={`question-card ${isSelected ? "questioncardselected" : "questioncardnotselected"}`}
-  onClick={handleClick}
->
+    <div className={`card ${added ? "bounce" : ""}`}>
+      <div
+        className={`question-card ${isSelected ? "questioncardselected" : "questioncardnotselected"}`}
+        onClick={handleClick}
+      >
         <div className="card-title-container">
-          <div className="card-no noofquestion ">{index + 1}</div>
+          <div className="card-no noofquestion">{index + 1}</div>
           <div className="card-title">{question.questionType}</div>
         </div>
         <div className="cardcontent">
           <div className="maincardcontent">
-          <div className={`maincardcontentinner ${isSelected ? "maincardcontentselected" : "maincardcontentnot-selected"}`}>
-          
+            <div className={`maincardcontentinner ${isSelected ? "maincardcontentselected" : "maincardcontentnot-selected"}`}>
               <div className="maincardcontentinnerheading">
                 {quizData ? question.questionText : "Question"}
               </div>
@@ -61,11 +82,7 @@ function QuestionCard({ question, index, isNew, isSelected, onClick }) {
                   {imagePath ? (
                     <div className="maincardcontentinnerimagecontainerinnerpath">
                       <span className="imgpostinquestincard">
-                        <img
-                          className=""
-                          src={`${baseUrl1}${imagePath}`}
-                          alt=""
-                        />
+                        <img className="" src={`${baseUrl1}${imagePath}`} alt="" />
                       </span>
                     </div>
                   ) : (
@@ -82,7 +99,7 @@ function QuestionCard({ question, index, isNew, isSelected, onClick }) {
                       key={optionIndex}
                       className={`maincardcontentinneroptioncontainerinner ${
                         option === question.correctAnswer ? "correct-answer" : ""
-                        }`}
+                      }`}
                     >
                       {option}
                     </div>
@@ -91,7 +108,7 @@ function QuestionCard({ question, index, isNew, isSelected, onClick }) {
             </div>
           </div>
           <div className="cardsidebar">
-            <span className="icons-side copyicon">
+            <span className="icons-side copyicon" onClick={handleCopy}>
               <svg
                 width="20px"
                 height="20px"

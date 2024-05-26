@@ -29,4 +29,9 @@ router.put('/quizzes/update/:quizId', quizController.updateQuizById);
 // DELETE a question by question ID
 router.delete('/questions/delete/:questionId', quizController.deleteQuestionById);
 
+router.delete('/quizzes/delete/:quizId', quizController.deleteQuizById);
+
+
+router.post('/add-questionss', quizController.addQuestionssToQuiz);
+
 module.exports = router;

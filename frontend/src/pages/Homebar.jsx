@@ -4,6 +4,7 @@ import "./homebar.css"
 const Homebar = () => {
   return (
     <>
+    
       <div className="toolbar" aria-hidden="true" data-amplitude-link-position="toolbar" style={{ backgroundColor: '#0a4602' }}>
         <div className="toolbar__logo">
           <img src="https://kahoot.com/wp-content/themes/kahoot2017/assets/img/kahoot_tb_logo.webp" alt="Kahoot! toolbar, free 10min sessions" />

@@ -15,7 +15,9 @@ import Home from "./pages/Home";
 import Takequiz from "./pages/Takequiz";
 import Machingthepairs from "./questiontype/Matching.jsx";
 
-import Foroffice from "./pages/Foroffice.jsx";
+import ForFun from "./pages/ForFun.jsx";
+import ForEducation from "./pages/ForEduation.jsx";
+import Formotivation from "./pages/Formotivation.jsx";
 
 const App = () => {
   const { user } = useContext(AuthContext);
@@ -29,6 +31,9 @@ const App = () => {
         <Route path="/createquiz" element={<Createquiz />} />
         <Route path="/quiz" element={<QuizList />} />
         <Route path="/mtp" element={<Machingthepairs />} />
+        <Route path="/fun" element={<ForFun />} />
+        <Route path="/edu" element={<ForEducation />} />
+        <Route path="/motivation" element={<Formotivation />} />
    
 
         <Route path="/takequiz" element={<Takequiz />} />

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./ButtonCard.css";
 
-const ButtonCard = ({ icon, colorClass, answer, onAnswerChange, index, onCorrectAnswerChange }) => {
+const ButtonCard = ({ icon, colorClass, answer, onAnswerChange, index, onCorrectAnswerChange, questiontype }) => {
   const [isTyping, setIsTyping] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [isButtonHovered, setIsButtonHovered] = useState(false);
@@ -14,8 +14,6 @@ const ButtonCard = ({ icon, colorClass, answer, onAnswerChange, index, onCorrect
     setIsTyping(updatedAnswer.trim().length > 0); // Update isTyping based on the length of the typed value
     onAnswerChange(updatedAnswer); // Call the onAnswerChange function to update the answer
   };
-  
-  
 
   const handleButtonClick = () => {
     setIsChecked(!isChecked);
@@ -86,15 +84,10 @@ const ButtonCard = ({ icon, colorClass, answer, onAnswerChange, index, onCorrect
                 />
               </div>
             </div>
-             
-             
-
-
-            
           </div>
         </span>
 
-        { !answer && !isTyping && (
+        {(!answer || !isTyping) && !questiontype === "Nat" && (
           <div className="add-image-as-answer-button__AddMediaButtonWrapper-sc-1utqm9v-0 hFycfb">
             <button
               aria-label="Image library"
@@ -123,14 +116,10 @@ const ButtonCard = ({ icon, colorClass, answer, onAnswerChange, index, onCorrect
           </div>
         )}
 
-
-
-
-        {(isTyping || answer) && (
+        {(isTyping || answer) && questiontype !== "Nat" && (
           <button
             aria-label={`Toggle answer ${index + 1} correct.`}
             aria-checked={isChecked}
-            role="switch"
             data-functional-selector="question-answer__toggle-button"
             data-onboarding-step=""
             tabIndex="0"
@@ -140,9 +129,7 @@ const ButtonCard = ({ icon, colorClass, answer, onAnswerChange, index, onCorrect
             onMouseLeave={() => handleButtonHover(false)}
           >
             {isChecked && (
-              <span
-                className="icon-button__IconSpan-sc-12q2f5v-2 ftJDBB"
-              >
+              <span className="icon-button__IconSpan-sc-12q2f5v-2 ftJDBB">
                 <img
                   src="//assets-cdn.kahoot.it/builder/v2/assets/check-icon-fe2a6a3d.svg"
                   alt="checkmark"
@@ -158,3 +145,4 @@ const ButtonCard = ({ icon, colorClass, answer, onAnswerChange, index, onCorrect
 };
 
 export default ButtonCard;
+
