@@ -3,7 +3,6 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import Lottie from "lottie-react";
 import quizAnimation from "../assets/quiz.json";
-
 import correctSound from "../assets/sound/correct1.wav";
 import wrongSound from "../assets/sound/fail.mp3";
 import { baseUrl1 } from "../utils/services";
@@ -12,13 +11,14 @@ const TakeQuiz = () => {
   const { quizId } = useParams();
   const [quizData, setQuizData] = useState(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedOptionIndex, setSelectedOptionIndex] = useState(null);
+  const [selectedOptionIndexes, setSelectedOptionIndexes] = useState([]);
   const [userInput, setUserInput] = useState('');
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
   const [score, setScore] = useState(0);
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [showAnimation, setShowAnimation] = useState(false);
   const [timer, setTimer] = useState(0);
+  const [quizCardVisible, setQuizCardVisible] = useState(true); // State to manage the visibility of the quiz card
 
   const correctAudio = useRef(new Audio(correctSound));
   const wrongAudio = useRef(new Audio(wrongSound));
@@ -59,30 +59,48 @@ const TakeQuiz = () => {
     }
   };
 
+  const findCorrectAnswerIndex = () => {
+    const correctAnswers = quizData.questions[currentQuestionIndex].correctAnswers;
+    const correctAnswerIndex = correctAnswers.findIndex(ans => ans !== "");
+    return correctAnswerIndex !== -1 ? parseInt(correctAnswers[correctAnswerIndex]) : -1;
+  };
+  
   const handleOptionClick = (index) => {
     if (!quizCompleted) {
-      setSelectedOptionIndex(index);
-      setShowCorrectAnswer(true);
-      clearInterval(timerIntervalRef.current); // Stop the timer when an answer is selected
-      const correctAnswerIndex = findCorrectAnswerIndex();
-
-      if (correctAnswerIndex === -1) {
-        console.error("No correct answer specified for this question.");
-        return;
-      }
-
-      if (index === correctAnswerIndex) {
-        setScore(score + 1);
-        correctAudio.current.play();
-        handleCorrectAnswer();
+      if (currentQuestion.questionType === "MCQ" || currentQuestion.questionType === "True/False") {
+        // For MCQ and True/False questions, update selected option index directly
+        setSelectedOptionIndexes([index]);
+        setShowCorrectAnswer(true);
+        clearInterval(timerIntervalRef.current); // Stop the timer when an answer is selected
+        
+        // Check if the selected option index is the correct answer index
+        const correctAnswerIndex = findCorrectAnswerIndex();
+        if (index === correctAnswerIndex) {
+          setScore(score + 1);
+          correctAudio.current.play();
+          handleCorrectAnswer();
+        } else {
+          wrongAudio.current.play();
+          setTimeout(() => {
+            moveToNextQuestion();
+          }, 4000);
+        }
       } else {
-        wrongAudio.current.play();
-        setTimeout(() => {
-          moveToNextQuestion();
-        }, 2000);
+        // For other question types, toggle selected option indexes (MSQ or NAT)
+        const newSelectedIndexes = [...selectedOptionIndexes];
+        const selectedIndexIndex = newSelectedIndexes.indexOf(index);
+        if (selectedIndexIndex !== -1) {
+          newSelectedIndexes.splice(selectedIndexIndex, 1);
+        } else {
+          newSelectedIndexes.push(index);
+        }
+        setSelectedOptionIndexes(newSelectedIndexes);
+        
       }
+      
     }
   };
+  
 
   const handleInputSubmit = () => {
     if (!quizCompleted) {
@@ -97,7 +115,7 @@ const TakeQuiz = () => {
         wrongAudio.current.play();
         setTimeout(() => {
           moveToNextQuestion();
-        }, 2000);
+        }, 4000);
       }
     }
   };
@@ -114,22 +132,39 @@ const TakeQuiz = () => {
     return quizData?.questions[currentQuestionIndex]?.options || [];
   };
 
-  const findCorrectAnswerIndex = () => {
-    const correctAnswers = quizData.questions[currentQuestionIndex].correctAnswers;
-    const correctAnswerIndex = correctAnswers.findIndex(ans => ans !== "");
-    return correctAnswerIndex !== -1 ? parseInt(correctAnswers[correctAnswerIndex]) : -1;
+  const findCorrectAnswerIndexes = () => {
+    return quizData.questions[currentQuestionIndex].correctAnswers.map((ans) => parseInt(ans));
   };
 
   const moveToNextQuestion = () => {
     if (quizData && currentQuestionIndex < quizData.questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
-      setSelectedOptionIndex(null);
+      setSelectedOptionIndexes([]);
       setUserInput('');
       setShowCorrectAnswer(false);
       setTimer(quizData.questions[currentQuestionIndex + 1].timer || 0); // Update timer for the next question
     } else {
       setQuizCompleted(true);
     }
+  };
+
+  const checkMSQAnswer = () => {
+    const correctAnswerIndexes = findCorrectAnswerIndexes();
+    const isCorrect = correctAnswerIndexes.every(index => selectedOptionIndexes.includes(index)) && correctAnswerIndexes.length === selectedOptionIndexes.length;
+    if (isCorrect) {
+      setScore(score + 1);
+      correctAudio.current.play();
+      handleCorrectAnswer();
+    } else {
+      wrongAudio.current.play();
+      setTimeout(() => {
+        moveToNextQuestion();
+      }, 2000);
+    }
+  };
+
+  const toggleQuizCardVisibility = () => {
+    setQuizCardVisible(!quizCardVisible);
   };
 
   if (!quizData) {
@@ -143,16 +178,26 @@ const TakeQuiz = () => {
   const currentQuestion = quizData.questions[currentQuestionIndex];
   const options = getCurrentQuestionOptions();
 
+  const handleQuizCardClick = (e) => {
+    // Prevent toggling the quiz card visibility when clicked on the quiz-taking card
+    e.stopPropagation();
+  };
+  
   return (
     <div
-      className="h-screen flex justify-center items-center"
+      className="mainimagecontainer h-screen flex justify-center items-center"
       style={{
         backgroundImage: `url(http://localhost:5000${currentQuestion.imagePath})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
+      onClick={toggleQuizCardVisibility} // Toggle quiz card visibility on click
     >
-      <div className="max-w-lg bg-black opacity-70 p-8 rounded-lg shadow-xl absolute">
+      {quizCardVisible && (
+        <div
+          className="quiz-takingcard max-w-lg bg-black opacity-70 p-8 rounded-lg shadow-xl absolute"
+          onClick={handleQuizCardClick} // Prevent event propagation when clicked on the quiz-taking card
+        >
         <h1 className="text-3xl mb-6 font-bold text-white text-center">
           {quizData.title}
         </h1>
@@ -179,12 +224,38 @@ const TakeQuiz = () => {
                   Submit
                 </button>
               </div>
+            ) : currentQuestion.questionType === "MSQ" ? (
+              <>
+                {options.map((option, index) => (
+                  <button
+                    key={index}
+                    className={`option-button w-full px-4 py-2 mb-4 rounded-md transition duration-300 focus:outline-none ${
+                      selectedOptionIndexes.includes(index)
+                        ? "bg-yellow-500 text-white"
+                        : "bg-blue-500 hover:bg-blue-600 text-white"
+                    }`}
+                    onClick={() => handleOptionClick(index)}
+                    disabled={quizCompleted}
+                  >
+                    {option}
+                  </button>
+                ))}
+                {selectedOptionIndexes.length > 0 && (
+                  <button
+                    className="option-button w-full px-4 py-2 mb-4 rounded-md transition duration-300 focus:outline-none bg-green-500 hover:bg-green-600 text-white"
+                    onClick={checkMSQAnswer}
+                    disabled={quizCompleted}
+                  >
+                    Submit
+                  </button>
+                )}
+              </>
             ) : (
               options.map((option, index) => (
                 <button
                   key={index}
                   className={`option-button w-full px-4 py-2 mb-4 rounded-md transition duration-300 focus:outline-none ${
-                    selectedOptionIndex === index && showCorrectAnswer
+                    selectedOptionIndexes.includes(index) && showCorrectAnswer
                       ? index === findCorrectAnswerIndex()
                         ? "bg-green-500 hover:bg-green-600 text-white"
                         : "bg-red-500 hover:bg-red-600 text-white"
@@ -198,30 +269,32 @@ const TakeQuiz = () => {
               ))
             )}
           </div>
-          {showCorrectAnswer && showAnimation && (
-            <div className="lottie-container absolute top-0 left-0 w-full h-full z-10 flex justify-center items-center pointer-events-none">
-              <Lottie
-                className="w-full h-auto"
-                animationData={quizAnimation}
-                loop={false}
-                autoplay={true}
-                style={{ background: "transparent" }}
-              />
+          {quizCompleted && (
+            <div className="result-container">
+              <h2 className="text-2xl font-bold text-white text-center mb-4">
+                Quiz Completed
+              </h2>
+              <p className="text-white text-center mb-4">
+                Your final score is: {score}/{quizData.questions.length}
+              </p>
             </div>
           )}
         </div>
-     
-        {quizCompleted && (
-          <div className="result-container bg-gray-100 p-6 rounded-lg shadow-md text-center">
-            <h2 className="text-xl mb-4">Quiz Completed!</h2>
-            <p className="text-lg">
-              Your Score: {score}/{quizData.questions.length}
-            </p>
+        {showAnimation && (
+          <div className="animation-container fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50">
+            <Lottie
+              animationData={quizAnimation}
+              loop={false}
+              autoplay
+              className="w-screen h-screen"
+            />
           </div>
         )}
       </div>
-    </div>
-  );
+    )}
+  </div>
+);
 };
 
 export default TakeQuiz;
+
