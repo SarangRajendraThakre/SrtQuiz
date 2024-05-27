@@ -33,7 +33,7 @@ const MiddleQtype = () => {
       {questionType === "True/False" && <TrueFalse />}
       {questionType === "NAT" && <Nat />}
       {questionType === "MSQ" && <Msq />}
-      {questionType === "MTP" && <Mtp />}
+      {questionType === "MCQ" && <Mcq />}
 
       {showRightside && <Rightside  />}
     </div>

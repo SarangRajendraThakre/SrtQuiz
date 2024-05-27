@@ -3,8 +3,6 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import Lottie from "lottie-react";
 import quizAnimation from "../assets/quiz.json";
-import lotty2Animation from "../assets/lotty2.json";
-import lottyanimationAnimation from "../assets/lottyanimation.json";
 
 import correctSound from "../assets/sound/correct1.wav";
 import wrongSound from "../assets/sound/fail.mp3";
@@ -15,10 +13,11 @@ const TakeQuiz = () => {
   const [quizData, setQuizData] = useState(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOptionIndex, setSelectedOptionIndex] = useState(null);
+  const [userInput, setUserInput] = useState('');
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
   const [score, setScore] = useState(0);
   const [quizCompleted, setQuizCompleted] = useState(false);
-  const [randomAnimation, setRandomAnimation] = useState(null);
+  const [showAnimation, setShowAnimation] = useState(false);
   const [timer, setTimer] = useState(0);
 
   const correctAudio = useRef(new Audio(correctSound));
@@ -42,20 +41,16 @@ const TakeQuiz = () => {
   }, [quizId]);
 
   useEffect(() => {
-    const animations = [quizAnimation, lotty2Animation, lottyanimationAnimation];
-    const randomIndex = Math.floor(Math.random() * animations.length);
-    setRandomAnimation(animations[randomIndex]);
-  }, []);
-
-  useEffect(() => {
     if (timer > 0) {
       timerIntervalRef.current = setInterval(() => {
         setTimer((prevTimer) => prevTimer - 1);
       }, 1000);
 
       return () => clearInterval(timerIntervalRef.current);
+    } else if (timer === 0 && quizData) {
+      moveToNextQuestion();
     }
-  }, [timer]);
+  }, [timer, quizData]);
 
   const shuffleQuestions = (questions) => {
     for (let i = questions.length - 1; i > 0; i--) {
@@ -89,11 +84,30 @@ const TakeQuiz = () => {
     }
   };
 
+  const handleInputSubmit = () => {
+    if (!quizCompleted) {
+      setShowCorrectAnswer(true);
+      clearInterval(timerIntervalRef.current); // Stop the timer when an answer is submitted
+
+      if (userInput.trim().toLowerCase() === quizData.questions[currentQuestionIndex].options[0].toLowerCase()) {
+        setScore(score + 1);
+        correctAudio.current.play();
+        handleCorrectAnswer();
+      } else {
+        wrongAudio.current.play();
+        setTimeout(() => {
+          moveToNextQuestion();
+        }, 2000);
+      }
+    }
+  };
+
   const handleCorrectAnswer = () => {
-    setRandomAnimation(quizAnimation);
+    setShowAnimation(true);
     setTimeout(() => {
+      setShowAnimation(false);
       moveToNextQuestion();
-    }, 7000);
+    }, 7000); // Adjust the duration as needed
   };
 
   const getCurrentQuestionOptions = () => {
@@ -107,9 +121,10 @@ const TakeQuiz = () => {
   };
 
   const moveToNextQuestion = () => {
-    if (currentQuestionIndex < quizData.questions.length - 1) {
+    if (quizData && currentQuestionIndex < quizData.questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setSelectedOptionIndex(null);
+      setUserInput('');
       setShowCorrectAnswer(false);
       setTimer(quizData.questions[currentQuestionIndex + 1].timer || 0); // Update timer for the next question
     } else {
@@ -137,38 +152,57 @@ const TakeQuiz = () => {
         backgroundPosition: "center",
       }}
     >
-      <div className="max-w-lg bg-white p-8 rounded-lg shadow-xl relative">
-        <h1 className="text-3xl mb-6 font-bold text-black text-center">
+      <div className="max-w-lg bg-black opacity-70 p-8 rounded-lg shadow-xl absolute">
+        <h1 className="text-3xl mb-6 font-bold text-white text-center">
           {quizData.title}
         </h1>
         <div className="question-container bg-transparent p-6 rounded-lg shadow-md mb-6 relative">
-          <h2 className="text-xl text-black mb-4">{currentQuestion.questionText}</h2>
+          <h2 className="text-xl text-white mb-4">{currentQuestion.questionText}</h2>
           <div className="timer-container mb-4 text-center">
-            <p className="font-bold text-lg text-black">Time Left: {timer} seconds</p>
+            <p className="font-bold text-lg text-white">Time Left: {timer} seconds</p>
           </div>
           <div className="options-list">
-            {options.map((option, index) => (
-              <button
-                key={index}
-                className={`option-button w-full px-4 py-2 mb-4 rounded-md transition duration-300 focus:outline-none ${
-                  selectedOptionIndex === index && showCorrectAnswer
-                    ? index === findCorrectAnswerIndex()
-                      ? "bg-green-500 hover:bg-green-600 text-white"
-                      : "bg-red-500 hover:bg-red-600 text-white"
-                    : "bg-blue-500 hover:bg-blue-600 text-white"
-                }`}
-                onClick={() => handleOptionClick(index)}
-                disabled={quizCompleted}
-              >
-                {option}
-              </button>
-            ))}
+            {currentQuestion.questionType === "NAT" ? (
+              <div className="input-container">
+                <input
+                  type="text"
+                  className="w-full px-4 py-2 mb-4 rounded-md transition duration-300 focus:outline-none bg-white text-black"
+                  value={userInput}
+                  onChange={(e) => setUserInput(e.target.value)}
+                  disabled={quizCompleted}
+                />
+                <button
+                  className="option-button w-full px-4 py-2 mb-4 rounded-md transition duration-300 focus:outline-none bg-blue-500 hover:bg-blue-600 text-white"
+                  onClick={handleInputSubmit}
+                  disabled={quizCompleted}
+                >
+                  Submit
+                </button>
+              </div>
+            ) : (
+              options.map((option, index) => (
+                <button
+                  key={index}
+                  className={`option-button w-full px-4 py-2 mb-4 rounded-md transition duration-300 focus:outline-none ${
+                    selectedOptionIndex === index && showCorrectAnswer
+                      ? index === findCorrectAnswerIndex()
+                        ? "bg-green-500 hover:bg-green-600 text-white"
+                        : "bg-red-500 hover:bg-red-600 text-white"
+                      : "bg-blue-500 hover:bg-blue-600 text-white"
+                  }`}
+                  onClick={() => handleOptionClick(index)}
+                  disabled={quizCompleted}
+                >
+                  {option}
+                </button>
+              ))
+            )}
           </div>
-          {showCorrectAnswer && (
+          {showCorrectAnswer && showAnimation && (
             <div className="lottie-container absolute top-0 left-0 w-full h-full z-10 flex justify-center items-center pointer-events-none">
               <Lottie
                 className="w-full h-auto"
-                animationData={randomAnimation}
+                animationData={quizAnimation}
                 loop={false}
                 autoplay={true}
                 style={{ background: "transparent" }}

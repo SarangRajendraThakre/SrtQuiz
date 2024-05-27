@@ -50,6 +50,8 @@ const Mcq = () => {
 
   const showmenudots = windowWidth < 900;
 
+
+
   useEffect(() => {
     if (questionIdd && quizData) {
       const foundQuestion = getQuestionById();
@@ -73,6 +75,10 @@ const Mcq = () => {
     fileInputRef.current.click();
   };
 
+ 
+  const longPressTimerRef = useRef(null);
+
+
   const handleQuestionChange = (e) => {
     setQuestion(e.target.value);
   };
@@ -84,17 +90,18 @@ const Mcq = () => {
   };
 
   const handleSelectCorrectAnswer = (index) => {
-    // Check if the index is already in the array of correct answers
+    // Check if the index is already in the array
     const indexExists = correctAnswerIndices.includes(index);
   
-    if (indexExists) {
-      // If the index exists, remove it from the array
-      const updatedCorrectAnswers = correctAnswerIndices.filter((idx) => idx !== index);
-      setCorrectAnswerIndices(updatedCorrectAnswers);
+    // If the index exists and there's only one correct answer selected,
+    // remove it from the array
+    if (indexExists && correctAnswerIndices.length === 1) {
+      setCorrectAnswerIndices([]);
+      // Show notification to the user
+      alert("Only one correct answer can be selected for this question.");
     } else {
-      // If the index does not exist, add it to the array
-      const updatedCorrectAnswers = [...correctAnswerIndices, index];
-      setCorrectAnswerIndices(updatedCorrectAnswers);
+      // Otherwise, deselect all previously selected correct answers
+      setCorrectAnswerIndices([index]);
     }
   };
   
@@ -138,6 +145,16 @@ const Mcq = () => {
       console.error("Error updating question:", error);
     }
   };
+
+  const handleImageLongPressStart = () => {
+    longPressTimerRef.current = setTimeout(() => {
+      setImagePath("");
+    }, 500); // 500ms for a long press
+  };
+
+  const handleImageLongPressEnd = () => {
+    clearTimeout(longPressTimerRef.current);
+  };
   
   return (
     <>
@@ -170,25 +187,17 @@ const Mcq = () => {
         <div className="mainmiddlearea">
           <div className="mainmiddleareainner">
             <div className="mainmiddleareainnerinner">
-              <div
-                className={`${
-                  imagePath
-                    ? "mainmiddleareainnerinnerinnerimg"
-                    : "mainmiddleareainnerinnerinner"
-                }`}
-              >
+              <div className={imagePath ? "mainmiddleareainnerinnerinnerimg" : "mainmiddleareainnerinnerinner"}>
                 {imagePath ? (
                   <div
-                    className={`${
-                      imagePath
-                        ? "mainmiddleareainnerinnerinnerimg"
-                        : "mainmiddleareainnerinnerinner"
-                    }`}
+                    className={imagePath ? "mainmiddleareainnerinnerinnerimg" : "mainmiddleareainnerinnerinner"}
+                    onMouseDown={handleImageLongPressStart}
+                    onMouseUp={handleImageLongPressEnd}
+                    onTouchStart={handleImageLongPressStart}
+                    onTouchEnd={handleImageLongPressEnd}
                   >
                     <img
-                      className={` ${
-                        imagePath && "mainmiddleareainnerinnerinnerimg"
-                      }`}
+                      className={imagePath && "mainmiddleareainnerinnerinnerimg"}
                       src={`${baseUrl1}${imagePath}`}
                       alt=""
                     />
@@ -196,41 +205,37 @@ const Mcq = () => {
                 ) : (
                   <div className="mainmiddleareainnerinnerinner">
                     <div className="mainmiddleareainnerinnerinnerinner">
-                      {imagePath ? (
-                        <div className="uploadinnercontent"></div>
-                      ) : (
-                        <div className="uploadinnercontent">
-                          <div className="uploadimg">
-                            <div className="uploadimgurl"></div>
-                            <label htmlFor="fileInput" className="uploadbtn">
-                              <div className="uploadbtninner">
-                                <span className="spanicon">
-                                  <BsPlusLg fontSize="25px" />
-                                </span>
-                              </div>
-                            </label>
-                            <input
-                              ref={fileInputRef}
-                              id="fileInput"
-                              type="file"
-                              accept="image/*"
-                              onChange={handleImageChange}
-                              style={{ display: "none" }}
-                            />
-                            <button onClick={handleUploadClick}>
-                              Select Image
-                            </button>
-                          </div>
-                          <div className="uploadingmessage">
-                            <p className="uploaddrag">
-                              <button className="buttonupload">
-                                Upload file
-                              </button>{" "}
-                              or drag here to upload
-                            </p>
-                          </div>
+                      <div className="uploadinnercontent">
+                        <div className="uploadimg">
+                          <div className="uploadimgurl"></div>
+                          <label htmlFor="fileInput" className="uploadbtn">
+                            <div className="uploadbtninner">
+                              <span className="spanicon">
+                                <BsPlusLg fontSize="25px" />
+                              </span>
+                            </div>
+                          </label>
+                          <input
+                            ref={fileInputRef}
+                            id="fileInput"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageChange}
+                            style={{ display: "none" }}
+                          />
+                          <button onClick={handleUploadClick}>
+                            Select Image
+                          </button>
                         </div>
-                      )}
+                        <div className="uploadingmessage">
+                          <p className="uploaddrag">
+                            <button className="buttonupload">
+                              Upload file
+                            </button>{" "}
+                            or drag here to upload
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 )}

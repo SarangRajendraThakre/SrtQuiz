@@ -16,7 +16,7 @@ const Nat = () => {
   const [answers, setAnswers] = useState(["", "", "", ""]);
   const [correctAnswerIndices, setCorrectAnswerIndices] = useState([]);
   const [imagePath, setImagePath] = useState("");
-  const [questiontype, setQuestiontype] = useState("Nat");
+  const [questiontype, setQuestiontype] = useState("NAT");
 
   const fileInputRef = useRef(null);
 

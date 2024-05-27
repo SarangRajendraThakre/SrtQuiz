@@ -14,7 +14,7 @@ const ButtonsContainerr = ({ answers, onAnswerChange, onCorrectAnswerChange, cor
       <FaSquareFull fontSize="20px" color="white" />,
       <FaSquareFull fontSize="20px" color="white" />
     ];
-  } else if (questiontype === "Nat") {
+  } else if (questiontype === "NAT") {
     icons = [
       <FaSquareFull fontSize="20px" color="white" />
     ];
@@ -36,7 +36,7 @@ const ButtonsContainerr = ({ answers, onAnswerChange, onCorrectAnswerChange, cor
           key={index}
           index={index}
           icon={icon}
-          colorClass={questiontype === "Nat" ? colorClass : `color${index + 1}`}
+          colorClass={questiontype === "NAT" ? colorClass : `color${index + 1}`}
           answer={answers[index]}
           onAnswerChange={(updatedAnswer) => onAnswerChange(index, updatedAnswer)}
           onCorrectAnswerChange={onCorrectAnswerChange}

@@ -59,7 +59,7 @@ const ForFun = () => {
 
   return (
     <> <div className="toolbar_container">
-    <div className="toolbar toolbar-active toolbarc3">
+    <div className="toolbar toolbar-active toolbarc4">
       <div className="toolbar__logo">
       <Link to="/">
               <img src={logo} alt="" />
@@ -78,7 +78,7 @@ const ForFun = () => {
             <Link to="/fun" className="toolbar__switcher__item toolbar__switcher__item--active ">
               Fun
             </Link>
-            <Link to="/motivation" className="toolbar__switcher__item ">
+            <Link to="/motivation" className="toolbar__switcher__item  ">
              Motivation
             </Link>
       </div>
@@ -89,12 +89,11 @@ const ForFun = () => {
               className="carousel slide_container_inner "
               ref={flickityRef}
             >
-              {/* Carousel items */}
+              
               <Link to="/" className="toolbar__tile">
                 <img src={img1} alt="" />
               </Link>
              
-              {/* Add more carousel items as needed */}
             </div>
           </div>
         </div>

@@ -366,9 +366,12 @@ const Createquiz = () => {
             {/* Options for existing categories */}
             <option value="">Select Category</option>
             <option value="Geography">Geography</option>
+            <option value="History">History</option>
+              <option value="Guess">Guess</option>
             <option value="Maths">Maths</option>
             <option value="Movies">Movies</option>
             <option value="Motivational">Motivational</option>
+          
             {/* Add more options for existing categories */}
           </select>
         </label>
@@ -468,9 +471,9 @@ const Createquiz = () => {
                             </button>
                             <button
                               className="modalbuttons"
-                              onClick={() => handleSubmite("MTP")}
+                              onClick={() => handleSubmite("MCQ")}
                             >
-                              MTP
+                              MCQ
                             </button>
                           </div>
                         </div>
