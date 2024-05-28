@@ -33,3 +33,29 @@
   display: flex;
   justify-content: space-between;
 }
+.slider-card-container {
+  padding: 10px; /* Adjust the padding to add space between the cards */
+}
+
+.slick-slide {
+  display: flex;
+  justify-content: center;
+}
+
+.bottombuttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.quiz-button {
+  display: none;
+}
+
+.quiz-button.show {
+  display: inline-block;
+}
+
+.card {
+  margin: 10px; /* Adjust the margin to add space around the cards */
+}

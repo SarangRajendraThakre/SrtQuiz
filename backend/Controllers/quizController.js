@@ -271,3 +271,48 @@ exports.addQuestionssToQuiz = async (req, res) => {
     res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };
+
+exports.searchQuizzes = async (req, res) => {
+  try {
+    const { query } = req.query;
+    if (!query) {
+      return res.status(400).json({ message: 'Query parameter is required' });
+    }
+
+    // Search quizzes where title, tags, or category matches the query
+    const quizzes = await Quiz.find({
+      $or: [
+        { title: { $regex: query, $options: 'i' } },
+        { tags: { $regex: query, $options: 'i' } },
+        { category: { $regex: query, $options: 'i' } },
+      ]
+    });
+
+    res.status(200).json({ quizzes });
+  } catch (error) {
+    console.error('Error fetching quizzes:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
+// Modify the backend route to search for quizzes based on any word that matches the title, category, or creator
+exports.searchQuizzes = async (req, res) => {
+  try {
+    const keyword = req.params.keyword;
+    const regex = new RegExp(keyword, 'i'); // Case-insensitive regex
+
+    const quizzes = await Quiz.find({
+      $or: [
+        { title: { $regex: regex } },
+        { category: { $regex: regex } },
+        { 'creatorName': { $regex: regex } }
+      ]
+    });
+
+    res.status(200).json({ quizzes });
+  } catch (error) {
+    console.error('Error searching quizzes:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};

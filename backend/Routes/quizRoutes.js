@@ -29,9 +29,17 @@ router.put('/quizzes/update/:quizId', quizController.updateQuizById);
 // DELETE a question by question ID
 router.delete('/questions/delete/:questionId', quizController.deleteQuestionById);
 
+// DELETE a quiz by quiz ID
 router.delete('/quizzes/delete/:quizId', quizController.deleteQuizById);
 
-
+// POST multiple questions to a quiz
 router.post('/add-questionss', quizController.addQuestionssToQuiz);
+
+// GET quizzes by search query
+router.get('/search', quizController.searchQuizzes);
+
+
+router.get('/quizzes/search/:keyword', quizController.searchQuizzes);
+
 
 module.exports = router;

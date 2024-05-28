@@ -2,7 +2,8 @@ import React, { useRef, useEffect } from "react";
 import "./home.css";
 import Flickity from "flickity";
 import "flickity/css/flickity.css";
-import img1 from "../assets/Biology-copy.webp";
+import keepgoing from "../assets/keepgoing.jpg";
+import keepgoing1 from "../assets/keepgoing1.jpg";
 import img2 from "../assets/English-Vocabulary-Exercises.jpg";
 import img3 from "../assets/Nature-960x640.jpg";
 import img4 from "../assets/Top-IT-Skills-2030.png";
@@ -90,8 +91,9 @@ const Formotivation = () => {
               ref={flickityRef}
             >
               
+          
               <Link to="/" className="toolbar__tile">
-                <img src={img1} alt="" />
+                <img src={keepgoing1} alt="" />
               </Link>
              
             </div>
@@ -122,6 +124,8 @@ const Formotivation = () => {
       </div>
     </div>
   </div>
+  <footer className="footermain">Developed by : SARANG .R. THAKRE</footer>
+  
 </>
   )
 }

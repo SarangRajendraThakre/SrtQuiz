@@ -5,7 +5,7 @@ const questionSchema = new mongoose.Schema({
   options: [String],
   correctAnswers: [String],
   questionType: String,
-  timer: { type: Number, default: 10 },
+  timer: { type: Number, default: 20},
   imagePath: String
 });
 

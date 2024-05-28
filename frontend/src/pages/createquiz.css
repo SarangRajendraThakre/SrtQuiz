@@ -737,4 +737,113 @@ button.close {
       .delete-button:hover {
         background-color: #d32f2f;
       }
-      
+      /* Modal styles */
+.modalsetting {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  z-index: 1000;
+  max-width: 400px;
+  width: 100%;
+}
+
+/* Form label styles */
+.form-label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+/* Form input/select styles */
+.form-input,
+.form-select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+/* Image container styles */
+.image-container {
+  position: relative;
+  margin-bottom: 15px;
+}
+
+/* Uploaded image styles */
+.uploaded-image {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Upload button styles */
+.upload-button {
+  padding: 8px 12px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
+/* Delete image button styles */
+.delete-image-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  padding: 5px 8px;
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Form buttons container styles */
+.form-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Create button styles */
+.create-button {
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Delete button styles */
+.delete-button {
+  padding: 10px 20px;
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.modalsetting-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #333; /* Adjust color as needed */
+}
+.footermain {
+  z-index: 1000;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #333; /* Set your desired background color */
+  color: #fff; /* Set your desired text color */
+  text-align: center;
+  padding: 10px 0; /* Adjust padding as needed */
+}

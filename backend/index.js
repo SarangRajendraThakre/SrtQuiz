@@ -12,7 +12,7 @@ require("dotenv").config();
 
 app.use(express.json());
 
-const allowedOrigins = ["http://srtcoder.com", "http://localhost:5173",'http://192.168.8.188:5173'];
+const allowedOrigins = ["http://srtcoder.com", "http://localhost:5173",'http://192.168.45.188:5173/',"http://192.168.45.188:5173"];
 
 app.use(cors({
   origin: function (origin, callback) {

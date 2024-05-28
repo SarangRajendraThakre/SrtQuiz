@@ -6,6 +6,8 @@ import quizAnimation from "../assets/quiz.json";
 import correctSound from "../assets/sound/correct1.wav";
 import wrongSound from "../assets/sound/fail.mp3";
 import { baseUrl1 } from "../utils/services";
+import "./home.css";
+
 
 const TakeQuiz = () => {
   const { quizId } = useParams();
@@ -95,18 +97,16 @@ const TakeQuiz = () => {
           newSelectedIndexes.push(index);
         }
         setSelectedOptionIndexes(newSelectedIndexes);
-        
       }
       
     }
   };
   
-
   const handleInputSubmit = () => {
     if (!quizCompleted) {
       setShowCorrectAnswer(true);
       clearInterval(timerIntervalRef.current); // Stop the timer when an answer is submitted
-
+  
       if (userInput.trim().toLowerCase() === quizData.questions[currentQuestionIndex].options[0].toLowerCase()) {
         setScore(score + 1);
         correctAudio.current.play();
@@ -119,6 +119,7 @@ const TakeQuiz = () => {
       }
     }
   };
+  
 
   const handleCorrectAnswer = () => {
     setShowAnimation(true);
@@ -149,19 +150,29 @@ const TakeQuiz = () => {
   };
 
   const checkMSQAnswer = () => {
-    const correctAnswerIndexes = findCorrectAnswerIndexes();
-    const isCorrect = correctAnswerIndexes.every(index => selectedOptionIndexes.includes(index)) && correctAnswerIndexes.length === selectedOptionIndexes.length;
-    if (isCorrect) {
-      setScore(score + 1);
-      correctAudio.current.play();
-      handleCorrectAnswer();
-    } else {
-      wrongAudio.current.play();
-      setTimeout(() => {
-        moveToNextQuestion();
-      }, 2000);
+    if (!quizCompleted) {
+      setShowCorrectAnswer(true);
+      clearInterval(timerIntervalRef.current); // Stop the timer when an answer is submitted
+  
+      const correctAnswerIndexes = findCorrectAnswerIndexes();
+      const isCorrect =
+        correctAnswerIndexes.every((index) =>
+          selectedOptionIndexes.includes(index)
+        ) &&
+        correctAnswerIndexes.length === selectedOptionIndexes.length;
+      if (isCorrect) {
+        setScore(score + 1);
+        correctAudio.current.play();
+        handleCorrectAnswer();
+      } else {
+        wrongAudio.current.play();
+        setTimeout(() => {
+          moveToNextQuestion();
+        }, 2000);
+      }
     }
   };
+  
 
   const toggleQuizCardVisibility = () => {
     setQuizCardVisible(!quizCardVisible);
@@ -292,7 +303,9 @@ const TakeQuiz = () => {
         )}
       </div>
     )}
+      <footer className="footermain">Developed by : SARANG .R. THAKRE</footer>
   </div>
+
 );
 };
 

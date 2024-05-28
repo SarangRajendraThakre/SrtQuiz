@@ -12,10 +12,21 @@ import img7 from "../assets/Nature-960x640.jpg";
 import img8 from "../assets/geograph.jpg";
 import img9 from "../assets/movielistquiz.jpg";
 import img10 from "../assets/Maths-Camp-copy-1030x324.png";
+
+import Biology from "../assets/Biology-copy.webp";
+import Physics from "../assets/Physics.webp";
+import geograph from "../assets/geograph.jpg";
+import current from "../assets/current.jpg";
+import MATHEMATICS from "../assets/MATHEMATICS.png";
+import GK from "../assets/GK-general-science.webp";
+import history from "../assets/history.jpg";
+
 import logo from "../assets/SRTLL.png";
 import QuizListPrivate from "../components/QuizList/QuizListPrivate";
 import QuizListPublic from "../components/QuizList/QuizListPublic";
 import { Link } from "react-router-dom";
+import Header from "../components/Header/Header1";
+import Header1 from "../components/Header/Header1";
 
 const Home = () => {
   const flickityRef = useRef(null);
@@ -78,7 +89,7 @@ const Home = () => {
               Fun
             </Link>
             <Link to="/motivation" className="toolbar__switcher__item ">
-             Motivation
+              Motivation
             </Link>
           </div>
           <div className="toolbar__section">
@@ -88,17 +99,57 @@ const Home = () => {
                   className="carousel slide_container_inner "
                   ref={flickityRef}
                 >
-                 
-                  <Link to="/" className="toolbar__tile">
-                    <img src={img1} alt="" />
+                  <Link
+                    to="#"
+                    className="toolbar__tile"
+                    onClick={() => scrollToSlider(biologySliderRef)}
+                  >
+                    <img src={Biology} alt="Biology" />
                   </Link>
-                  
+                  <Link
+                    to="#"
+                    className="toolbar__tile"
+                    onClick={() => scrollToSlider(PhysicsSliderRef)}
+                  >
+                    <img src={Physics} alt="Physics" />
+                  </Link>
+                  <Link
+                    to="#"
+                    className="toolbar__tile"
+                    onClick={() => scrollToSlider(GkSliderRef)}
+                  >
+                    <img src={GK} alt="GK" />
+                  </Link>
 
-
+                  <Link
+                    to="#"
+                    className="toolbar__tile"
+                    onClick={() => scrollToSlider(mathsSliderRef)}
+                  >
+                    <img src={MATHEMATICS} alt="MATHEMATICS" />
+                  </Link>
+                  <Link
+                    to="#"
+                    className="toolbar__tile"
+                    onClick={() => scrollToSlider(biologySliderRef)}
+                  >
+                    <img src={current} alt="current" />
+                  </Link>
+                  <Link
+                    to="#"
+                    className="toolbar__tile"
+                    onClick={() => scrollToSlider(biologySliderRef)}
+                  >
+                    <img src={geograph} alt="geograph" />
+                  </Link>
+                  <Link
+                    to="#"
+                    className="toolbar__tile"
+                    onClick={() => scrollToSlider(historySliderRef)}
+                  >
+                    <img src={history} alt="History" />
+                  </Link>
                 </div>
-
-
-
               </div>
             </div>
             <div className="toolbar__section__box-shadow--left"></div>
@@ -108,7 +159,7 @@ const Home = () => {
           <div className="toolbar__buttons">
             <Link
               to="/createquiz"
-              className="toolbar__buttons__create"
+              className="toolbar__buttons__create custom-button"
               onClick={handleClearLocalStorage}
             >
               <img
@@ -117,7 +168,10 @@ const Home = () => {
               />
             </Link>
 
-            <Link to="/takequiz" className="toolbar__buttons__join">
+            <Link
+              to="/takequiz"
+              className="toolbar__buttons__join custom-button"
+            >
               <img
                 src="https://kahoot.com/wp-content/themes/kahoot2017/assets/img/enter_pin_logo.png"
                 alt=""
@@ -126,12 +180,14 @@ const Home = () => {
           </div>
         </div>
       </div>
+      <Header1 />
 
       <main>
         {" "}
         <QuizListPrivate />
         <QuizListPublic />
       </main>
+      <footer className="footermain">Developed by : SARANG .R. THAKRE</footer>
     </>
   );
 };

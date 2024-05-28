@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from "react";
 import "./home.css";
 import Flickity from "flickity";
 import "flickity/css/flickity.css";
-import img1 from "../assets/Biology-copy.webp";
+import guessme from "../assets/guessme.jpg";
 import img2 from "../assets/English-Vocabulary-Exercises.jpg";
 import img3 from "../assets/Nature-960x640.jpg";
 import img4 from "../assets/Top-IT-Skills-2030.png";
@@ -17,6 +17,7 @@ import QuizListPrivate from "../components/QuizList/QuizListPrivate";
 import QuizListPublic from "../components/QuizList/QuizListPublic";
 import { Link } from "react-router-dom";
 import Forall from "./ForFun";
+import GuessSlider from "../components/QuizList/GuessSlider";
 
 
 const ForFun = () => {
@@ -59,7 +60,7 @@ const ForFun = () => {
 
   return (
     <> <div className="toolbar_container">
-    <div className="toolbar toolbar-active toolbarc4">
+    <div className="toolbar toolbar-active toolbarc3">
       <div className="toolbar__logo">
       <Link to="/">
               <img src={logo} alt="" />
@@ -90,8 +91,8 @@ const ForFun = () => {
               ref={flickityRef}
             >
               
-              <Link to="/" className="toolbar__tile">
-                <img src={img1} alt="" />
+              <Link to="" className="toolbar__tile">
+                <img src={guessme} alt="" />
               </Link>
              
             </div>
@@ -122,6 +123,12 @@ const ForFun = () => {
       </div>
     </div>
   </div>
+
+  <main>
+       <GuessSlider/>
+      </main>
+      <footer className="footermain">Developed by : SARANG .R. THAKRE</footer>
+  
 </>
   )
 }
