@@ -395,6 +395,7 @@ const Createquiz = () => {
                   <option value="Motivational">Motivational</option>
                   <option value="Biology">Biology</option>
                   <option value="Physics">Physics</option>
+                  <option value="Computer">Computer</option>
                   <option value="Gk">Gk</option>
                 </select>
               </label>

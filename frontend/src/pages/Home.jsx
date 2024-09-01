@@ -10,6 +10,8 @@ import img5 from "../assets/13_5383.jpg";
 import img6 from "../assets/current.jpg";
 import img7 from "../assets/Nature-960x640.jpg";
 import img8 from "../assets/geograph.jpg";
+import enter_pin_logo from "../assets/enter_pin_logo.png";
+import create_icon from "../assets/create_icon.png";
 import img9 from "../assets/movielistquiz.jpg";
 import img10 from "../assets/Maths-Camp-copy-1030x324.png";
 
@@ -163,7 +165,7 @@ const Home = () => {
               onClick={handleClearLocalStorage}
             >
               <img
-                src="https://kahoot.com/wp-content/themes/kahoot2017/assets/img/create_icon.png"
+      src={create_icon}
                 alt=""
               />
             </Link>
@@ -173,7 +175,7 @@ const Home = () => {
               className="toolbar__buttons__join custom-button"
             >
               <img
-                src="https://kahoot.com/wp-content/themes/kahoot2017/assets/img/enter_pin_logo.png"
+           src={enter_pin_logo}
                 alt=""
               />
             </Link>

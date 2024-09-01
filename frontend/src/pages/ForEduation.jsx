@@ -9,7 +9,8 @@ import current from "../assets/current.jpg";
 import MATHEMATICS from "../assets/MATHEMATICS.png";
 import GK from "../assets/GK-general-science.webp";
 import history from "../assets/history.jpg";
-import img9 from "../assets/movielistquiz.jpg";
+import enter_pin_logo from "../assets/enter_pin_logo.png";
+import create_icon from "../assets/create_icon.png";
 import img10 from "../assets/Maths-Camp-copy-1030x324.png";
 import logo from "../assets/SRTLL.png";
 import { Link } from "react-router-dom";
@@ -128,10 +129,10 @@ const ForEducation = () => {
 
           <div className="toolbar__buttons">
             <Link to="/createquiz" className="toolbar__buttons__create" onClick={handleClearLocalStorage}>
-              <img src="https://kahoot.com/wp-content/themes/kahoot2017/assets/img/create_icon.png" alt="Create Quiz" />
+              <img src={create_icon} alt="Create Quiz" />
             </Link>
             <Link to="/takequiz" className="toolbar__buttons__join">
-              <img src="https://kahoot.com/wp-content/themes/kahoot2017/assets/img/enter_pin_logo.png" alt="Take Quiz" />
+              <img src={enter_pin_logo} alt="Take Quiz" />
             </Link>
           </div>
         </div>

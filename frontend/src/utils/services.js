@@ -1,5 +1,5 @@
 
-// export const baseUrl1 = "http://myquiz.srtcoder.com";
+// export const baseUrl1 = "https://my.srtcoder.com";
 
 export const baseUrl1 = "http://localhost:5000";
 

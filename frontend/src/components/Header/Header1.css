@@ -1,0 +1,30 @@
+.header-container {
+  width: 100%;
+  padding: 10px 16px;
+  background: #555;
+  color: #f1f1f1;
+  z-index: 200;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-container.fixed {
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+.sticky {
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+.content {
+  padding: 16px;
+}
+
+.sticky + .content {
+  padding-top: 102px;
+}

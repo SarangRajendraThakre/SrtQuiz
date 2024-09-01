@@ -10,6 +10,8 @@ import img4 from "../assets/Top-IT-Skills-2030.png";
 import img5 from "../assets/13_5383.jpg";
 import img6 from "../assets/current.jpg";
 import img7 from "../assets/Nature-960x640.jpg";
+import enter_pin_logo from "../assets/enter_pin_logo.png";
+import create_icon from "../assets/create_icon.png";
 import img8 from "../assets/geograph.jpg";
 import img9 from "../assets/movielistquiz.jpg";
 import img10 from "../assets/Maths-Camp-copy-1030x324.png";
@@ -18,6 +20,7 @@ import QuizListPrivate from "../components/QuizList/QuizListPrivate";
 import QuizListPublic from "../components/QuizList/QuizListPublic";
 import { Link } from "react-router-dom";
 import Forall from "./ForFun";
+import ComputerSlider from "../components/QuizList/ComputerSlider";
 
 
 const Formotivation = () => {
@@ -110,20 +113,23 @@ const Formotivation = () => {
           onClick={handleClearLocalStorage}
         >
           <img
-            src="https://kahoot.com/wp-content/themes/kahoot2017/assets/img/create_icon.png"
+            src={create_icon}
             alt=""
           />
         </Link>
 
         <Link to="/takequiz" className="toolbar__buttons__join">
           <img
-            src="https://kahoot.com/wp-content/themes/kahoot2017/assets/img/enter_pin_logo.png"
+          src={enter_pin_logo}
             alt=""
           />
         </Link>
       </div>
     </div>
   </div>
+  <main>
+    <ComputerSlider/>
+  </main>
   <footer className="footermain">Developed by : SARANG .R. THAKRE</footer>
   
 </>

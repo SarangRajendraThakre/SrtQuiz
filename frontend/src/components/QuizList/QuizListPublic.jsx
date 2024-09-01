@@ -106,43 +106,30 @@ const QuizListPublic = () => {
 
       navigate(`/createquiz/${newquizid}`);
     } catch (error) {
-      console.error('Error creating copy of quiz:', error);
+      console.error('Error copying quiz:', error);
     }
   };
-
-  const handleEditClick = (quizId) => {
-    localStorage.setItem('createdQuizId', quizId);
-    navigate(`/createquiz/${quizId}`);
-  };
-
-  const user = JSON.parse(localStorage.getItem('User'));
 
   return (
     <div className='mt-3 p-4'>
       <h1 className='font-semibold'>Public Quizzes</h1>
       {loading ? (
-        <Spinner animation="border" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </Spinner>
+        <Spinner animation="border" />
       ) : (
-        <Slider {...settings}> {/* Use Slider component from react-slick */}
+        <Slider {...settings}>
           {quizzes.map((quiz) => (
-            <div key={quiz._id} className="slider-card-container">
-              <Card className='p-2' onClick={() => handleCardClick(quiz._id)}>
+            <div key={quiz._id} className='slider-card-container'>
+              <Card onClick={() => handleCardClick(quiz._id)}>
                 <Card.Img variant="top" src={`${baseUrl1}${quiz.posterImg}`} style={{ height: '200px', objectFit: 'cover' }} />
                 <Card.Body>
                   <Card.Title className='text-2xl'>{quiz.title}</Card.Title>
                   <p>Created By: {quiz.creatorName}</p>
                   <p>Number of Questions: {quiz.questions.length}</p>
                   <div className='bottombuttons'>
-                    {quiz.createdBy === user._id ? (
-                      <Button className={`quiz-button ${showButtonId === quiz._id ? 'show' : ''}`} variant="primary" onClick={() => handleEditClick(quiz._id)}>Edit</Button>
-                    ) : (
-                      <Button className={`quiz-button ${showButtonId === quiz._id ? 'show' : ''}`} variant="primary" onClick={() => handleCopyClick(quiz._id)}>Copy</Button>
-                    )}
                     <Link to={`/takequiz/${quiz._id}`}>
                       <Button className={`quiz-button ${showButtonId === quiz._id ? 'show' : ''}`} variant="primary">Play</Button>
                     </Link>
+                    <Button className={`quiz-button ${showButtonId === quiz._id ? 'show' : ''}`} variant="primary" onClick={() => handleCopyClick(quiz._id)}>Copy</Button>
                   </div>
                 </Card.Body>
               </Card>

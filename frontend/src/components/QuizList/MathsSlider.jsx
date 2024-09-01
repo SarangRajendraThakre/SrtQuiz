@@ -18,7 +18,7 @@ const MathsSlider = () => {
     const fetchGuessQuizzes = async () => {
       try {
         const response = await axios.get(`${baseUrl1}/api/quizzes/all`);
-        const guessQuizzes = response.data.quizzes.filter(quiz => quiz.category === 'Maths');
+        const guessQuizzes = response.data.quizzes.filter(quiz => quiz.category === 'Maths'&& quiz.visibility === 'public');
         await Promise.all(guessQuizzes.map(async (quiz) => {
           if (quiz.createdBy) {
             const creator = await axios.get(`${baseUrl1}/api/find/${quiz.createdBy}`);

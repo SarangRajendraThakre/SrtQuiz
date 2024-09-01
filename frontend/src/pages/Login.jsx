@@ -3,6 +3,7 @@ import { Alert, Button, Form, Row, Col, Stack } from "react-bootstrap";
 import { AuthContext } from "../context/AuthContext";
 import NavBar from "../components/Header/NavBar";
 import Header from "../components/Header/Header1";
+import Header1 from "../components/Header/Header1";
 
 const Login = () => {
   const { loginUser, loginError, loginInfo, updateLoginInfo, isLoginLoading } =

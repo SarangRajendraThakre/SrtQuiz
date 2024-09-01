@@ -18,7 +18,7 @@ const PhysicsSlider = () => {
     const fetchGuessQuizzes = async () => {
       try {
         const response = await axios.get(`${baseUrl1}/api/quizzes/all`);
-        const guessQuizzes = response.data.quizzes.filter(quiz => quiz.category === 'Physics');
+        const guessQuizzes = response.data.quizzes.filter(quiz => quiz.category === 'Physics'&& quiz.visibility === 'public');
         await Promise.all(guessQuizzes.map(async (quiz) => {
           if (quiz.createdBy) {
             const creator = await axios.get(`${baseUrl1}/api/find/${quiz.createdBy}`);

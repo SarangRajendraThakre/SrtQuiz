@@ -35,7 +35,7 @@ const QuizListPrivate = () => {
       const promises = quizzes.map(async (quiz) => {
         try {
           const response = await axios.get(`${baseUrl1}/api/find/${quiz.createdBy}`);
-          return response.data.name;  // Make sure the response contains the name
+          return response.data.name;
         } catch (error) {
           console.error('Error fetching quiz creator name:', error);
           return 'Unknown';
@@ -71,11 +71,11 @@ const QuizListPrivate = () => {
         <div>No quizzes have been created yet.</div>
       )}
       {!error && (
-        <Row xs={1} md={2} className="g-4">
+        <Row xs={1} md={2} lg={3} className="g-4">
           {quizzes.map((quiz, index) => (
             <Col key={quiz._id} className='p-3'>
               <Card className='p-2' onClick={() => handleCardClick(quiz._id)}>
-                <Card.Img variant="top" src={`${baseUrl1}${quiz.posterImg}`} style={{ height: '300px', objectFit: 'cover' }} />
+                <Card.Img variant="top" src={`${baseUrl1}${quiz.posterImg}`} style={{ height: '200px', objectFit: 'cover' }} />
                 <Card.Body>
                   <Card.Title className='text-2xl'>{quiz.title}</Card.Title>
                   <p>Created By: {creatorNames[index]}</p>

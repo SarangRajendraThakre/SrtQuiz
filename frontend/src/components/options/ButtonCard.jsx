@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import "./ButtonCard.css";
 
+import tick from "../../assets/tick.svg";
+
 const ButtonCard = ({ icon, colorClass, answer, onAnswerChange, index, onCorrectAnswerChange, questiontype }) => {
   const [isTyping, setIsTyping] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
@@ -130,8 +132,7 @@ const ButtonCard = ({ icon, colorClass, answer, onAnswerChange, index, onCorrect
           >
             {isChecked && (
               <span className="icon-button__IconSpan-sc-12q2f5v-2 ftJDBB">
-                <img
-                  src="//assets-cdn.kahoot.it/builder/v2/assets/check-icon-fe2a6a3d.svg"
+             <img src={tick} 
                   alt="checkmark"
                   className="icon-button__CheckIcon-sc-12q2f5v-3 bCsMwL"
                 />

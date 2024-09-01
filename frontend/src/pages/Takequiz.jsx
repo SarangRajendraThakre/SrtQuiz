@@ -85,7 +85,7 @@ const TakeQuiz = () => {
           wrongAudio.current.play();
           setTimeout(() => {
             moveToNextQuestion();
-          }, 4000);
+          }, 2000);
         }
       } else {
         // For other question types, toggle selected option indexes (MSQ or NAT)
@@ -115,7 +115,7 @@ const TakeQuiz = () => {
         wrongAudio.current.play();
         setTimeout(() => {
           moveToNextQuestion();
-        }, 4000);
+        }, 2000);
       }
     }
   };
@@ -196,9 +196,9 @@ const TakeQuiz = () => {
   
   return (
     <div
-      className="mainimagecontainer h-screen flex justify-center items-center"
+      className="mainimagecontainer h-screen flex justify-center items-center bg-black"
       style={{
-        backgroundImage: `url(http://localhost:5000${currentQuestion.imagePath})`,
+        backgroundImage: `url(${baseUrl1}${currentQuestion.imagePath})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}

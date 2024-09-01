@@ -28,7 +28,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={user ? <Home /> : <Navigate to="/login" />} />
         <Route path="/chat" element={<Chat />} />
-        <Route path="/createquiz" element={<Createquiz />} />
+        <Route path="/createquiz" element={user ? <Createquiz />:<Navigate to="/createquiz" />} />
         <Route path="/quiz" element={<QuizList />} />
         <Route path="/mtp" element={<Machingthepairs />} />
         <Route path="/fun" element={<ForFun />} />
@@ -37,7 +37,7 @@ const App = () => {
    
 
         <Route path="/takequiz" element={<Takequiz />} />
-        <Route path="/takequiz/:quizId" element={<Takequiz />} />
+        <Route path="/takequiz/:quizId" element={user ? <Takequiz />:<Navigate to="/login" />} />
         <Route path="/createquiz/:quizId" element={<Createquiz />} />
 
         <Route path="/home" element={<Home />} />

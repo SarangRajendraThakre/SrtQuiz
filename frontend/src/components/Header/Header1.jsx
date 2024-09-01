@@ -17,20 +17,20 @@ const Header1 = ({ handleToggleModalSetting, createdquizdatatitle }) => {
   };
 
   const headerClasses = isHomePage()
-    ? "w-full m-4 h-14 flex z-[200] bg-white justify-between items-center font-sans px-4"
-    : "w-full fixed h-14 flex z-[200] bg-white justify-between items-center font-sans px-4";
+    ? " m-4  flex z-[200] bg-white justify-between items-center font-sans "
+    : " m-4  flex z-[200] bg-white justify-between items-center font-sans ";
 
   return (
     <>
       <div className={headerClasses}>
-        <Link to="/" className="pr-4">
+        <Link to="/" className="">
           <img className="w-40" src={logo} alt="Logo" />
         </Link>
         {!isLoginOrRegisterPage() && isHomePage() && (
           <form className="w-[37rem]">
             <label
               htmlFor="default-search"
-              className="mb-2  text-sm font-medium text-gray-900 sr-only dark:text-white"
+              className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
             >
               Search
             </label>
@@ -38,7 +38,7 @@ const Header1 = ({ handleToggleModalSetting, createdquizdatatitle }) => {
               <input
                 type="search"
                 id="default-search"
-                className="block  w-full pl-9 p-3   text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="block w-full pl-9 p-3 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Search the quiz here ...."
                 required
               />
@@ -93,7 +93,7 @@ const Header1 = ({ handleToggleModalSetting, createdquizdatatitle }) => {
                 </div>
               </>
             )}
-            <div className="w-1 h-10 bg-gray-300"></div>
+            
           </>
         )}
         {user ? (
@@ -114,19 +114,15 @@ const Header1 = ({ handleToggleModalSetting, createdquizdatatitle }) => {
             Register
           </Link>
         )}
-        {user ? (
-          <button className="bg-blue-600 text-white pb-1 px-4 h-8 rounded-md">
-            Save
-          </button>
-        ) : (
-          <Link
-            to="/login"
-            className="bg-gray-200 h-9 px-4 pb-1 font-semibold mr-2 rounded-md"
-          >
-            Login
-          </Link>
-        )}
+
+        <Link
+          to="/login"
+          className="bg-gray-200 h-9 px-4 pb-1 font-semibold mr-2 rounded-md"
+        >
+          Login
+        </Link>
       </div>
+     
     </>
   );
 };

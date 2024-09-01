@@ -9,13 +9,20 @@ import { PiDotsThreeOutlineVerticalFill } from "react-icons/pi";
 import Menudots from "../components/MiddleQtype/Menudots";
 
 const Mcq = () => {
-  const { updateQuestionById, quizData, questionIdd, getQuestionById,selectedImage } = useQuiz();
+  const {
+    updateQuestionById,
+    quizData,
+    questionIdd,
+    getQuestionById,
+    selectedImage,
+  } = useQuiz();
 
   const [question, setQuestion] = useState("");
   const [answers, setAnswers] = useState([]);
   const [correctAnswerIndices, setCorrectAnswerIndices] = useState([]);
   const [imagePath, setImagePath] = useState("");
   const [questiontype, setQuestiontype] = useState("MCQ");
+  const [explanation, setExplanation] = useState("");
 
   const fileInputRef = useRef(null);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -50,8 +57,6 @@ const Mcq = () => {
 
   const showmenudots = windowWidth < 900;
 
-
-
   useEffect(() => {
     if (questionIdd && quizData) {
       const foundQuestion = getQuestionById();
@@ -62,23 +67,25 @@ const Mcq = () => {
           ? foundQuestion.options
           : []
       );
-      
+
       // Filter out empty values from the correctAnswers array
-      const filteredCorrectAnswers = (foundQuestion && Array.isArray(foundQuestion.correctAnswers))
-        ? foundQuestion.correctAnswers.filter(answer => answer !== "")
-        : [];
+      const filteredCorrectAnswers =
+        foundQuestion && Array.isArray(foundQuestion.correctAnswers)
+          ? foundQuestion.correctAnswers.filter((answer) => answer !== "")
+          : [];
       setCorrectAnswerIndices(filteredCorrectAnswers);
     }
   }, [questionIdd, quizData]);
-  
+
   const handleUploadClick = () => {
     fileInputRef.current.click();
   };
 
- 
   const longPressTimerRef = useRef(null);
 
-
+  const handleExplanationChange = (e) => {
+    setExplanation(e.target.value);
+  };
   const handleQuestionChange = (e) => {
     setQuestion(e.target.value);
   };
@@ -92,7 +99,7 @@ const Mcq = () => {
   const handleSelectCorrectAnswer = (index) => {
     // Check if the index is already in the array
     const indexExists = correctAnswerIndices.includes(index);
-  
+
     // If the index exists and there's only one correct answer selected,
     // remove it from the array
     if (indexExists && correctAnswerIndices.length === 1) {
@@ -104,7 +111,6 @@ const Mcq = () => {
       setCorrectAnswerIndices([index]);
     }
   };
-  
 
   const handleImageChange = async (e) => {
     try {
@@ -127,18 +133,19 @@ const Mcq = () => {
         console.error("Question ID or quiz data not available");
         return;
       }
-  
+
       const updatedQuestionData = {
         question: question,
         answers: answers,
         correctAnswerIndices: correctAnswerIndices,
         imagePath: imagePath,
         questiontype: questiontype,
+        explanation: explanation,
       };
-  
+
       // Clear previous correct answers
       setCorrectAnswerIndices([]);
-      
+
       // Update the question
       await updateQuestionById(questionIdd, updatedQuestionData);
     } catch (error) {
@@ -155,13 +162,10 @@ const Mcq = () => {
   const handleImageLongPressEnd = () => {
     clearTimeout(longPressTimerRef.current);
   };
-  
+
   return (
     <>
-      <div
-        className="questiontext"
-        style={backgroundStyle}
-      >
+      <div className="questiontext" style={backgroundStyle}>
         <div className="advertise">
           <div className="advertiseinner"></div>
         </div>
@@ -187,17 +191,29 @@ const Mcq = () => {
         <div className="mainmiddlearea">
           <div className="mainmiddleareainner">
             <div className="mainmiddleareainnerinner">
-              <div className={imagePath ? "mainmiddleareainnerinnerinnerimg" : "mainmiddleareainnerinnerinner"}>
+              <div
+                className={
+                  imagePath
+                    ? "mainmiddleareainnerinnerinnerimg"
+                    : "mainmiddleareainnerinnerinner"
+                }
+              >
                 {imagePath ? (
                   <div
-                    className={imagePath ? "mainmiddleareainnerinnerinnerimg" : "mainmiddleareainnerinnerinner"}
+                    className={
+                      imagePath
+                        ? "mainmiddleareainnerinnerinnerimg"
+                        : "mainmiddleareainnerinnerinner"
+                    }
                     onMouseDown={handleImageLongPressStart}
                     onMouseUp={handleImageLongPressEnd}
                     onTouchStart={handleImageLongPressStart}
                     onTouchEnd={handleImageLongPressEnd}
                   >
                     <img
-                      className={imagePath && "mainmiddleareainnerinnerinnerimg"}
+                      className={
+                        imagePath && "mainmiddleareainnerinnerinnerimg"
+                      }
                       src={`${baseUrl1}${imagePath}`}
                       alt=""
                     />
@@ -253,12 +269,30 @@ const Mcq = () => {
                     answers={answers}
                     onAnswerChange={handleAnswerChange}
                     onCorrectAnswerChange={handleSelectCorrectAnswer}
-                    correctAnswerIndices={correctAnswerIndices}  // Add this line
+                    correctAnswerIndices={correctAnswerIndices} // Add this line
                     questiontype={questiontype}
                   />
                 )}
+
                 <button className="addmore">Add more options</button>
                 <button onClick={handleUpdateQuestion}>Submit</button>
+              </div>
+              <div className="question-container">
+                <div className="question-title__Container">
+                  <div className="question-text-field__TitleWrapper">
+                    <div className="question-text-field__Editor">
+                      <input
+                        className="styles__Wrapper innerquestiontextinput styles__ContentEditable styles__Wrapper "
+                        type="text"
+                        placeholder={!isFocused ? "Type question here" : ""}
+                        value={explanation}
+                        onFocus={handleFocus}
+                        onBlur={handleBlur}
+                        onChange={handleExplanationChange}
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

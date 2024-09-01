@@ -59,3 +59,29 @@
 .card {
   margin: 10px; /* Adjust the margin to add space around the cards */
 }
+
+/* Media query for mobile devices */
+@media (max-width: 600px) {
+  .button-row {
+    flex-direction: column; /* Stack buttons vertically */
+    align-items: stretch; /* Stretch buttons to full width */
+  }
+
+  .quiz-button {
+    width: 100%; /* Full width for buttons */
+    margin-top: 5px; /* Adjust margin between buttons */
+  }
+
+  .bottombuttons {
+    flex-direction: column; /* Stack bottom buttons vertically */
+    align-items: stretch; /* Stretch buttons to full width */
+  }
+
+  .card {
+    margin: 5px 0; /* Adjust margin for cards */
+  }
+
+  .slider-card-container {
+    padding: 5px; /* Adjust padding for card container */
+  }
+}

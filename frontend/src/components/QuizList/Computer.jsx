@@ -8,7 +8,7 @@ import 'slick-carousel/slick/slick-theme.css'; // Import slick carousel theme st
 import './QuizList.css';
 import { baseUrl1 } from "../../utils/services";
 
-const BiologySlider = () => {
+const Computer = () => {
   const [quizzes, setQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showButtonId, setShowButtonId] = useState(null);
@@ -18,7 +18,7 @@ const BiologySlider = () => {
     const fetchGuessQuizzes = async () => {
       try {
         const response = await axios.get(`${baseUrl1}/api/quizzes/all`);
-        const guessQuizzes = response.data.quizzes.filter(quiz => quiz.category === 'Biology'&& quiz.visibility === 'public');
+        const guessQuizzes = response.data.quizzes.filter(quiz => quiz.category === 'Gk'&& quiz.visibility === 'public');
         await Promise.all(guessQuizzes.map(async (quiz) => {
           if (quiz.createdBy) {
             const creator = await axios.get(`${baseUrl1}/api/find/${quiz.createdBy}`);
@@ -119,7 +119,7 @@ const BiologySlider = () => {
 
   return (
     <div className='mt-3 p-4'>
-      <h1 className='font-semibold'>Biology Quizzes</h1>
+      <h1 className='font-semibold'>Computer Quizzes</h1>
       {loading ? (
         <Spinner animation="border" role="status">
           <span className="visually-hidden">Loading...</span>
@@ -154,4 +154,4 @@ const BiologySlider = () => {
   );
 };
 
-export default BiologySlider;
+export default Computer;

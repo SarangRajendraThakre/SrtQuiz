@@ -67,11 +67,14 @@ const TrueFalse = () => {
   };
 
   const handleSelectCorrectAnswer = (index) => {
-    let newCorrectAnswerIndices;
-
+    let newCorrectAnswerIndices = [];
+  
+    // Toggle correct answer based on question type
     if (questiontype === "True/False") {
-      newCorrectAnswerIndices = [index];
+      // For True/False questions, set the correct answer index directly
+      newCorrectAnswerIndices = [index]; // Set [0] for True, [1] for False
     } else {
+      // For other question types, toggle the correct answer index
       const indexExists = correctAnswerIndices.includes(index);
       if (indexExists) {
         newCorrectAnswerIndices = correctAnswerIndices.filter((i) => i !== index);
@@ -79,9 +82,10 @@ const TrueFalse = () => {
         newCorrectAnswerIndices = [...correctAnswerIndices, index];
       }
     }
-
+  
     setCorrectAnswerIndices(newCorrectAnswerIndices);
   };
+  
 
   const handleImageChange = async (e) => {
     try {
