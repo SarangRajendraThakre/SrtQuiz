@@ -6,7 +6,8 @@ const questionSchema = new mongoose.Schema({
   correctAnswers: [String],
   questionType: String,
   timer: { type: Number, default: 20},
-  imagePath: String
+  imagePath: String ,
+  explanationText:String
 });
 
 const quizSchema = new mongoose.Schema({

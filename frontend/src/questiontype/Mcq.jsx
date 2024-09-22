@@ -22,7 +22,7 @@ const Mcq = () => {
   const [correctAnswerIndices, setCorrectAnswerIndices] = useState([]);
   const [imagePath, setImagePath] = useState("");
   const [questiontype, setQuestiontype] = useState("MCQ");
-  const [explanation, setExplanation] = useState("");
+  const [explanation, setExplanation] = useState(""); // Correctly handling explanation state
 
   const fileInputRef = useRef(null);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -33,7 +33,6 @@ const Mcq = () => {
   };
 
   const handleBlur = (e) => {
-    setIsFocused(false);
     if (!e.target.value.trim()) {
       setIsFocused(false);
     }
@@ -68,12 +67,12 @@ const Mcq = () => {
           : []
       );
 
-      // Filter out empty values from the correctAnswers array
       const filteredCorrectAnswers =
         foundQuestion && Array.isArray(foundQuestion.correctAnswers)
           ? foundQuestion.correctAnswers.filter((answer) => answer !== "")
           : [];
       setCorrectAnswerIndices(filteredCorrectAnswers);
+      setExplanation(foundQuestion ? foundQuestion.explanationText : ""); // Ensure explanation is set
     }
   }, [questionIdd, quizData]);
 
@@ -84,8 +83,9 @@ const Mcq = () => {
   const longPressTimerRef = useRef(null);
 
   const handleExplanationChange = (e) => {
-    setExplanation(e.target.value);
+    setExplanation(e.target.value); // Correctly update explanation
   };
+
   const handleQuestionChange = (e) => {
     setQuestion(e.target.value);
   };
@@ -97,17 +97,12 @@ const Mcq = () => {
   };
 
   const handleSelectCorrectAnswer = (index) => {
-    // Check if the index is already in the array
     const indexExists = correctAnswerIndices.includes(index);
 
-    // If the index exists and there's only one correct answer selected,
-    // remove it from the array
     if (indexExists && correctAnswerIndices.length === 1) {
       setCorrectAnswerIndices([]);
-      // Show notification to the user
       alert("Only one correct answer can be selected for this question.");
     } else {
-      // Otherwise, deselect all previously selected correct answers
       setCorrectAnswerIndices([index]);
     }
   };
@@ -140,13 +135,11 @@ const Mcq = () => {
         correctAnswerIndices: correctAnswerIndices,
         imagePath: imagePath,
         questiontype: questiontype,
-        explanation: explanation,
+        explanation: explanation, // Make sure explanationText is sent
       };
 
-      // Clear previous correct answers
       setCorrectAnswerIndices([]);
 
-      // Update the question
       await updateQuestionById(questionIdd, updatedQuestionData);
     } catch (error) {
       console.error("Error updating question:", error);
@@ -269,34 +262,34 @@ const Mcq = () => {
                     answers={answers}
                     onAnswerChange={handleAnswerChange}
                     onCorrectAnswerChange={handleSelectCorrectAnswer}
-                    correctAnswerIndices={correctAnswerIndices} // Add this line
+                    correctAnswerIndices={correctAnswerIndices}
                     questiontype={questiontype}
                   />
                 )}
 
                 <button className="addmore">Add more options</button>
-                <button onClick={handleUpdateQuestion}>Submit</button>
-              </div>
-              <div className="question-container">
-                <div className="question-title__Container">
-                  <div className="question-text-field__TitleWrapper">
-                    <div className="question-text-field__Editor">
-                      <input
-                        className="styles__Wrapper innerquestiontextinput styles__ContentEditable styles__Wrapper "
-                        type="text"
-                        placeholder={!isFocused ? "Type question here" : ""}
-                        value={explanation}
-                        onFocus={handleFocus}
-                        onBlur={handleBlur}
-                        onChange={handleExplanationChange}
-                      />
-                    </div>
-                  </div>
-                </div>
+                <button onClick={handleUpdateQuestion}>Save Question</button>
               </div>
             </div>
           </div>
         </div>
+
+        <div className="explanation-container">
+          <label className="explanation-label">Explanation</label>
+          <textarea
+            className="explanation-input"
+            value={explanation}
+            onChange={handleExplanationChange}
+            placeholder="Type the explanation for this question..."
+          />
+        </div>
+
+        {showmenudots && (
+          <div className="menudots-container">
+            <PiDotsThreeOutlineVerticalFill fontSize="2em" />
+            <Menudots />
+          </div>
+        )}
       </div>
     </>
   );

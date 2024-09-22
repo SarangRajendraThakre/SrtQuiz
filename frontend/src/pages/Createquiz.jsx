@@ -192,6 +192,7 @@ const Createquiz = () => {
   const [imagePath, setImagePath] = useState("");
   const [questiontypee, setQuestionTypee] = useState("");
   const [image, setImage] = useState(null);
+  const [explanation, setExplanation] = useState("");
 
   const fileInputRef = useRef(null);
 
@@ -199,26 +200,13 @@ const Createquiz = () => {
     fileInputRef.current.click();
   };
 
-  const handleQuestionChange = (e) => {
-    setQuestion(e.target.value);
-  };
-
-  const handleAnswerChange = (e, index) => {
-    const newAnswers = [...answers];
-    newAnswers[index] = e.target.innerText;
-    setAnswers(newAnswers);
-  };
-
-  const handleSelectCorrectAnswer = (index) => {
-    setCorrectAnswerIndex(index);
-  };
 
   const handleSubmite = async (type) => {
     try {
       let uploadedImagePath = "";
-
+  
       let createdQuizId = localStorage.getItem("createdQuizId");
-
+  
       if (!createdQuizId) {
         const response = await axios.post(`${baseUrl1}/api/quizzes`, {
           title: "",
@@ -226,11 +214,11 @@ const Createquiz = () => {
           folder: "Your Quiz Folder",
           posterImg: "",
         });
-
+  
         createdQuizId = response.data._id;
-        console.log("Empty quiz created:", response.data);
         localStorage.setItem("createdQuizId", createdQuizId);
       }
+  
       const questionData = {
         question: question,
         answers: answers,
@@ -238,22 +226,23 @@ const Createquiz = () => {
         questiontype: type,
         imagePath: uploadedImagePath,
         quizId: createdQuizId,
+        explanationText: explanation,  // Make sure explanation is included
       };
-
+      console.log(questionData);
+  
       await addQuestion(questionData);
-
+  
+      // Reset form fields
       setQuestion("");
       setAnswers(["", "", "", ""]);
       setCorrectAnswerIndex(null);
       setImagePath("");
+      setExplanation(""); // Reset explanation field
     } catch (error) {
       console.error("Error creating quiz:", error);
     }
-
-    updateQuestionType(type);
-    setIsModalOpen(false);
-    setQuestionCards([...questionCards, type]);
   };
+  
 
   const handleDeleteQuiz = async () => {
     try {

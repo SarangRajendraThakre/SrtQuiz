@@ -72,33 +72,40 @@ exports.createQuiz = async (req, res) => {
   }
 };
 
-// Add a new question to a quiz
 exports.addQuestionToQuiz = async (req, res) => {
   try {
-    const { quizId, question, answers, correctAnswerIndex, imagePath, questiontype } = req.body;
+    console.log('Request Body from quiz:', req.body); // Log the entire request body
+
+    const { quizId, question, answers, correctAnswerIndex, imagePath, questiontype, explanation } = req.body;
 
     const quiz = await Quiz.findById(quizId);
     if (!quiz) {
       return res.status(404).json({ message: 'Quiz not found' });
     }
+    console.log('Quiz Found:', quiz); // Log the found quiz
 
     const newQuestion = {
       questionText: question,
       options: answers || [],
       correctAnswers: correctAnswerIndex || [],
       questionType: questiontype || null,
-      imagePath: imagePath || null
-    };
+      imagePath: imagePath || null,
+      explanationtext: explanation       };
+    console.log('New Question:', newQuestion.explanationtext); // Log new question data
 
     quiz.questions.push(newQuestion);
-    await quiz.save();
+    console.log('Quiz Before Save:', quiz); // Log quiz before saving
 
-    res.status(201).json({ message: 'Question added successfully', quiz });
+    const savedQuiz = await quiz.save(); // Save the updated quiz
+    console.log('Saved Quiz:', savedQuiz); // Log the saved quiz
+
+    res.status(201).json({ message: 'Question added successfully', quiz: savedQuiz });
   } catch (error) {
     console.error('Error adding question:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
 
 // Delete question by question ID
 exports.deleteQuestionById = async (req, res) => {
@@ -145,13 +152,17 @@ exports.getQuestionById = async (req, res) => {
 // Update question by question ID
 exports.updateQuestionById = async (req, res) => {
   try {
+    console.log('Request Body:', req.body); // Log the entire request body
+
     const questionId = req.params.questionId;
-    const { question, answers, correctAnswerIndices, imagePath, questiontype } = req.body;
+    const { question, answers, correctAnswerIndices, questiontype ,imagePath, explanation } = req.body;
 
     const quiz = await Quiz.findOne({ "questions._id": questionId });
     if (!quiz) {
       return res.status(404).json({ message: 'Quiz containing the question not found' });
     }
+
+    console.log('Quiz:', quiz); // Log the fetched quiz
 
     const updatedQuestionIndex = quiz.questions.findIndex(question => question._id.toString() === questionId);
     if (updatedQuestionIndex === -1) {
@@ -163,13 +174,19 @@ exports.updateQuestionById = async (req, res) => {
       options: answers || [],
       correctAnswers: correctAnswerIndices || [],
       questionType: questiontype || null,
-      imagePath: imagePath || null
+      imagePath: imagePath || null,
+      explanationText: explanation   // Ensure this is included
     };
 
-    quiz.questions[updatedQuestionIndex] = updatedQuestion;
-    await quiz.save();
+    console.log('Updated Question:', updatedQuestion); // Log updated question data
 
-    res.status(200).json({ message: 'Question updated successfully', quiz });
+    quiz.questions[updatedQuestionIndex] = updatedQuestion;
+    console.log('Quiz Before Save:', quiz); // Log quiz before saving
+
+    const savedQuiz = await quiz.save(); // Save the updated quiz
+    console.log('Saved Quiz:', savedQuiz); // Log the saved quiz
+
+    res.status(200).json({ message: 'Question updated successfully', quiz: savedQuiz });
   } catch (error) {
     console.error('Error updating question:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -241,6 +258,10 @@ exports.addQuestionssToQuiz = async (req, res) => {
     const { quizId, question } = req.body;
     console.log('Received request to add question:', req.body); // Log incoming request
 
+    if (!question.explanationText) {
+      return res.status(400).json({ message: 'Explanation text is required' });
+    }
+    
     // Validate required fields
     if (!quizId || !question || !question.questionText || !Array.isArray(question.options) || !Array.isArray(question.correctAnswers)) {
       return res.status(400).json({ message: 'Missing required fields or invalid question format' });
@@ -259,6 +280,7 @@ exports.addQuestionssToQuiz = async (req, res) => {
       correctAnswers: question.correctAnswers,
       questionType: question.questionType || null,
       imagePath: question.imagePath || null,
+      explanationText: explanation
     };
 
     // Add the new question to the quiz

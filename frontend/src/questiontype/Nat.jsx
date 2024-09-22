@@ -17,7 +17,7 @@ const Nat = () => {
   const [correctAnswerIndices, setCorrectAnswerIndices] = useState([]);
   const [imagePath, setImagePath] = useState("");
   const [questiontype, setQuestiontype] = useState("NAT");
-
+  const [explanation , setExplanation] = useState("");
   const fileInputRef = useRef(null);
 
  
@@ -56,9 +56,13 @@ const Nat = () => {
     fileInputRef.current.click();
   };
 
+  const handleExplanationChange = (e)=>{
+    setExplanation(e.target.value);
+  }
   const handleQuestionChange = (e) => {
     setQuestion(e.target.value);
   };
+  
 
   const handleAnswerChange = (index, updatedAnswer) => {
     const newAnswers = [...answers];
@@ -113,6 +117,7 @@ const Nat = () => {
         correctAnswerIndices: filteredCorrectAnswerIndices,
         imagePath: imagePath,
         questiontype: questiontype,
+        explanation:explanation
       };
   
       await updateQuestionById(questionIdd, updatedQuestionData);
@@ -246,14 +251,29 @@ const Nat = () => {
                   onCorrectAnswerChange={handleSelectCorrectAnswer}
                   questiontype={questiontype}
                 />
-                {/* Button for adding more options */}
-                <button className="addmore">Add more options</button>
-                {/* Button for submitting the question */}
-                <button onClick={handleUpdateQuestion}>Submit</button>
+            
+                <button className="" onClick={handleUpdateQuestion}>Save Question</button>
               </div>
             </div>
           </div>
         </div>
+
+        <div className="explanation-container position-relative flex align-items-center justify-content-center top-10">
+     
+          <textarea
+            className="explanation-input w-1/2"
+            value={explanation}
+            onChange={handleExplanationChange}
+            placeholder="Type the explanation for this question..."
+          />
+        </div>
+
+        {showmenudots && (
+          <div className="menudots-container">
+            <PiDotsThreeOutlineVerticalFill fontSize="2em" />
+            <Menudots />
+          </div>
+        )}
       </div>
     </>
   );

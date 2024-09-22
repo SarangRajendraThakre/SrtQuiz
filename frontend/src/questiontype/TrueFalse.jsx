@@ -17,6 +17,7 @@ const TrueFalse = () => {
   const [questiontype, setQuestiontype] = useState("True/False");
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
+
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
@@ -235,6 +236,7 @@ const TrueFalse = () => {
                   onCorrectAnswerChange={handleSelectCorrectAnswer}
                   questiontype={questiontype}
                 />
+                
                 <button className="addmore">Add more options</button>
                
                 <button onClick={handleUpdateQuestion}>Submit</button>
