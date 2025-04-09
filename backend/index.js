@@ -20,9 +20,11 @@ const io = new Server(server, {
 });
 
 require("dotenv").config();
+// this code is  from the srt coders
 
 app.use(express.json());
 
+<<<<<<< HEAD
 // CORS configuration
 const allowedOrigins = ["http://srtcoder.com", "http://localhost:5173", "http://192.168.45.188:5173"];
 
@@ -36,15 +38,43 @@ app.use(cors({
     return callback(null, true);
   },
 }));
+=======
+const allowedOrigins = [
+  "http://srtcoder.com",
+  "http://localhost:5173",
+  "http://192.168.45.188:5173/",
+  "http://192.168.45.188:5173",
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
+  })
+);
+>>>>>>> cad8abbef90c22f9da2d70724de30fa2893b7968
 
 // API Routes
 app.use("/api/users", userRoute);
 app.use("/api", userRoute);
 app.use("/api", quizRoutes);
+<<<<<<< HEAD
 app.use('/api/quizzes', quizRoutes);
 app.use("/api/upload", uploadRoute);
+=======
+app.use("/api/quizzes", quizRoutes);
+
+app.use("/api/upload", uploadRoute); // Mount the upload route
+>>>>>>> cad8abbef90c22f9da2d70724de30fa2893b7968
 app.use("/api/getquiz", retrievRoute);
-app.use('/uploads', express.static('uploads'));
+app.use("/uploads", express.static("uploads"));
 
 // Simple Home Route
 app.get("/", (req, res) => {
