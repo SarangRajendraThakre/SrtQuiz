@@ -1,0 +1,130 @@
+.fknXzl {
+    background: rgb(0, 0, 0);
+    width: 100%;
+    padding: 0.8rem 1.6rem;
+    border-bottom: 0.1rem solid rgba(255, 255, 255, 0.1);
+    visibility: visible;
+    opacity: 1;
+    height: 6rem;
+    overflow: hidden;
+}
+
+.diziPe {
+    max-width: 121.6rem;
+    margin: 0px auto;
+    display: grid;
+    grid-template-columns: 1fr 3rem;
+    -webkit-box-align: center;
+    align-items: center;
+    height: 100%;
+}
+
+.llJVzw.llJVzw.llJVzw {
+    color: white;
+    font-weight: 600;
+}
+
+
+.bQrrzR {
+    margin: 0px;
+    padding: 0px;
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 1.4rem;
+    letter-spacing: 0rem;
+    line-height: 2.2rem;
+    color: rgb(188, 186, 255);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.bQrrzR::after {
+    content: "→";
+    padding-left: 0.8rem;
+    display: inline-block;
+}
+
+.vMWRC {
+    transform: rotate(45deg);
+    background: none;
+    color: rgb(255, 255, 255);
+    border: none;
+    font-size: 2rem;
+    justify-self: flex-end;
+    font-weight: 500;
+    margin: 0px;
+    padding: 0px;
+    cursor: pointer;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media screen and (min-width: 990px) {
+    .fknXzl {
+        height: 4.8rem;
+        padding: 1.2rem 2.4rem;
+    }
+}
+
+
+@media screen and (min-width: 990px) {
+    .bQrrzR {
+        color: rgb(99, 93, 255);
+        font-family: Inter;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 1.4rem;
+        letter-spacing: 0rem;
+        line-height: 2.2rem;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    .bQrrzR {
+        color: rgb(99, 93, 255);
+        font-family: Inter;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 1.4rem;
+        letter-spacing: 0rem;
+        line-height: 2.2rem;
+    }
+}
+
+.llJVzw.llJVzw.llJVzw {
+    color: white;
+    font-weight: 600;
+}
+

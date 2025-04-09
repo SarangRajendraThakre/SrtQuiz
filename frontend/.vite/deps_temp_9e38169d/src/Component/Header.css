@@ -1,0 +1,126 @@
+.ezSOIv {
+    background: rgb(58, 62, 68);
+    position: fixed;
+    top: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    z-index: 1000;
+    overflow: auto;
+    max-width: 144rem;
+    transition: 0.2s;
+    border-bottom: 0.1rem solid rgba(255, 255, 255, 0.2);
+}
+
+.dcRaMF {
+    background: rgb(58, 62, 68);
+    position: fixed;
+    top: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    z-index: 1000;
+    overflow: auto;
+    max-width: 144rem;
+    transition: 0.2s;
+    border-bottom: 0.1rem solid rgba(255, 255, 255, 0.2);
+    height: 100%;
+}
+
+.knFFML {
+    background: rgb(58, 62, 68);
+    position: fixed;
+    top: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    z-index: 1000;
+    overflow: auto;
+    max-width: 144rem;
+    transition: 0.2s;
+    border-bottom: 0.1rem solid rgba(255, 255, 255, 0.2);
+}
+
+
+.hIZPmS {
+    list-style-type: none;
+    margin: 0px;
+    padding: 0px;
+}
+
+
+.eHJHVF {
+    margin: 0px;
+    padding: 0px;
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 1.8rem;
+    letter-spacing: -0.005rem;
+    line-height: 2.8rem;
+    color: rgb(188, 186, 255);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
+
+.fNxXrH a {
+    color: white;
+    font-size: 2rem;
+    letter-spacing: -0.01rem;
+    font-weight: 500;
+}
+
+.fNxXrH + li {
+    margin-top: 2rem;
+}
+
+
+.jRwwAh {
+    padding: 2.4rem 1.6rem 3.6rem;
+}
+
+
+.jRwwAh:last-child {
+    border-bottom: 0.1rem solid rgb(66, 70, 77);
+}
+
+
+.bCzHgn {
+    font-family: SpaceGrotesk, sans-serif;
+    font-weight: 500;
+    font-size: 1.4rem;
+    line-height: 2rem;
+    letter-spacing: 0.15rem;
+    text-transform: uppercase;
+    margin: 0px 0px 2rem;
+    color: rgb(140, 146, 156);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media screen and (min-width: 990px) {
+    .knFFML {
+        overflow: visible;
+    }
+}
+
+
+@media screen and (min-width: 990px) {
+    .knFFML {
+        border-radius: 0px 0px 1.6rem 1.6rem;
+        border-bottom: none;
+    }
+}

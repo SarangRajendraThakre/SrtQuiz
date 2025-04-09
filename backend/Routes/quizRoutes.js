@@ -41,5 +41,7 @@ router.get('/search', quizController.searchQuizzes);
 
 router.get('/quizzes/search/:keyword', quizController.searchQuizzes);
 
+router.get("/quiz/:quizId",quizController.getthehostquizQuestion);
+
 
 module.exports = router;
