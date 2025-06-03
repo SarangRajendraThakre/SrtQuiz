@@ -1,0 +1,65 @@
+# .gitignore
+# This file tells Git which files or directories to ignore.
+
+# Node.js specific ignores (common for both backend and frontend)
+# ========================
+node_modules/
+.env
+.DS_Store # macOS specific
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json # Only if you want to regenerate it often, usually committed
+yarn.lock         # Only if you want to regenerate it often, usually committed
+
+# Frontend specific ignores (e.g., React, Vue, Angular)
+# ========================
+# For Create React App / Vite / Next.js / similar build tools
+/frontend/build/
+/frontend/dist/
+/frontend/.vite/
+/frontend/.parcel-cache/
+/frontend/.svelte-kit/
+/frontend/.next/ # For Next.js projects
+/frontend/out/   # For Next.js static exports
+/frontend/.expo/ # For Expo projects
+/frontend/web-build/ # For some mobile framework web builds
+
+# Backend specific ignores (e.g., Node.js with Express, Mongoose)
+# ========================
+# For Node.js/Express backend
+/backend/node_modules/ # Redundant if node_modules/ is already ignored at root, but good for clarity
+/backend/.env          # Redundant if .env is already ignored at root, but good for clarity
+/backend/logs/         # Common for server logs
+/backend/uploads/      # If you're storing user uploads (like in your app)
+/backend/coverage/     # Test coverage reports
+
+# Editor-specific ignores
+# =======================
+.vscode/ # VSCode settings (only ignore user-specific settings, not workspace settings if shared)
+.idea/   # IntelliJ IDEA
+*.swp    # Vim swap files
+*.bak    # Backup files
+*.sublime-project
+*.sublime-workspace
+
+# OS generated files
+# ==================
+.DS_Store
+.Trash-*
+ehthumbs.db
+Thumbs.db
+
+# Other common ignores
+# ====================
+*.log
+*.sqlite
+*.sqlite-journal
+*.patch
+*.diff
+*.orig
+
+# Custom ignores for your project (add any other specific files/folders)
+# =====================================================================
+# For example, if you have a temporary folder at the root:
+# /temp/
