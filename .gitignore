@@ -31,8 +31,8 @@ yarn.lock         # Only if you want to regenerate it often, usually committed
 /backend/node_modules/ # Redundant if node_modules/ is already ignored at root, but good for clarity
 /backend/.env          # Redundant if .env is already ignored at root, but good for clarity
 /backend/logs/         # Common for server logs
-/backend/uploads/      # If you're storing user uploads (like in your app)
-/backend/coverage/     # Test coverage reports
+/backend/uploads/      
+/backend/coverage/     
 
 # Editor-specific ignores
 # =======================
