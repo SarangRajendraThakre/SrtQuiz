@@ -134,7 +134,7 @@ module.exports = function (io) {
         let userEntry = liveQuiz.users.find(u => u.userId.toString() === userId);
         if (!userEntry) {
           // If user is new, create entry including userName
-          userEntry = { userId, userName, answers: [], totalScore: 0 }; // <--- userName stored here on first answer
+          userEntry = { userId, userName, answers: [], totalScore: 1 }; // <--- userName stored here on first answer
           liveQuiz.users.push(userEntry);
           console.log(`[Submit Answer] User ${userName} (${userId}) added to liveQuiz for room ${roomCode}.`);
         } else {
@@ -183,48 +183,69 @@ module.exports = function (io) {
 
         console.log(`[Submit Answer Logic] Question "${question.questionText}", Submitted: "${answer}", Expected: "${correctAnswerText}", Is Correct: ${isCorrect}`);
 
-      const alreadyAnswered = userEntry.answers.find(a => a.questionId.toString() === questionId);
-        if (!alreadyAnswered) {
-            const newAnswerObject = { questionId, answer, isCorrect };
-            userEntry.answers.push(newAnswerObject);
-            userEntry.totalScore += isCorrect ? 1 : 0; // Score updated in memory here
-            console.log(`[Answer Stored Success] User ${userName} (${userId}) | Stored Answer Object:`, newAnswerObject);
-            console.log(`[Answer Stored Success] User ${userName} (${userId}) | New Total Score: ${userEntry.totalScore}`);
-        } else {
-            console.log(`[Answer Skipped] User ${userName} (${userId}) already answered question ${questionId}. Skipping storage.`);
-            return socket.emit("info", "You have already answered this question.");
-        }
+        const alreadyAnswered = userEntry.answers.find(a => a.questionId.toString() === questionId);
+  
+if (!alreadyAnswered) {
+    const newAnswerObject = { questionId, answer, isCorrect };
+    userEntry.answers.push(newAnswerObject);
+    userEntry.totalScore += isCorrect ? 1 : 0; // This calculation is correct
+    console.log(`[Answer Stored Success] User ${userName} (${userId}) | New Total Score: ${userEntry.totalScore}`); // This log shows the correct calculated score in memory
+} else {
+    console.log(`[Answer Skipped] User ${userName} (${userId}) already answered question ${questionId}. Skipping storage.`);
+    return socket.emit("info", "You have already answered this question.");
+}
 
-        // --- CRITICAL STEP: Ensure save completes before emitting leaderboard ---
-        try {
-            await liveQuiz.save(); // <--- This line is essential for persistence
-            console.log(`[DB Save] LiveQuiz document for room ${roomCode} saved successfully to DB.`);
-        } catch (saveError) {
-            console.error(`[DB Save Error] Failed to save LiveQuiz document for room ${roomCode}:`, saveError);
-            // You might want to emit an error to the client or log this more prominently
-            socket.emit("error", "Failed to save quiz progress.");
-            return; // Stop further processing if save fails
-        }
+// --- CRITICAL CHANGE AREA ---
+try {
+    // 1. Save the document with the updated score
+    await liveQuiz.save(); // Ensure this save operation completes
+    console.log(`[DB Save] LiveQuiz document for room ${roomCode} saved successfully to DB.`); // Your log indicates this runs
 
-        // Emit updated score for that user to their socket only
-        socket.emit("answer submitted", {
-            questionId,
-            isCorrect,
-            totalScore: userEntry.totalScore, // This now reflects the saved score
-        });
+    // 2. IMPORTANT: Re-fetch the liveQuiz document IMMEDIATELY from the database
+    // This is the most robust way to ensure you are working with the absolutely latest
+    // state that has been persisted to MongoDB. This bypasses any potential in-memory
+    // caching or eventual consistency issues before the next step.
+    const updatedLiveQuiz = await LiveQuiz.findOne({ roomCode });
+    if (!updatedLiveQuiz) {
+        console.error(`[DB Fetch Error] Could not re-fetch LiveQuiz document for room ${roomCode} after save.`);
+        socket.emit("error", "Failed to retrieve updated quiz data.");
+        return;
+    }
+    // Now, 'liveQuiz' variable refers to the newly fetched, confirmed-from-DB data
+    liveQuiz = updatedLiveQuiz;
 
-        // 🔄 Emit live leaderboard (construct this *after* the save is complete)
-        const leaderboardWithNames = liveQuiz.users.map(u => ({
-            userId: u.userId,
-            userName: u.userName,
-            totalScore: u.totalScore, // This totalScore comes from the `liveQuiz` object that was just saved
-        }));
-        leaderboardWithNames.sort((a, b) => b.totalScore - a.aoTalScore);
-        io.to(roomCode).emit("leaderboard update", { leaderboard: leaderboardWithNames });
-
+} catch (saveOrFetchError) {
+    console.error(`[DB Error] Failed to save or re-fetch LiveQuiz document for room ${roomCode}:`, saveOrFetchError);
+    socket.emit("error", "An error occurred while updating quiz progress.");
+    return; // Stop further processing if persistence fails
+}
+// --- END CRITICAL CHANGE AREA ---
 
 
+// Emit updated score for that user to their socket only (using the now confirmed score)
+const currentUsersFinalScore = liveQuiz.users.find(u => u.userId.toString() === userId)?.totalScore || 0;
+socket.emit("answer submitted", {
+    questionId,
+    isCorrect,
+    totalScore: currentUsersFinalScore, // Send the confirmed totalScore from DB
+});
 
+// 🔄 Emit live leaderboard (now directly uses the *re-fetched* liveQuiz.users)
+// This calculates scores for ALL users in the liveQuiz and sends to everyone in the room
+const leaderboardWithNames = liveQuiz.users.map(u => ({
+    userId: u.userId,
+    userName: u.userName,
+    totalScore: u.totalScore, // This 'totalScore' now comes from the freshly fetched document
+}));
+leaderboardWithNames.sort((a, b) => b.totalScore - a.totalScore); // Sort by score descending
+io.to(roomCode).emit("leaderboard update", { leaderboard: leaderboardWithNames });
+
+
+
+
+
+
+        
 
         // ✅ Optional Auto-End Quiz When All Questions Are Answered by All Participants
         const totalQuestions = quiz.questions.length;
