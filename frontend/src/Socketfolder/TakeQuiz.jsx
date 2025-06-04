@@ -12,6 +12,7 @@ const TakeQuiz = () => {
   const [selectedAnswerLocal, setSelectedAnswerLocal] = useState(null); // Local state for selected option
   const [error, setError] = useState(null); // For displaying errors
   const [infoMessage, setInfoMessage] = useState(null); // For info messages (e.g., already answered)
+  const [finalLeaderboardResults, setFinalLeaderboardResults] = useState(null);
 
   const { quizId } = useParams(); // roomCode for the player
   const navigate = useNavigate();
@@ -95,6 +96,17 @@ const TakeQuiz = () => {
         }
     }
 
+    socket.on('quiz ended', (data) => { //
+    console.log('Quiz ended received:', data); //
+    setFinalLeaderboardResults(data.results); //
+
+    // Navigate if not already navigated by frontend logic for final question
+    // This check helps prevent redundant navigation if the user already clicked "Submit Final Answer"
+    if (!window.location.pathname.includes('/leaderboard')) { //
+         navigate('/leaderboard', { state: { finalResults: data.results, currentUserScore: data.results.find(res => res.userId === userId)?.totalScore || score, roomCode: quizId } }); //
+    }
+});
+
 
     // --- Cleanup on unmount ---
     return () => {
@@ -155,9 +167,19 @@ const TakeQuiz = () => {
     // Frontend logic to move to the next question or signal completion
     const isLastQuestion = currentQuestionIndex === questions.length - 1;
 
-    if (!isLastQuestion) {
-      setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
-    }
+
+if (isLastQuestion) { //
+    console.log("Submitting final answer, navigating to leaderboard immediately."); //
+    navigate('/leaderboard', { //
+        state: {
+            roomCode: quizId, //
+            currentUserScore: score, //
+            finalResults: finalLeaderboardResults || [] //
+        }
+    });
+} else {
+    setCurrentQuestionIndex((prevIndex) => prevIndex + 1); //
+}
     // If it's the last question, navigation to leaderboard will be triggered by
     // the 'quiz ended' event from the server.
   };
