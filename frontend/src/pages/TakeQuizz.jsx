@@ -9,7 +9,7 @@ import { baseUrl1 } from "../utils/services";
 import "./home.css";
 
 
-const TakeQuiz = () => {
+const TakeQuizz = () => {
   const { quizId } = useParams();
   const [quizData, setQuizData] = useState(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -309,5 +309,5 @@ const TakeQuiz = () => {
 );
 };
 
-export default TakeQuiz;
+export default TakeQuizz;
 

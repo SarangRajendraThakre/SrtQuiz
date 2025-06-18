@@ -237,8 +237,7 @@ const TrueFalse = () => {
                   questiontype={questiontype}
                 />
                 
-                <button className="addmore">Add more options</button>
-               
+             
                 <button onClick={handleUpdateQuestion}>Submit</button>
               </div>
             </div>

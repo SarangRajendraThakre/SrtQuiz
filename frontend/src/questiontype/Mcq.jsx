@@ -271,7 +271,6 @@ const Mcq = () => {
                   />
                 )}
 
-                <button className="addmore">Add more options</button>
                 <button onClick={handleUpdateQuestion}>Save Question</button>
               </div>
               <div className="question-container">
@@ -295,15 +294,7 @@ const Mcq = () => {
           </div>
         </div>
 
-        <div className="explanation-container">
-          <label className="explanation-label">Explanation</label>
-          <textarea
-            className="explanation-input"
-            value={explanation}
-            onChange={handleExplanationChange}
-            placeholder="Type the explanation for this question..."
-          />
-        </div>
+     
 
         {showmenudots && (
           <div className="menudots-container">
