@@ -41,7 +41,7 @@ const QuizListPrivate = () => {
     const fetchQuizCreatorNames = async () => {
       const promises = quizzes.map(async (quiz) => {
         try {
-          const response = await axios.get(`${baseUrl1}/api/find/${quiz.createdBy}`);
+          const response = await axios.get(`${baseUrl1}/api/users/find/${quiz.createdBy}`);
           return response.data.name;
         } catch (error) {
           console.error("Error fetching quiz creator name:", error);

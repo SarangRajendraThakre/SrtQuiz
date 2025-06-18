@@ -24,7 +24,7 @@ const QuizListPublic = () => {
           publicQuizzes.map(async (quiz) => {
             try {
               if (quiz.createdBy) {
-                const creatorRes = await axios.get(`${baseUrl1}/api/find/${quiz.createdBy}`);
+                const creatorRes = await axios.get(`${baseUrl1}/api/users/find/${quiz.createdBy}`);
                 const creatorName = creatorRes?.data?.name || 'Unknown';
                 return { ...quiz, creatorName };
               }
