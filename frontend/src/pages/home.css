@@ -2,18 +2,15 @@
   position: relative;
   width: calc(100% - 2.5rem); /* Adjusted width */
   height: 7.5rem;
-
   top: 0.5rem;
   /* Other styles remain the same */
-  position:fixed;
+  position: fixed;
   z-index: 9999;
 }
-
 
 .toolbar {
   display: flex;
   margin-top: 10px;
-  
   padding: .75rem;
   border-radius: .5rem;
   justify-content: space-between;
@@ -27,24 +24,27 @@
   transform: translate(-50%, -50%);
   visibility: hidden;
 }
-.toolbarc1{
+
+.toolbarc1 {
   background-color: #46178F;
 }
-.toolbarc2{
+
+.toolbarc2 {
   background-color: #287109;
 }
-.toolbarc3{
+
+.toolbarc3 {
   background-color: #900505;
 }
-.toolbarc4{
+
+.toolbarc4 {
   background-color: #0f2c84;
 }
 
-
-
-.toolbar-active{
+.toolbar-active {
   visibility: visible;
 }
+
 .toolbar__logo {
   max-height: 5rem;
   min-width: 7.75rem;
@@ -56,12 +56,14 @@
   width: 4.5rem;
   min-width: 4.5rem;
 }
+
 .toolbar__section {
   width: 100%;
   position: relative;
   overflow: hidden;
   margin: 0 1rem;
 }
+
 .toolbar__buttons {
   max-height: 5rem;
   display: -webkit-box;
@@ -74,6 +76,7 @@
   background-color: rgba(0, 0, 0, 0.5);
   color: #fff;
 }
+
 .toolbar__switcher__item {
   display: inline-block;
   width: auto;
@@ -87,6 +90,7 @@
   text-decoration: none;
   cursor: pointer;
 }
+
 .flickity-enabled.is-draggable {
   -webkit-tap-highlight-color: transparent;
   tap-highlight-color: transparent;
@@ -95,54 +99,53 @@
   -ms-user-select: none;
   user-select: none;
 }
-.slide_container_inner{
-  
+
+.slide_container_inner {
   height: 85px;
   touch-action: pan-y;
   overflow: hidden;
   position: relative;
   height: 100%;
 }
-.flickity-slider{
+
+.flickity-slider {
   position: absolute;
   width: 100%;
   height: 100%;
-  left: 0px; 
+  left: 0px;
   transform: translateX(-93.87%);
-
-}
-.toolbar_tile{
-width: 9.0625rem;
-height: 5.3125rem;
-display: inline-block;
-margin: 0.5rem;
-position: absolute;
-left: 0;
 }
 
-.toolbar__tile{
+.toolbar_tile {
+  width: 9.0625rem;
+  height: 5.3125rem;
+  display: inline-block;
+  margin: 0.5rem;
+  position: absolute;
+  left: 0;
+}
+
+.toolbar__tile {
   border-radius: 1rem;
   width: 180px;
   height: 100px;
   border-radius: 1rem;
-
 }
 
+.toolbar__tile:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: .5rem;
+  background-color: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  -webkit-transition: 0.2s all;
+  transition: 0.2s all;
+}
 
-   .toolbar__tile:before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: .5rem;
-    background-color: rgba(0, 0, 0, 0.4);
-    opacity: 0;
-    -webkit-transition: 0.2s all;
-    transition: 0.2s all;
-
-   }
 .toolbar__section__box-shadow--left {
   position: absolute;
   left: 0;
@@ -153,6 +156,7 @@ left: 0;
   background: -webkit-linear-gradient(right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.35) 100%);
   background: linear-gradient(270deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.35) 100%);
 }
+
 .toolbar__section__box-shadow--right {
   position: absolute;
   right: 0;
@@ -164,15 +168,14 @@ left: 0;
   background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.35) 100%);
 }
 
-
-.toolbar__tile img{
-object-fit: contain;
-
+.toolbar__tile img {
+  object-fit: contain;
   width: 180px;
   height: 100px;
   border-radius: 1rem;
   padding: 1rem;
-} 
+}
+
 .footermain {
   position: fixed;
   bottom: 0;
@@ -184,9 +187,95 @@ object-fit: contain;
   padding: 10px 0; /* Adjust padding as needed */
 }
 
-
-@media screen and (max-width: 768px) { /* Adjust max-width as per your mobile breakpoint */
+/* --- Mobile Responsiveness --- */
+@media screen and (max-width: 768px) {
   .toolbar_container {
+    height: auto; /* Allow height to adjust based on content */
+    width: 100%; /* Take full width on mobile (before adding internal margin) */
+    top: 0; /* Align to top */
+    padding-bottom: 10px; /* Add some padding at the bottom */
+    position: relative; /* Change to relative to avoid fixed positioning issues if content below it scrolls */
+  }
+
+  .toolbar {
+    flex-direction: column; /* Stack items vertically */
+    justify-content: center; /* Center items when stacked */
+    align-items: center; /* Center items horizontally */
+    width: calc(100% - 2rem); /* Adjusted width: 100% minus 1rem (16px) on each side */
+    margin: 0 auto; /* Center the toolbar horizontally */
+    margin-top: 10px; /* Keep existing top margin */
+    /* Added left and right margin to the toolbar itself */
+    margin-left: 1rem; /* Example: 16px margin on the left */
+    margin-right: 1rem; /* Example: 16px margin on the right */
+
+    position: static; /* Remove absolute positioning */
+    transform: none; /* Remove transform */
+    padding: .5rem; /* Adjust padding */
+  }
+
+  .toolbar__logo {
+    margin-bottom: 1rem; /* Add space below logo */
+    max-height: 4rem; /* Slightly smaller logo */
+    min-width: 6rem;
+    max-width: 6rem;
+  }
+
+  .toolbar__switcher {
+    width: 100%; /* Make switcher take full width */
+    display: flex; /* Keep switcher items in a row */
+    justify-content: space-around; /* Distribute items evenly */
+    margin-bottom: 1rem; /* Add space below switcher */
+    min-width: unset; /* Remove fixed min-width */
+  }
+
+  .toolbar__switcher__item {
+    font-size: .75rem; /* Slightly smaller font for items */
+    padding: .2rem .4rem;
+    text-align: center; /* Center text within item */
+  }
+
+  .toolbar__section {
+    width: 100%; /* Make carousel section take full width */
+    margin: 0; /* Remove horizontal margin */
+    margin-bottom: 1rem;
+  }
+
+  .slide_container_inner {
+    height: 70px; /* Smaller height for carousel on mobile */
+  }
+
+  .toolbar__tile {
+    width: 120px; /* Smaller tile size */
+    height: 70px;
+    margin: 0.25rem; /* Smaller margin */
+  }
+
+  .toolbar__tile img {
+    width: 100%; /* Make image fill its tile */
+    height: 100%; /* Make image fill its tile */
+    padding: 0.25rem; /* Adjust padding */
+    object-fit: contain; /* Ensure image fits */
+  }
+
+  /* Hide box shadows for the carousel section if they don't look good stacked */
+  .toolbar__section__box-shadow--left,
+  .toolbar__section__box-shadow--right {
     display: none;
+  }
+
+  .toolbar__buttons {
+    width: 100%; /* Make buttons take full width */
+    justify-content: space-around; /* Distribute buttons evenly */
+    gap: 0.25rem; /* Reduce gap between buttons */
+  }
+
+  .toolbar__buttons__create,
+  .toolbar__buttons__join {
+    width: auto;
+    padding: 0.5rem; /* Adjust padding for smaller buttons */
+  }
+
+  .toolbar__buttons img {
+    max-height: 2.5rem; /* Smaller icons on mobile */
   }
 }

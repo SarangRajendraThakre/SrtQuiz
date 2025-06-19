@@ -1,9 +1,9 @@
 
-export const baseUrl1 = "https://api.srtquiz.fun";
+// export const baseUrl1 = "https://api.srtquiz.fun";
 
 
 
-//  export const baseUrl1 = "http://localhost:5000";
+ export const baseUrl1 = "http://localhost:5000";
 
 
 export const postRequest = async (url, body) => {
