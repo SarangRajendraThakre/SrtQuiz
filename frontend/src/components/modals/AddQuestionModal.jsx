@@ -61,7 +61,7 @@ const AddQuestionModal = ({
 
       await addQuestion({
         question: "",
-        answers: [],
+       answers: ["", "", "", ""], // Initialize with four empty strings for MCQ
         correctAnswerIndex: null,
         questiontype: type,
         imagePath: "",

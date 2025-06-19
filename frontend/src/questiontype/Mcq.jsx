@@ -149,6 +149,7 @@ const Mcq = () => {
       console.error("Error updating question:", error);
     }
   };
+  
 
   const handleImageLongPressStart = () => {
     longPressTimerRef.current = setTimeout(() => {
