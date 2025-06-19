@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Card, Col, Row, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import "./QuizList.css";
+import "./QuizList.css"; // Your custom CSS file
 import { baseUrl1 } from "../../utils/services";
 import { useQuiz } from "../../context/QuizContext";
 
@@ -67,15 +67,13 @@ const QuizListPrivate = () => {
   };
 
   return (
-    <div className="mt-52 p-4">
+    <div className="quiz-list-private-container p-4"> {/* Changed class to a semantic name */}
       <h1 className="font-semibold">{`Quizzes Made by ${userName}`}</h1>
 
-      {/* Show error message */}
       {error && (
         <div className="text-danger mt-3">{error.message}</div>
       )}
 
-      {/* Show quizzes only if there's no error */}
       {!error && (
         <Row xs={1} md={2} lg={3} className="g-4">
           {quizzes.map((quiz, index) => (

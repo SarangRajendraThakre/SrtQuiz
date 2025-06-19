@@ -1,87 +1,144 @@
-
-.quiz-button {
-  opacity: 0;
-  transition: opacity 0.5s ease-in-out;
-  
+/* General container for the quiz list */
+.quiz-list-private-container {
+  padding: 15px; /* Default padding for all screens */
+  margin-top: 25px; /* Default top margin for mobile */
 }
 
-.quiz-button.show {
-  opacity: 1;
+/* Media query for larger screens (e.g., Bootstrap's 'md' breakpoint and up) */
+@media (min-width: 768px) {
+  .quiz-list-private-container {
+    margin-top: 150px; /* Increased top margin for desktop */
+    padding: 20px; /* Slightly more padding on desktop */
+  }
 }
-/* Add this CSS to your QuizList.css file */
-.button-row {
+
+/* Styling for the quiz cards */
+.card {
+  margin: 10px; /* Default margin around cards for spacing in the grid */
+  border: 1px solid #e0e0e0; /* Subtle border */
+  border-radius: 8px; /* Rounded corners */
+  overflow: hidden; /* Ensures image fits within rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Smooth hover effect */
+  cursor: pointer; /* Indicates card is clickable */
+}
+
+.card:hover {
+  transform: translateY(-5px); /* Lift card slightly on hover */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* More pronounced shadow on hover */
+}
+
+.card-img-top {
+  width: 100%;
+  height: 200px; /* Fixed height for consistency */
+  object-fit: cover; /* Ensures image covers the area without distortion */
+  border-bottom: 1px solid #eee; /* Separator for image and body */
+}
+
+.card-body {
+  padding: 15px;
+}
+
+.card-title {
+  font-size: 1.5rem; /* Equivalent to your text-2xl from Tailwind-like classes */
+  font-weight: 600; /* Equivalent to your font-semibold */
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.card-body p {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+/* Container for the action buttons at the bottom of the card */
+.bottombuttons {
   display: flex;
-  justify-content: space-between; /* Align buttons horizontally with equal space between them */
-  margin-top: 10px; /* Add some space between the buttons and the card content */
+  justify-content: space-between; /* Distribute buttons horizontally with space */
+  gap: 10px; /* Space between buttons */
+  margin-top: 15px; /* Space above buttons */
 }
 
+/* Styling for the individual quiz buttons (Host, Edit, Play) */
 .quiz-button {
-  /* Style your buttons as needed */
-  background-color: #007bff;
+  flex: 1; /* Allows buttons to share available space equally */
+  background-color: #007bff; /* Primary blue */
   color: #fff;
   border: none;
-  padding: 5px 10px;
+  padding: 8px 12px; /* Slightly more padding for better touch targets */
   border-radius: 5px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: center;
+  text-decoration: none; /* For Link components */
+  cursor: pointer;
+  white-space: nowrap; /* Prevent text wrapping on buttons */
+  transition: background-color 0.3s ease-in-out, opacity 0.3s ease-in-out; /* Transition for hover and show/hide */
+
+  /* Initial state: hidden by opacity for smooth transition */
+  opacity: 0;
+  visibility: hidden; /* Hide element from screen readers and layout */
+  pointer-events: none; /* Prevent clicks when hidden */
 }
 
 .quiz-button:hover {
-  /* Add hover effect */
-  background-color: #0056b3;
+  background-color: #0056b3; /* Darker blue on hover */
 }
 
-.bottombuttons{
-  display: flex;
-  justify-content: space-between;
-}
-.slider-card-container {
-  padding: 10px; /* Adjust the padding to add space between the cards */
-}
-
-.slick-slide {
-  display: flex;
-  justify-content: center;
-}
-
-.bottombuttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
-}
-
-.quiz-button {
-  display: none;
-}
-
+/* State when buttons are visible */
 .quiz-button.show {
-  display: inline-block;
+  opacity: 1;
+  visibility: visible; /* Make visible for screen readers and layout */
+  pointer-events: auto; /* Allow clicks */
 }
 
-.card {
-  margin: 10px; /* Adjust the margin to add space around the cards */
+/* Other utility classes you had, ensure these are also defined if not from a framework like Tailwind */
+.text-danger {
+  color: #dc3545 !important; /* Bootstrap's text-danger */
 }
+.mt-3 {
+  margin-top: 1rem !important; /* Bootstrap's mt-3 */
+}
+/* You already defined text-2xl and font-semibold above within .card-title */
 
-/* Media query for mobile devices */
+
+/* Media queries for responsiveness */
+
+/* Mobile-specific adjustments (max-width: 600px applies to phones) */
 @media (max-width: 600px) {
-  .button-row {
-    flex-direction: column; /* Stack buttons vertically */
-    align-items: stretch; /* Stretch buttons to full width */
-  }
-
-  .quiz-button {
-    width: 100%; /* Full width for buttons */
-    margin-top: 5px; /* Adjust margin between buttons */
-  }
-
-  .bottombuttons {
-    flex-direction: column; /* Stack bottom buttons vertically */
-    align-items: stretch; /* Stretch buttons to full width */
+  .quiz-list-private-container {
+    padding: 10px; /* Reduce padding on very small screens */
   }
 
   .card {
-    margin: 5px 0; /* Adjust margin for cards */
+    margin: 8px 0; /* Adjust margin for cards to stack better */
   }
 
-  .slider-card-container {
-    padding: 5px; /* Adjust padding for card container */
+  .bottombuttons {
+    flex-direction: column; /* Stack buttons vertically */
+    align-items: stretch; /* Stretch buttons to full width */
+    gap: 8px; /* Slightly less space between stacked buttons */
+  }
+
+  .quiz-button {
+    width: 100%; /* Full width for buttons when stacked */
+    padding: 10px 15px; /* Larger touch target for mobile buttons */
+    font-size: 1rem; /* Slightly larger font on mobile buttons */
+  }
+
+  .card-title {
+    font-size: 1.3rem; /* Slightly smaller title on small screens */
+  }
+}
+
+/* Potentially useful for smaller tablets (adjust breakpoint as needed) */
+@media (min-width: 601px) and (max-width: 767px) {
+  .card {
+    margin: 10px; /* Keep similar margin for tablet */
+  }
+  .bottombuttons {
+    /* Keep row layout for tablets, but adjust gap if necessary */
+    gap: 8px;
   }
 }

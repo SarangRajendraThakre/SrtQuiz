@@ -62,7 +62,7 @@ const ForFun = () => {
 
   return (
     <> <div className="toolbar_container">
-    <div className="toolbar toolbar-active toolbarc2">
+    <div className="toolbar toolbar-active toolbarc3">
       <div className="toolbar__logo">
       <Link to="/">
               <img src={logo} alt="" />
