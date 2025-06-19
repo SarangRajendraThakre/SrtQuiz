@@ -296,12 +296,12 @@ const Mcq = () => {
 
      
 
-        {showmenudots && (
+        {/* {showmenudots && (
           <div className="menudots-container">
             <PiDotsThreeOutlineVerticalFill fontSize="2em" />
             <Menudots />
           </div>
-        )}
+        )} */}
       </div>
     </>
   );
