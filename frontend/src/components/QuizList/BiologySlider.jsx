@@ -21,7 +21,8 @@ const BiologySlider = () => {
         const guessQuizzes = response.data.quizzes.filter(quiz => quiz.category === 'Biology'&& quiz.visibility === 'public');
         await Promise.all(guessQuizzes.map(async (quiz) => {
           if (quiz.createdBy) {
-            const creator = await axios.get(`${baseUrl1}/api/find/${quiz.createdBy}`);
+
+            const creator = await axios.get(`${baseUrl1}/api/quizzes/${quiz.createdBy}`);
             quiz.creatorName = creator.data.name;
           }
         }));
@@ -70,6 +71,7 @@ const BiologySlider = () => {
 
       const user = JSON.parse(localStorage.getItem('User'));
       if (!user || !user._id) {
+        console.log(user);
         console.error("User ID not found in local storage or user object is invalid");
         return;
       }
@@ -118,7 +120,7 @@ const BiologySlider = () => {
   const user = JSON.parse(localStorage.getItem('User'));
 
   return (
-    <div className='mt-3 p-4'>
+    <div className='mt-48 p-4'>
       <h1 className='font-semibold'>Biology Quizzes</h1>
       {loading ? (
         <Spinner animation="border" role="status">

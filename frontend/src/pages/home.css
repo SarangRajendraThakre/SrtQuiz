@@ -279,3 +279,105 @@
     max-height: 2.5rem; /* Smaller icons on mobile */
   }
 }
+
+
+.main-content-area {
+  /* Default for desktop (screens > 768px):
+     Accounts for toolbar_container (height: 7.5rem, top: 0.5rem) = 8rem total height
+  */
+  padding-top: 8rem;
+
+  /* Accounts for footermain (approx. 40px height, ~2.5rem, using 3rem for safety) */
+  padding-bottom: 3.75rem; /* Or 60px if you prefer pixel value */
+}
+
+/* --- Mobile Responsiveness --- */
+@media screen and (max-width: 768px) {
+  .main-content-area {
+    padding-top: 3.5rem; /* Account for Headermain's height (h-14) */
+    /* padding-bottom can remain the same unless your footermain also changes height significantly on mobile */
+  }
+
+  /* Optional: Adjust font-size for specific elements if needed for better mobile spacing */
+  .QuizListPrivate h1,
+  .QuizListPublic h1 {
+    font-size: 1.5rem; /* Example: slightly smaller headings on mobile */
+  }
+}
+
+
+
+
+
+
+
+.secondary-header-wrapper {
+    width: 100%;
+    /* On desktop, this z-index puts it below the main toolbar (9999) but above content */
+    z-index: 9998;
+    margin-top: 10rem;
+}
+
+/* Desktop positioning for Headermain (screens > 768px) */
+@media screen and (min-width: 769px) {
+    .secondary-header-wrapper {
+        position: fixed;
+        /* Place it 8rem below the top (after .toolbar_container's 8rem fixed space) */
+        top: 0rem;
+    }
+}
+
+/* Mobile positioning for Headermain (screens <= 768px) */
+@media screen and (max-width: 768px) {
+    .secondary-header-wrapper {
+        position: fixed; /* Keep it fixed for mobile */
+        /* Set its top position to 10rem (equivalent of mt-40) */
+        top: 10rem; /* THIS IS THE CHANGE TO FULFILL MT-40 REQUEST */
+        /* On mobile, it becomes the primary fixed header, so its z-index relative to content is 200 */
+        z-index: 200;
+    }
+}
+
+
+/* Adjust main content area to prevent overlap with fixed headers and footers */
+.main-content-area {
+  /* Desktop (screens > 768px):
+     Accounts for:
+     1. toolbar_container's fixed height: 8rem
+     2. Headermain's fixed height: 7.5rem (since it's positioned *after* the toolbar)
+     Total padding-top = 8rem + 7.5rem = 15.5rem
+  */
+  padding-top: 15.5rem;
+
+  /* Accounts for footermain (approx. 40px height, ~2.5rem, using 3.75rem for safety) */
+  padding-bottom: 3.75rem;
+}
+
+/* --- Mobile Responsiveness for main content area --- */
+@media screen and (max-width: 768px) {
+  /*
+     On mobile:
+     - .toolbar_container becomes `position: relative`, so it takes its natural space in the document flow.
+       Let's assume its effective height on mobile is still around 7.5rem.
+     - .secondary-header-wrapper (containing Headermain) is `position: fixed` at `top: 10rem`.
+       Its effective height is 7.5rem.
+
+     To ensure content doesn't overlap fixed Headermain AND clears the relative toolbar_container:
+     1. Use `margin-top` to push content down past the `relative` toolbar_container.
+     2. Use `padding-top` to create space *within* the main content area to clear the `fixed` Headermain.
+
+     So, for main-content-area:
+     - margin-top: 7.5rem (to clear relative toolbar_container)
+     - padding-top: 10rem (fixed top of Headermain) + 7.5rem (effective height of Headermain) = 17.5rem
+  */
+  .main-content-area {
+    padding-top: 1.5rem; /* Space for fixed Headermain at top:10rem + its height */
+    margin-top: 2.5rem;   /* Space for the relative toolbar_container above it */
+  }
+
+  /* Optional: Adjust font-size for specific elements if needed for better mobile spacing */
+  .QuizListPrivate h1,
+  .QuizListPublic h1 {
+    font-size: 1.5rem; /* Example: slightly smaller headings on mobile */
+  }
+}

@@ -67,11 +67,11 @@ const QuizListPrivate = () => {
   };
 
   return (
-    <div className="quiz-list-private-container p-4"> {/* Changed class to a semantic name */}
+     <div className='mt-3 p-4'>
       <h1 className="font-semibold">{`Quizzes Made by ${userName}`}</h1>
 
       {error && (
-        <div className="text-danger mt-3">{error.message}</div>
+        <div className="text-danger pt-5">{error.message}</div>
       )}
 
       {!error && (

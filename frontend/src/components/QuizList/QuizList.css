@@ -1,16 +1,4 @@
 /* General container for the quiz list */
-.quiz-list-private-container {
-  padding: 15px; /* Default padding for all screens */
-  margin-top: 25px; /* Default top margin for mobile */
-}
-
-/* Media query for larger screens (e.g., Bootstrap's 'md' breakpoint and up) */
-@media (min-width: 768px) {
-  .quiz-list-private-container {
-    margin-top: 150px; /* Increased top margin for desktop */
-    padding: 20px; /* Slightly more padding on desktop */
-  }
-}
 
 /* Styling for the quiz cards */
 .card {

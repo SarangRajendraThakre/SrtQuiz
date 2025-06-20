@@ -8,9 +8,6 @@ import logo from "../../assets/logoofcreatequiz.jpg";
 import { AuthContext } from "../../context/AuthContext";
 import { useQuiz } from "../../context/QuizContext"; // Import the QuizContext
 
-
-
-
 const Headermain = ({ handleToggleModalSetting, createdquizdatatitle }) => {
   const { user, logoutUser, removeCreatedQuizId } = useContext(AuthContext);
   const location = useLocation();
@@ -22,8 +19,9 @@ const Headermain = ({ handleToggleModalSetting, createdquizdatatitle }) => {
 
   return (
     <>
-       <div className="w-full fixed h-14 flex z-[200] bg-white justify-between items-center font-sans px-4 ">
-        <Link to="/" className="pr-4">
+      {/* Changed 'fixed' to 'sticky top-0' */}
+    <div className="w-full h-14 flex bg-white justify-between items-center font-sans pt-4 p-8 ">
+   <Link to="/" className="pr-4">
           <img className="w-40" src={logo} alt="Logo" />
         </Link>
         {!isLoginOrRegisterPage() && (
@@ -46,55 +44,60 @@ const Headermain = ({ handleToggleModalSetting, createdquizdatatitle }) => {
             </div>
           </>
         )}
-        <div className="flex-grow"></div>
+        <div className="flex-grow"></div> {/* Pushes content to the sides */}
         {!isLoginOrRegisterPage() && (
           <>
-            <button className="flex items-center justify-center  text-green-600 pt-2 pr-4 pb-1 font-semibold ">
+            <button className="flex items-center justify-center text-green-600 px-4 py-2 font-semibold ">
               <MdStars color="#028282" size="24px" />
               <span className="mx-2">Upgrade</span>
             </button>
-            <button onClick={toggleRightsideVisibility} className="bg-blue-600 flex items-center text-white font-semibold rounded-md px-2 mx-1">
+            <button onClick={toggleRightsideVisibility} className="bg-blue-600 flex items-center text-white font-semibold rounded-md px-2 mx-1 py-2">
               <IoIosColorPalette />
               <span className="flex items-center justify-center w-24">
                 Themes
               </span>
             </button>
-            <button className="bg-gray-200 px-2 mx-1 flex items-center justify-center h-10">
+            <button className="bg-gray-200 px-2 mx-1 flex items-center justify-center h-10 py-2">
               <AiOutlineEye />
               <span className="px-2">Preview</span>
             </button>
           </>
         )}
-        <div className="w-1 h-10 bg-gray-300"></div>
+        <div className="w-1 h-10 bg-gray-300"></div> {/* Separator line */}
+
         {user ? (
-          <button
-            className="bg-gray-200 h-9 px-4 pb-1 font-semibold mr-2 rounded-md"
-            onClick={() => {
-              logoutUser();
-              removeCreatedQuizId();
-            }}
-          >
-            Exit
-          </button>
+          <>
+            <Link
+              to="/profile"
+              className="bg-gray-200 px-4 py-2 font-semibold mr-2 rounded-md"
+            >
+              Profile
+            </Link>
+            <button
+              className="bg-gray-200 px-4 py-2 font-semibold mr-2 rounded-md"
+              onClick={() => {
+                logoutUser();
+                removeCreatedQuizId();
+              }}
+            >
+              Logout
+            </button>
+          </>
         ) : (
-          <Link
-            to="/register"
-            className="bg-gray-200 h-9 px-4 pb-1 font-semibold mr-2 rounded-md"
-          >
-            Register
-          </Link>
-        )}
-        {user ? (
-          <button className="bg-blue-600 text-white pb-1 px-4 h-8 rounded-md">
-            Save
-          </button>
-        ) : (
-          <Link
-            to="/login"
-            className="bg-gray-200 h-9 px-4 pb-1 font-semibold mr-2 rounded-md"
-          >
-            Login
-          </Link>
+          <>
+            <Link
+              to="/register"
+              className="bg-gray-200 px-4 py-2 font-semibold mr-2 rounded-md"
+            >
+              Register
+            </Link>
+            <Link
+              to="/login"
+              className="bg-blue-600 text-white px-4 py-2 font-semibold rounded-md"
+            >
+              Login
+            </Link>
+          </>
         )}
       </div>
     </>
@@ -102,5 +105,3 @@ const Headermain = ({ handleToggleModalSetting, createdquizdatatitle }) => {
 };
 
 export default Headermain;
-
-

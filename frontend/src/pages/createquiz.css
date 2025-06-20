@@ -774,7 +774,7 @@ button.close {
 
 /* Uploaded image styles */
 .uploaded-image {
-  max-width: 100%;
+  max-width: 40%;
   height: auto;
 }
 

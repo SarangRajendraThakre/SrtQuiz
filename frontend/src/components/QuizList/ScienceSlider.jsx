@@ -21,7 +21,7 @@ const ScienceSlider = () => {
         const guessQuizzes = response.data.quizzes.filter(quiz => quiz.category === 'History');
         await Promise.all(guessQuizzes.map(async (quiz) => {
           if (quiz.createdBy) {
-            const creator = await axios.get(`${baseUrl1}/api/find/${quiz.createdBy}`);
+            const creator = await axios.get(`${baseUrl1}/api/quizzes/${quiz.createdBy}`);
             quiz.creatorName = creator.data.name;
           }
         }));
