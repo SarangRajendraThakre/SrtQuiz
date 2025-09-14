@@ -118,7 +118,7 @@ const ComputerSlider = () => {
   const user = JSON.parse(localStorage.getItem('User'));
 
   return (
-    <div className='mt-3 p-4'>
+    <div className='mt-40 p-4'>
       <h1 className='font-semibold'>Computer Quizzes</h1>
       {loading ? (
         <Spinner animation="border" role="status">

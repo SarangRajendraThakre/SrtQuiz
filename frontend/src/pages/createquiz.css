@@ -63,6 +63,7 @@ div{
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  margin-top: 3rem;
   -webkit-box-align: center;
   align-items: center;
   bottom: unset;

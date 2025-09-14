@@ -5,42 +5,21 @@ import ButtonsContainerr from "../components/options/ButtonsContainerr";
 import { BsPlusLg } from "react-icons/bs";
 import "./Mcq.css";
 import { baseUrl1 } from "../utils/services";
-import { PiDotsThreeOutlineVerticalFill } from "react-icons/pi";
 import Menudots from "../components/MiddleQtype/Menudots";
 
 const Msq = () => {
-  const {
-    updateQuestionById,
-    quizData,
-    questionIdd,
-    getQuestionById,
-    selectedImage,
-  } = useQuiz();
+  const { updateQuestionById, quizData, questionIdd, getQuestionById } = useQuiz();
 
   const [question, setQuestion] = useState("");
-  const [answers, setAnswers] = useState([]);
+  const [answers, setAnswers] = useState(["", "", "", ""]);
   const [correctAnswerIndices, setCorrectAnswerIndices] = useState([]);
   const [imagePath, setImagePath] = useState("");
-  const [questiontype, setQuestiontype] = useState("MCQ");
-  const [explanation, setExplanation] = useState("");
+  const [questiontype, setQuestiontype] = useState("MSQ");
 
   const fileInputRef = useRef(null);
+  const longPressTimerRef = useRef(null);
+
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const [isFocused, setIsFocused] = useState(false);
-
-  const handleFocus = () => {
-    setIsFocused(true);
-  };
-
-  const handleBlur = (e) => {
-    if (!e.target.value.trim()) {
-      setIsFocused(false);
-    }
-  };
-
-  const backgroundStyle = {
-    backgroundImage: `url(${selectedImage})`,
-  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -49,6 +28,7 @@ const Msq = () => {
 
     window.addEventListener("resize", handleResize);
 
+    // Cleanup function to remove the event listener
     return () => {
       window.removeEventListener("resize", handleResize);
     };
@@ -64,16 +44,8 @@ const Msq = () => {
       setAnswers(
         foundQuestion && Array.isArray(foundQuestion.options)
           ? foundQuestion.options
-          : []
+          : ["", "", "", ""]
       );
-
-      // Filter out empty values from the correctAnswers array
-      const filteredCorrectAnswers =
-        foundQuestion && Array.isArray(foundQuestion.correctAnswers)
-          ? foundQuestion.correctAnswers.filter((answer) => answer !== "")
-          : [];
-      setCorrectAnswerIndices(filteredCorrectAnswers);
-      setExplanation(foundQuestion ? foundQuestion.explanationText : ""); // Ensure explanation is set
     }
   }, [questionIdd, quizData]);
 
@@ -81,11 +53,6 @@ const Msq = () => {
     fileInputRef.current.click();
   };
 
-  const longPressTimerRef = useRef(null);
-
-  const handleExplanationChange = (e) => {
-    setExplanation(e.target.value);
-  };
   const handleQuestionChange = (e) => {
     setQuestion(e.target.value);
   };
@@ -98,14 +65,12 @@ const Msq = () => {
 
   const handleSelectCorrectAnswer = (index) => {
     const indexExists = correctAnswerIndices.includes(index);
-
-    // If the index exists and there's only one correct answer selected,
-    // remove it from the array
-    if (indexExists && correctAnswerIndices.length === 1) {
-      setCorrectAnswerIndices([]);
-      alert("Only one correct answer can be selected for this question.");
+    if (indexExists) {
+      const newCorrectAnswerIndices = correctAnswerIndices.filter((i) => i !== index);
+      setCorrectAnswerIndices(newCorrectAnswerIndices);
     } else {
-      setCorrectAnswerIndices([index]);
+      const newCorrectAnswerIndices = [...correctAnswerIndices, index];
+      setCorrectAnswerIndices(newCorrectAnswerIndices);
     }
   };
 
@@ -131,19 +96,18 @@ const Msq = () => {
         return;
       }
 
+      const filteredCorrectAnswerIndices = correctAnswerIndices.filter(
+        (index) => index !== ""
+      );
+
       const updatedQuestionData = {
         question: question,
         answers: answers,
-        correctAnswerIndices: correctAnswerIndices,
+        correctAnswerIndices: filteredCorrectAnswerIndices,
         imagePath: imagePath,
         questiontype: questiontype,
-        explanation: explanation,
       };
 
-      // Clear previous correct answers
-      setCorrectAnswerIndices([]);
-
-      // Update the question
       await updateQuestionById(questionIdd, updatedQuestionData);
     } catch (error) {
       console.error("Error updating question:", error);
@@ -162,55 +126,46 @@ const Msq = () => {
 
   return (
     <>
-      <div className="questiontext" style={backgroundStyle}>
+      <div
+        className="questiontext"
+        style={{
+          objectFit: "contain",
+          backgroundImage: `ur(${baseUrl1}${quizData.posterImg})`,
+        }}
+      >
         <div className="advertise">
           <div className="advertiseinner"></div>
         </div>
 
-        <div className="question-container">
-          <div className="question-title__Container">
-            <div className="question-text-field__TitleWrapper">
-              <div className="question-text-field__Editor">
-                <input
-                  className="styles__Wrapper innerquestiontextinput styles__ContentEditable styles__Wrapper "
-                  type="text"
-                  placeholder={!isFocused ? "Type question here" : ""}
-                  value={question}
-                  onFocus={handleFocus}
-                  onBlur={handleBlur}
-                  onChange={handleQuestionChange}
-                />
-              </div>
+        <div className="question-title__Container">
+          <div className="question-text-field__TitleWrapper">
+            <div className="question-text-field__Editor">
+              <input
+                className="styles__Wrapper innerquestiontextinput styles__ContentEditable styles__Wrapper"
+                type="text"
+                placeholder="Type question here"
+                value={question}
+                onChange={handleQuestionChange}
+              />
             </div>
           </div>
+          {showmenudots && <Menudots />}
         </div>
 
         <div className="mainmiddlearea">
           <div className="mainmiddleareainner">
             <div className="mainmiddleareainnerinner">
-              <div
-                className={
-                  imagePath
-                    ? "mainmiddleareainnerinnerinnerimg"
-                    : "mainmiddleareainnerinnerinner"
-                }
-              >
+              <div className={imagePath ? "mainmiddleareainnerinnerinnerimg" : "mainmiddleareainnerinnerinner"}>
                 {imagePath ? (
                   <div
-                    className={
-                      imagePath
-                        ? "mainmiddleareainnerinnerinnerimg"
-                        : "mainmiddleareainnerinnerinner"
-                    }
+                    className={imagePath ? "mainmiddleareainnerinnerinnerimg" : "mainmiddleareainnerinnerinner"}
                     onMouseDown={handleImageLongPressStart}
                     onMouseUp={handleImageLongPressEnd}
                     onTouchStart={handleImageLongPressStart}
                     onTouchEnd={handleImageLongPressEnd}
                   >
                     <img
-                      className={
-                        imagePath && "mainmiddleareainnerinnerinnerimg"
-                      }
+                      className={imagePath && "mainmiddleareainnerinnerinnerimg"}
                       src={`${baseUrl1}${imagePath}`}
                       alt=""
                     />
@@ -261,47 +216,18 @@ const Msq = () => {
           <div className="optionmainareainner">
             <div className="optionmainareainnerinner">
               <div className="optionmainareainnerinnerinner">
-                {answers.length > 0 && (
-                  <ButtonsContainerr
-                    answers={answers}
-                    onAnswerChange={handleAnswerChange}
-                    onCorrectAnswerChange={handleSelectCorrectAnswer}
-                    correctAnswerIndices={correctAnswerIndices} // Add this line
-                    questiontype={questiontype}
-                  />
-                )}
-
-                <button onClick={handleUpdateQuestion}>Save Question</button>
-              </div>
-              <div className="question-container">
-                <div className="question-title__Container">
-                  <div className="question-text-field__TitleWrapper">
-                    <div className="question-text-field__Editor">
-                      <input
-                        className="styles__Wrapper innerquestiontextinput styles__ContentEditable styles__Wrapper "
-                        type="text"
-                        placeholder={!isFocused ? "Type Explanation of answer or image here" : ""}
-                        value={explanation}
-                        onFocus={handleFocus}
-                        onBlur={handleBlur}
-                        onChange={handleExplanationChange}
-                      />
-                    </div>
-                  </div>
-                </div>
+                <ButtonsContainerr
+                  answers={answers}
+                  onAnswerChange={handleAnswerChange}
+                  onCorrectAnswerChange={handleSelectCorrectAnswer}
+                  questiontype={questiontype}
+                />
+                <button className="addmore">Add more options</button>
+                <button onClick={handleUpdateQuestion}>Submit</button>
               </div>
             </div>
           </div>
         </div>
-
-     
-
-        {showmenudots && (
-          <div className="menudots-container">
-            <PiDotsThreeOutlineVerticalFill fontSize="2em" />
-            <Menudots />
-          </div>
-        )}
       </div>
     </>
   );

@@ -37,6 +37,9 @@ const App = () => {
       <Routes>
         {/* Main Home Route - Protected */}
         <Route path="/" element={user ? <Home /> : <Navigate to="/login" />} />
+   
+        <Route path="/" element={user ? <Home/> : <Navigate to="/login" />} />
+      
 
         {/* Authentication Routes */}
         <Route path="/register" element={user ? <Home /> : <Register />} />
@@ -44,6 +47,8 @@ const App = () => {
 
         {/* Chat Route */}
         <Route path="/chat" element={<Chat />} />
+
+
 
         {/* Quiz Management Routes - Protected */}
         {/* Corrected: Redirect to login if not authenticated */}

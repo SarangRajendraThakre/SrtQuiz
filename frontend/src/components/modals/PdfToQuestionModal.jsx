@@ -1,8 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import axios from "axios";
-// Assuming baseUrl1 is still used for your local backend if needed,
-// but the PDF API is now directly specified.
-// import { baseUrl1 } from "../../utils/services";
+
+import { baseUrl1 } from "../../utils/services";
 
 import { useQuiz } from "../../context/QuizContext"; // To access addQuestion function
 
@@ -19,7 +18,7 @@ const PdfToQuestionModal = ({ isModalOpen, setIsModalOpen }) => {
   const [apiError, setApiError] = useState(null); // For errors from the API call
 
   // External API URL for PDF to questions
-  const PDF_GENERATION_API_URL = "https://api.srtquiz.fun/api/pdf/upload-pdf";
+ const PDF_GENERATION_API_URL = `${baseUrl1}/api/pdf/upload-pdf`;
 
   useEffect(() => {
     const handleOutsideClick = (event) => {

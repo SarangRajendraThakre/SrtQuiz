@@ -76,6 +76,7 @@ const QuizListPrivate = () => {
 
       {!error && (
         <Row xs={1} md={2} lg={3} className="g-4">
+          
           {quizzes.map((quiz, index) => (
             <Col key={quiz._id} className="p-3">
               <Card className="p-2" onClick={() => handleCardClick(quiz._id)}>
