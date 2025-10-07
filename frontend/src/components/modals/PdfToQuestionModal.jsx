@@ -1,115 +1,103 @@
 import React, { useRef, useEffect, useState } from "react";
 import axios from "axios";
-
 import { baseUrl1 } from "../../utils/services";
-
-import { useQuiz } from "../../context/QuizContext"; // To access addQuestion function
+import { useQuiz } from "../../context/QuizContext";
+import { IoMdClose } from "react-icons/io";
+import { FaSpinner } from "react-icons/fa";
 
 const PdfToQuestionModal = ({ isModalOpen, setIsModalOpen }) => {
   const modalRef = useRef(null);
-  const { addQuestion } = useQuiz(); // Get addQuestion from context
+  const { addQuestion } = useQuiz();
 
   const [selectedFile, setSelectedFile] = useState(null);
-  const [topic, setTopic] = useState(""); // State for the topic input
+  const [topic, setTopic] = useState("");
   const [loading, setLoading] = useState(false);
   const [generatedQuestions, setGeneratedQuestions] = useState([]);
-  const [selectedQuestions, setSelectedQuestions] = useState(new Set()); // Using Set for efficient selection tracking
+  const [selectedQuestions, setSelectedQuestions] = useState(new Set());
   const [error, setError] = useState(null);
-  const [apiError, setApiError] = useState(null); // For errors from the API call
+  const [apiError, setApiError] = useState(null);
 
-  // External API URL for PDF to questions
- const PDF_GENERATION_API_URL = `${baseUrl1}/api/pdf/upload-pdf`;
+  const PDF_GENERATION_API_URL = `${baseUrl1}/api/pdf/upload-pdf`;
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
-        setIsModalOpen(false);
-        // Reset state when closing
-        setSelectedFile(null);
-        setTopic("");
-        setGeneratedQuestions([]);
-        setSelectedQuestions(new Set());
-        setError(null);
-        setApiError(null);
+        closeModal();
       }
     };
+    if (isModalOpen) document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, [isModalOpen]);
 
-    if (isModalOpen) {
-      document.addEventListener("mousedown", handleOutsideClick);
-    } else {
-      document.removeEventListener("mousedown", handleOutsideClick);
-    }
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedFile(null);
+    setTopic("");
+    setGeneratedQuestions([]);
+    setSelectedQuestions(new Set());
+    setError(null);
+    setApiError(null);
+  };
 
-    return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
-    };
-  }, [isModalOpen, setIsModalOpen]);
-
-  const handleFileChange = (event) => {
-    setSelectedFile(event.target.files[0]);
+  const handleFileChange = (e) => {
+    setSelectedFile(e.target.files[0]);
     setError(null);
   };
 
-  const handleTopicChange = (event) => {
-    setTopic(event.target.value);
+  const handleTopicChange = (e) => {
+    setTopic(e.target.value);
     setError(null);
   };
 
   const handleGenerateQuestions = async () => {
-    if (!selectedFile) {
-      setError("Please select a PDF file.");
-      return;
-    }
-    if (!topic.trim()) {
-      setError("Please enter a topic.");
+    if (!selectedFile && !topic.trim()) {
+      setError("Please select a PDF or enter a topic.");
       return;
     }
 
     setLoading(true);
     setError(null);
     setApiError(null);
-    setGeneratedQuestions([]); // Clear previous results
-    setSelectedQuestions(new Set()); // Clear previous selections
+    setGeneratedQuestions([]);
+    setSelectedQuestions(new Set());
 
     const formData = new FormData();
-    formData.append("pdfFile", selectedFile);
-    formData.append("topic", topic); // Append the topic
+    if (selectedFile) formData.append("pdfFile", selectedFile);
+    if (topic.trim()) formData.append("topic", topic);
 
     try {
-      const response = await axios.post(
-        PDF_GENERATION_API_URL, // Use the specific external API
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const res = await axios.post(PDF_GENERATION_API_URL, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
-      if (response.data && Array.isArray(response.data)) {
-        setGeneratedQuestions(response.data);
+      if (Array.isArray(res.data)) {
+        setGeneratedQuestions(res.data);
       } else {
         setApiError("Unexpected API response format.");
       }
-      setLoading(false);
     } catch (err) {
-      console.error("Error generating questions from PDF:", err);
+      console.error("Error:", err);
       setApiError(
         err.response?.data?.error ||
-          "Failed to generate questions. Please ensure the API is running and accessible."
+          "Failed to generate questions. Please check your API."
       );
+    } finally {
       setLoading(false);
     }
   };
 
-  const toggleQuestionSelection = (index) => {
-    const newSelectedQuestions = new Set(selectedQuestions);
-    if (newSelectedQuestions.has(index)) {
-      newSelectedQuestions.delete(index);
+  const toggleQuestionSelection = (i) => {
+    const newSel = new Set(selectedQuestions);
+    newSel.has(i) ? newSel.delete(i) : newSel.add(i);
+    setSelectedQuestions(newSel);
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedQuestions.size === generatedQuestions.length) {
+      setSelectedQuestions(new Set());
     } else {
-      newSelectedQuestions.add(index);
+      setSelectedQuestions(new Set(generatedQuestions.map((_, i) => i)));
     }
-    setSelectedQuestions(newSelectedQuestions);
   };
 
   const handleSaveSelectedQuestions = async () => {
@@ -118,118 +106,161 @@ const PdfToQuestionModal = ({ isModalOpen, setIsModalOpen }) => {
       return;
     }
 
-    // Get the current quiz ID from local storage
-    const createdQuizId = localStorage.getItem("createdQuizId");
-    if (!createdQuizId) {
-      setError("No active quiz found. Please create or select a quiz first.");
+    const quizId = localStorage.getItem("createdQuizId");
+    if (!quizId) {
+      setError("No active quiz found. Please create one first.");
       return;
     }
 
     setLoading(true);
-    setError(null);
-
     try {
-      // Iterate over selected questions and add them to the quiz
-      for (const index of selectedQuestions) {
-        const q = generatedQuestions[index];
-        // Map the generated question format to your quiz question format
-        await addQuestion({ // `addQuestion` from QuizContext is used here
+      for (const i of selectedQuestions) {
+        const q = generatedQuestions[i];
+        const correctIndex = q.correct_answer
+          ? q.correct_answer.toUpperCase().charCodeAt(0) - 65
+          : null;
+        const type = q.options?.length > 2 ? "MCQ" : "True/False";
+        await addQuestion({
           question: q.question,
           answers: q.options,
-          // Convert 'A', 'B', 'C', 'D' to 0, 1, 2, 3
-          correctAnswerIndex: q.correct_answer ? q.correct_answer.charCodeAt(0) - 'A'.charCodeAt(0) : null,
-          questiontype: q.options && q.options.length > 2 ? "MCQ" : "True/False", // Infer type
-          imagePath: "", // No image from PDF generation, typically
-          quizId: createdQuizId,
-          explanationText: "", // No explanation from PDF generation, typically
+          correctAnswerIndex: correctIndex,
+          questiontype: type,
+          imagePath: "",
+          quizId,
+          explanationText: "",
         });
       }
-      setIsModalOpen(false); // Close modal after saving
-      alert("Selected questions added to the quiz successfully!");
+      closeModal();
     } catch (err) {
-      console.error("Error saving selected questions:", err);
-      setError("Failed to save selected questions. Please try again.");
+      console.error("Save error:", err);
+      setError("Failed to save questions.");
     } finally {
       setLoading(false);
     }
   };
 
-
   if (!isModalOpen) return null;
 
   return (
-    <div className="modalsetting1" ref={modalRef}>
-      <div className="modalinside">
-        <div className="modalagaininside">
-          <div className="modalmainheader">
-            <div className="modalheader">
-              <div className="modalheadertext">PDF to Question Generator</div>
-              <button
-                className="close-button"
-                onClick={() => setIsModalOpen(false)}
-              >
-                &times;
-              </button>
-            </div>
+    <div className="fixed inset-0 bg-gray-900 bg-opacity-70 flex items-center justify-center z-[10000] p-2 sm:p-6">
+      <div
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-lg sm:max-w-3xl lg:max-w-5xl flex flex-col max-h-[95vh] overflow-hidden"
+        ref={modalRef}
+      >
+        {/* Header */}
+        <div className="p-4 bg-indigo-600 flex justify-between items-center">
+          <h3 className="text-lg sm:text-xl font-semibold text-white">
+            Generate Questions
+          </h3>
+          <button
+            className="text-white hover:text-gray-200"
+            onClick={closeModal}
+          >
+            <IoMdClose size={22} />
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="flex flex-col flex-1 p-4 sm:p-5 overflow-y-auto">
+          <div className="flex flex-col sm:flex-row gap-3 mb-4">
+            <input
+              type="file"
+              accept=".pdf"
+              onChange={handleFileChange}
+              className="w-full text-sm border border-gray-300 rounded-md p-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+            />
+            <input
+              type="text"
+              placeholder="Enter topic"
+              value={topic}
+              onChange={handleTopicChange}
+              className="w-full text-sm border border-gray-300 rounded-md p-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+            />
           </div>
-          <div className="mma">
-            <div className="modalmainarea">
-              <div className="modalmainareainside">
-                <div className="pdf-generator-content">
-                  <div className="input-section">
-                    <input type="file" accept=".pdf" onChange={handleFileChange} />
-                    <input
-                      type="text"
-                      placeholder="Enter topic for questions"
-                      value={topic}
-                      onChange={handleTopicChange}
-                    />
-                    <button
-                      onClick={handleGenerateQuestions}
-                      disabled={!selectedFile || !topic.trim() || loading}
-                    >
-                      {loading ? "Generating..." : "Generate Questions"}
-                    </button>
-                  </div>
 
-                  {error && <p className="error-message">{error}</p>}
-                  {apiError && <p className="error-message">API Error: {apiError}</p>}
+          <button
+            onClick={handleGenerateQuestions}
+            disabled={loading || (!selectedFile && !topic.trim())}
+            className="bg-indigo-600 text-white font-medium py-2 px-6 rounded-lg hover:bg-indigo-700 disabled:bg-gray-400 flex items-center justify-center shadow-md"
+          >
+            {loading && <FaSpinner className="animate-spin mr-2" />}
+            {loading ? "Generating..." : "Generate"}
+          </button>
 
-                  {generatedQuestions.length > 0 && (
-                    <div className="generated-questions-list">
-                      <h3>Select Questions to Add:</h3>
-                      {generatedQuestions.map((q, index) => (
-                        <div
-                          key={index}
-                          className={`question-card ${selectedQuestions.has(index) ? "selected" : ""}`}
-                          onClick={() => toggleQuestionSelection(index)}
-                        >
-                          <p><strong>Q{index + 1}:</strong> {q.question}</p>
-                          {q.options && q.options.length > 0 && (
-                            <ul>
-                              {q.options.map((option, optIndex) => (
-                                <li key={optIndex}>
-                                  {String.fromCharCode(65 + optIndex)}. {option}
-                                </li>
-                              ))}
-                            </ul>
-                          )}
-                          <p>Correct Answer: {q.correct_answer}</p>
-                        </div>
-                      ))}
-                      <button
-                        className="save-selected-button"
-                        onClick={handleSaveSelectedQuestions}
-                        disabled={selectedQuestions.size === 0 || loading}
-                      >
-                        Save Selected Questions ({selectedQuestions.size})
-                      </button>
-                    </div>
-                  )}
-                </div>
+          {error && <p className="text-red-500 text-sm mt-3">{error}</p>}
+          {apiError && (
+            <p className="text-red-500 text-sm mt-3">API Error: {apiError}</p>
+          )}
+
+          {generatedQuestions.length > 0 && (
+            <>
+              <div className="flex justify-between items-center mt-5 mb-3">
+                <h3 className="text-base font-semibold text-gray-800">
+                  Select Questions
+                </h3>
+                <button
+                  onClick={toggleSelectAll}
+                  className="text-sm text-indigo-600 font-semibold hover:text-indigo-800"
+                >
+                  {selectedQuestions.size === generatedQuestions.length
+                    ? "Deselect All"
+                    : "Select All"}
+                </button>
               </div>
-            </div>
-          </div>
+
+              {/* Responsive list view */}
+              <div className="flex flex-col gap-3 overflow-y-auto max-h-[55vh] pr-1">
+                {generatedQuestions.map((q, i) => (
+                  <div
+                    key={i}
+                    onClick={() => toggleQuestionSelection(i)}
+                    className={`rounded-xl p-3 border-2 transition cursor-pointer ${
+                      selectedQuestions.has(i)
+                        ? "border-indigo-600 bg-indigo-50 shadow-sm"
+                        : "border-gray-200 hover:border-gray-400"
+                    }`}
+                  >
+                    <div className="flex justify-between mb-1 text-sm font-semibold text-gray-700">
+                      <span>Q{i + 1}</span>
+                      <span className="text-green-600">
+                        Ans: {q.correct_answer || "-"}
+                      </span>
+                    </div>
+                    <p className="text-gray-800 text-sm mb-2">{q.question}</p>
+                    {q.options?.length > 0 && (
+                      <ul className="text-sm space-y-1">
+                        {q.options.map((opt, j) => (
+                          <li
+                            key={j}
+                            className={`${
+                              String.fromCharCode(65 + j) === q.correct_answer
+                                ? "text-yellow-700 font-medium"
+                                : "text-gray-600"
+                            }`}
+                          >
+                            <strong>{String.fromCharCode(65 + j)}.</strong>{" "}
+                            {opt}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              <div className="sticky bottom-0 mt-5 bg-white py-3">
+                <button
+                  onClick={handleSaveSelectedQuestions}
+                  disabled={selectedQuestions.size === 0 || loading}
+                  className="w-full bg-green-600 text-white font-semibold py-3 rounded-lg hover:bg-green-700 disabled:bg-gray-400 shadow-md"
+                >
+                  {loading
+                    ? "Saving..."
+                    : `Save Selected (${selectedQuestions.size})`}
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

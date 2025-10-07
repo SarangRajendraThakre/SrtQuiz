@@ -1,0 +1,72 @@
+/* --- Card Flip Animation --- */
+.card-perspective {
+  perspective: 1500px;
+}
+.card-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
+  transform-style: preserve-3d;
+}
+.card-front, .card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+}
+.card-back {
+  transform: rotateY(180deg);
+  color: white;
+}
+.is-flipped {
+  transform: rotateY(180deg);
+}
+
+/* --- Rotational Question Transitions --- */
+@keyframes animateInFromBottomRight {
+  from { opacity: 0; transform: translateY(100%) translateX(100%) rotate(45deg) scale(0.5); }
+  to { opacity: 1; transform: translateY(0) translateX(0) rotate(0) scale(1); }
+}
+@keyframes animateOutToBottomLeft {
+  from { opacity: 1; transform: translateY(0) translateX(0) rotate(0) scale(1); }
+  to { opacity: 0; transform: translateY(100%) translateX(-100%) rotate(-45deg) scale(0.5); }
+}
+@keyframes animateInFromBottomLeft {
+  from { opacity: 0; transform: translateY(100%) translateX(-100%) rotate(-45deg) scale(0.5); }
+  to { opacity: 1; transform: translateY(0) translateX(0) rotate(0) scale(1); }
+}
+@keyframes animateOutToBottomRight {
+  from { opacity: 1; transform: translateY(0) translateX(0) rotate(0) scale(1); }
+  to { opacity: 0; transform: translateY(100%) translateX(100%) rotate(45deg) scale(0.5); }
+}
+
+.animate-in-br { animation: animateInFromBottomRight 0.6s ease-out forwards; }
+.animate-out-bl { animation: animateOutToBottomLeft 0.6s ease-in forwards; }
+.animate-in-bl { animation: animateInFromBottomLeft 0.6s ease-out forwards; }
+.animate-out-br { animation: animateOutToBottomRight 0.6s ease-in forwards; }
+
+/* --- Enhanced UI Elements --- */
+.important-btn {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 10;
+  color: #cbd5e1; /* gray-300 */
+  transition: color 0.2s, transform 0.2s;
+}
+.important-btn.marked {
+  color: #f59e0b; /* amber-500 */
+  transform: scale(1.2);
+}
+.important-btn:hover {
+  color: #f59e0b; /* amber-500 */
+}

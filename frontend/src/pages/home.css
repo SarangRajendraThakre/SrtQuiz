@@ -6,6 +6,7 @@
   /* Other styles remain the same */
   position: fixed;
   z-index: 9999;
+  margin-bottom: 0.5rem;
 }
 
 .toolbar {
@@ -285,7 +286,7 @@
   /* Default for desktop (screens > 768px):
      Accounts for toolbar_container (height: 7.5rem, top: 0.5rem) = 8rem total height
   */
-  padding-top: 8rem;
+ 
 
   /* Accounts for footermain (approx. 40px height, ~2.5rem, using 3rem for safety) */
   padding-bottom: 3.75rem; /* Or 60px if you prefer pixel value */
@@ -340,18 +341,7 @@
 
 
 /* Adjust main content area to prevent overlap with fixed headers and footers */
-.main-content-area {
-  /* Desktop (screens > 768px):
-     Accounts for:
-     1. toolbar_container's fixed height: 8rem
-     2. Headermain's fixed height: 7.5rem (since it's positioned *after* the toolbar)
-     Total padding-top = 8rem + 7.5rem = 15.5rem
-  */
-  padding-top: 15.5rem;
 
-  /* Accounts for footermain (approx. 40px height, ~2.5rem, using 3.75rem for safety) */
-  padding-bottom: 3.75rem;
-}
 
 /* --- Mobile Responsiveness for main content area --- */
 @media screen and (max-width: 768px) {
@@ -370,14 +360,25 @@
      - margin-top: 7.5rem (to clear relative toolbar_container)
      - padding-top: 10rem (fixed top of Headermain) + 7.5rem (effective height of Headermain) = 17.5rem
   */
-  .main-content-area {
-    padding-top: 1.5rem; /* Space for fixed Headermain at top:10rem + its height */
-    margin-top: 2.5rem;   /* Space for the relative toolbar_container above it */
-  }
+
 
   /* Optional: Adjust font-size for specific elements if needed for better mobile spacing */
   .QuizListPrivate h1,
   .QuizListPublic h1 {
     font-size: 1.5rem; /* Example: slightly smaller headings on mobile */
   }
+}
+
+.toolbar_container {
+  position: relative;
+  z-index: 30;
+}
+
+.toolbar__tile img {
+  border-radius: 10px;
+  transition: transform 0.3s ease;
+}
+
+.toolbar__tile:hover img {
+  transform: scale(1.05);
 }

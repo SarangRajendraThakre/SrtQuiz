@@ -20,10 +20,12 @@ import QuizListPublic from "../components/QuizList/QuizListPublic";
 import { Link } from "react-router-dom";
 import Forall from "./ForFun";
 import GuessSlider from "../components/QuizList/GuessSlider";
+import Headermain from "../components/Header/Headermain";
 
 
 const ForFun = () => {
   const flickityRef = useRef(null);
+  const GuessSliderRef = useRef(null);
 
   useEffect(() => {
     let flickityInstance;
@@ -125,9 +127,13 @@ const ForFun = () => {
       </div>
     </div>
   </div>
+     <Headermain/>
+
 
   <main>
-       <GuessSlider/>
+       <div ref={GuessSliderRef} className="first-slider-margin">
+                    <GuessSlider />
+                </div>
       </main>
       <footer className="footermain">Developed by : SARANG .R. THAKRE</footer>
   

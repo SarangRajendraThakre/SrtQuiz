@@ -11,7 +11,7 @@ import QuizList from "./components/QuizList/QuizListPrivate";
 
 import Home from "./pages/Home";
 
-import TakeQuizz from './pages/TakeQuizz.jsx'
+import PracticeQuiz from './pages/PracticeQuiz.jsx'
 
 // Assuming these are your core quiz components for live functionality
 import JoinQuiz from './Socketfolder/JoinQuiz.jsx';
@@ -64,7 +64,7 @@ const App = () => {
         {/* Leaderboard Route */}
         <Route path="/leaderboard" element={<Leaderboard />} /> {/* Leaderboard might be public or protected */}
 
-        <Route path="/takequiz/:quizId" element={user ? <TakeQuizz />:<Navigate to="/login" />} />
+        <Route path="/takequiz/:quizId" element={user ? <PracticeQuiz />:<Navigate to="/login" />} />
         {/* Other Pages/Games - Apply protection as needed */}
         <Route path="/mtp" element={<Machingthepairs />} />
         <Route path="/fun" element={<ForFun />} />

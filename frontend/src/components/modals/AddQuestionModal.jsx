@@ -1,22 +1,25 @@
-// In AddQuestionModal.jsx
-
 import React, { useRef, useEffect, useState } from "react";
 import axios from "axios";
-import { baseUrl1 } from "../../utils/services"; // Correct relative path
+import { baseUrl1 } from "../../utils/services";
 import { useQuiz } from "../../context/QuizContext";
-
+import {
+  FaCheckCircle,
+  FaListUl,
+  FaRegDotCircle,
+  FaFilePdf,
+  FaTimes,
+} from "react-icons/fa";
+import { RiCheckboxMultipleLine } from "react-icons/ri";
 
 const AddQuestionModal = ({
   isModalOpen,
   setIsModalOpen,
   setQuestionCards,
-  setIsPdfModalOpen, // <--- YOU NEED TO PASS THIS PROP FROM Createquiz.jsx
+  setIsPdfModalOpen,
 }) => {
   const modalRef = useRef(null);
-  // This `updateQuestionType` will still cause a TypeError until QuizContext.js is fixed
   const { addQuestion, updateQuestionType } = useQuiz();
 
-  // State for question details (can be managed here or passed from parent if needed)
   const [question, setQuestion] = useState("");
   const [answers, setAnswers] = useState(["", "", "", ""]);
   const [correctAnswerIndex, setCorrectAnswerIndex] = useState(null);
@@ -42,10 +45,9 @@ const AddQuestionModal = ({
 
   const handleAddQuestionType = async (type) => {
     try {
-      // This `updateQuestionType` function needs to be provided by QuizContext.js
-      updateQuestionType(type); // Call updateQuestionType instead of setQuestionType
-      setIsModalOpen(false); // Close this modal
-      setQuestionCards((prevCards) => [...prevCards, type]); // Add to parent's questionCards
+      updateQuestionType(type);
+      setIsModalOpen(false);
+      setQuestionCards((prevCards) => [...prevCards, type]);
 
       let createdQuizId = localStorage.getItem("createdQuizId");
       if (!createdQuizId) {
@@ -61,7 +63,7 @@ const AddQuestionModal = ({
 
       await addQuestion({
         question: "",
-       answers: ["", "", "", ""], // Initialize with four empty strings for MCQ
+        answers: ["", "", "", ""],
         correctAnswerIndex: null,
         questiontype: type,
         imagePath: "",
@@ -78,69 +80,64 @@ const AddQuestionModal = ({
     }
   };
 
-  // NEW FUNCTION TO OPEN PDF MODAL
   const handleOpenPdfModal = () => {
-    setIsModalOpen(false); // Close the current AddQuestionModal
-    setIsPdfModalOpen(true); // Open the PDF to Question modal (This is the key!)
+    setIsModalOpen(false);
+    setIsPdfModalOpen(true);
   };
 
   if (!isModalOpen) return null;
 
+  const questionTypes = [
+    { name: "True/False", icon: <FaCheckCircle className="text-green-500" /> },
+    { name: "NAT", icon: <FaListUl className="text-purple-500" /> },
+    { name: "MSQ", icon: <RiCheckboxMultipleLine className="text-blue-500" /> },
+    { name: "MCQ", icon: <FaRegDotCircle className="text-orange-500" /> },
+  ];
+
   return (
-    <div className="modalsetting1" ref={modalRef}>
-      <div className="modalinside">
-        <div className="modalagaininside">
-          <div className="modalmainheader ">
-            <div className="modalheader">
-              <div className="modalheadertext">Select Question Type</div>
-            </div>
-          </div>
-          <div className="mma">
-            <div className="modalmainarea">
-              <div className="modalmainareainside">
-                <div className="modalmainareainsideinsdie">
-                  <div className="modallsidequestionlist">
-                    <div className="modalquestiontyep">
-                      <div className="testknowtitle">Question Types</div>
-                      <div className="questionlist">
-                        <button
-                          className="modalbuttons"
-                          onClick={() => handleAddQuestionType("True/False")}
-                        >
-                          True/False
-                        </button>
-                        <button
-                          className="modalbuttons"
-                          onClick={() => handleAddQuestionType("NAT")}
-                        >
-                          NAT
-                        </button>
-                        <button
-                          className="modalbuttons"
-                          onClick={() => handleAddQuestionType("MSQ")}
-                        >
-                          MSQ
-                        </button>
-                        <button
-                          className="modalbuttons"
-                          onClick={() => handleAddQuestionType("MCQ")}
-                        >
-                          MCQ
-                        </button>
-                        {/* THIS IS THE CHANGE YOU NEED TO MAKE */}
-                        <button
-                          className="modalbuttons"
-                          onClick={handleOpenPdfModal} 
-                        >
-                          PDF to question generator
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+    <div className="fixed inset-0 z-[9999] bg-black/30 backdrop-blur-sm flex items-center justify-center p-4">
+      <div
+        ref={modalRef}
+        className="relative w-full max-w-md bg-white rounded-2xl shadow-lg p-6 md:p-8 transition-all duration-300 animate-fadeIn"
+      >
+        {/* Close Button */}
+        <button
+          onClick={() => setIsModalOpen(false)}
+          className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition"
+        >
+          <FaTimes size={20} />
+        </button>
+
+        {/* Header */}
+        <h2 className="text-xl font-semibold text-gray-800 mb-6 text-center border-b pb-3">
+          Select Question Type
+        </h2>
+
+        {/* Buttons */}
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-2">
+          {questionTypes.map((type) => (
+            <button
+              key={type.name}
+              onClick={() => handleAddQuestionType(type.name)}
+              className="flex flex-col items-center justify-center p-4 bg-gray-50 rounded-xl shadow-sm hover:shadow-md hover:bg-blue-50 active:scale-95 transition-all duration-200"
+            >
+              <div className="text-3xl mb-2">{type.icon}</div>
+              <span className="text-sm font-medium text-gray-700">
+                {type.name}
+              </span>
+            </button>
+          ))}
+
+          {/* PDF Button */}
+          <button
+            onClick={handleOpenPdfModal}
+            className="flex flex-col items-center justify-center p-4 bg-gray-100 rounded-xl shadow-sm hover:shadow-md hover:bg-red-50 active:scale-95 transition-all duration-200"
+          >
+            <FaFilePdf className="text-3xl text-red-500 mb-2" />
+            <span className="text-sm font-medium text-gray-700 text-center">
+              PDF to Questions
+            </span>
+          </button>
         </div>
       </div>
     </div>

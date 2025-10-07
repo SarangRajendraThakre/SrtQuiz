@@ -21,41 +21,15 @@ import QuizListPublic from "../components/QuizList/QuizListPublic";
 import { Link } from "react-router-dom";
 import Forall from "./ForFun";
 import ComputerSlider from "../components/QuizList/ComputerSlider";
+import useFlickity from "../utils/useFlickity";
+import Headermain from "../components/Header/Headermain";
 
 
 const Formotivation = () => {
   const flickityRef = useRef(null);
+  const ComputerSliderRef = useRef(null);
 
-  useEffect(() => {
-    let flickityInstance;
-
-    if (flickityRef.current) {
-      flickityInstance = new Flickity(flickityRef.current, {
-        autoPlay: 1500,
-        pauseAutoPlayOnHover: false,
-        wrapAround: true,
-        prevNextButtons: false,
-        pageDots: false,
-        draggable: true,
-        freeScroll: true,
-        cellAlign: "left",
-        friction: 0.2,
-        selectedAttraction: 0.01,
-        dragThreshold: 0,
-      });
-    }
-
-    // Start autoplay timer again after dragging ends
-    const handleDragEnd = () => {
-      flickityInstance.playPlayer();
-    };
-
-    flickityInstance.on("dragEnd", handleDragEnd);
-
-    return () => {
-      flickityInstance.off("dragEnd", handleDragEnd);
-    };
-  }, []);
+    useFlickity(flickityRef, { speed: 0.2 });
 
   const handleClearLocalStorage = () => {
     localStorage.removeItem("createdQuizId");
@@ -106,6 +80,8 @@ const Formotivation = () => {
         <div className="toolbar__section__box-shadow--right"></div>
       </div>
 
+
+
       <div className="toolbar__buttons">
         <Link
           to="/createquiz"
@@ -127,8 +103,12 @@ const Formotivation = () => {
       </div>
     </div>
   </div>
+
+     <Headermain/>
   <main>
-    <ComputerSlider/>
+  <div ref={ComputerSliderRef} className="first-slider-margin">
+                    <ComputerSlider />
+                </div>
   </main>
   <footer className="footermain">Developed by : SARANG .R. THAKRE</footer>
   

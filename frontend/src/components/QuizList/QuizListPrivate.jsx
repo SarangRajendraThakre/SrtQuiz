@@ -2,128 +2,97 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Card, Col, Row, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import "./QuizList.css"; // Your custom CSS file
+import "./QuizListPrivate.css";
 import { baseUrl1 } from "../../utils/services";
 import { useQuiz } from "../../context/QuizContext";
 
 const QuizListPrivate = () => {
-  const { updateCreatedQuizId } = useQuiz();
-  const [quizzes, setQuizzes] = useState([]);
-  const [creatorNames, setCreatorNames] = useState([]);
-  const [clickedCardId, setClickedCardId] = useState(null);
-  const [showButtonId, setShowButtonId] = useState(null);
-  const [error, setError] = useState(null);
+    const { updateCreatedQuizId } = useQuiz();
+    const [quizzes, setQuizzes] = useState([]);
+    const [error, setError] = useState(null);
 
-  const userId = JSON.parse(localStorage.getItem("User"))?._id;
-  const userName = JSON.parse(localStorage.getItem("User"))?.name;
+    const userId = JSON.parse(localStorage.getItem("User"))?._id;
+    const userName = JSON.parse(localStorage.getItem("User"))?.name;
 
-  useEffect(() => {
-    const fetchQuizzes = async () => {
-      try {
-        const response = await axios.get(`${baseUrl1}/api/quizzes/${userId}`);
-        setQuizzes(response.data.quizzes);
-        setError(null); // Clear error if successful
-      } catch (error) {
-        setQuizzes([]); // Clear quizzes on error
-        if (error.response && error.response.status === 404) {
-          setError({ message: "No quizzes you have made." });
-        } else {
-          setError({ message: "An error occurred while fetching quizzes." });
-          console.error("Error fetching quizzes:", error);
-        }
-      }
+    useEffect(() => {
+        const fetchQuizzes = async () => {
+            try {
+                const response = await axios.get(`${baseUrl1}/api/quizzes/${userId}`);
+                setQuizzes(response.data.quizzes);
+                setError(null);
+            } catch (error) {
+                setQuizzes([]);
+                if (error.response && error.response.status === 404) {
+                    setError({ message: "You haven't created any quizzes yet." });
+                } else {
+                    setError({ message: "An error occurred while fetching your quizzes." });
+                    console.error("Error fetching quizzes:", error);
+                }
+            }
+        };
+
+        if (userId) fetchQuizzes();
+    }, [userId]);
+
+    // We no longer need handleCardClick or showButtonId if buttons show on image hover
+    // The previous logic was tied to the entire card click, now it's image hover
+
+    const handleEditClick = (quizId) => {
+        localStorage.setItem("createdQuizId", quizId);
+        updateCreatedQuizId(quizId);
     };
 
-    if (userId) fetchQuizzes();
-  }, [userId]);
+    return (
+        <div className='quiz-list-container'>
+            <h1 className="main-title">{userName ? `Quizzes Made by ${userName}`: 'My Quizzes'}</h1>
 
-  useEffect(() => {
-    const fetchQuizCreatorNames = async () => {
-      const promises = quizzes.map(async (quiz) => {
-        try {
-          const response = await axios.get(`${baseUrl1}/api/users/find/${quiz.createdBy}`);
-          return response.data.name;
-        } catch (error) {
-          console.error("Error fetching quiz creator name:", error);
-          return "Unknown";
-        }
-      });
+            {error && (
+                <div className="error-message">{error.message}</div>
+            )}
 
-      const names = await Promise.all(promises);
-      setCreatorNames(names);
-    };
-
-    if (quizzes.length > 0) fetchQuizCreatorNames();
-  }, [quizzes]);
-
-  const handleCardClick = (quizId) => {
-    setClickedCardId(quizId === clickedCardId ? null : quizId);
-    setShowButtonId(quizId === showButtonId ? null : quizId);
-  };
-
-  const handleEditClick = (quizId) => {
-    localStorage.setItem("createdQuizId", quizId);
-    updateCreatedQuizId(quizId);
-  };
-
-  return (
-     <div className='mt-3 p-4'>
-      <h1 className="font-semibold">{`Quizzes Made by ${userName}`}</h1>
-
-      {error && (
-        <div className="text-danger pt-5">{error.message}</div>
-      )}
-
-      {!error && (
-        <Row xs={1} md={2} lg={3} className="g-4">
-          
-          {quizzes.map((quiz, index) => (
-            <Col key={quiz._id} className="p-3">
-              <Card className="p-2" onClick={() => handleCardClick(quiz._id)}>
-                <Card.Img
-                  variant="top"
-                  src={`${baseUrl1}${quiz.posterImg}`}
-                  style={{ height: "200px", objectFit: "cover" }}
-                />
-                <Card.Body>
-                  <Card.Title className="text-2xl">{quiz.title}</Card.Title>
-                  <p>Created By: {creatorNames[index]}</p>
-                  <p>Number of Questions: {quiz.questions.length}</p>
-                  <div className="bottombuttons">
-                    <Link to={`/host/${quiz._id}`}>
-                      <Button
-                        className={`quiz-button ${showButtonId === quiz._id ? "show" : ""}`}
-                        variant="primary"
-                      >
-                        Host
-                      </Button>
-                    </Link>
-                    <Link to={`/createquiz/${quiz._id}`}>
-                      <Button
-                        className={`quiz-button ${showButtonId === quiz._id ? "show" : ""}`}
-                        variant="primary"
-                        onClick={() => handleEditClick(quiz._id)}
-                      >
-                        Edit
-                      </Button>
-                    </Link>
-                    <Link to={`/takequiz/${quiz._id}`}>
-                      <Button
-                        className={`quiz-button ${showButtonId === quiz._id ? "show" : ""}`}
-                        variant="primary"
-                      >
-                        Play
-                      </Button>
-                    </Link>
-                  </div>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      )}
-    </div>
-  );
+            {!error && (
+                <Row xs={1} md={2} lg={4} className="g-4">
+                    {quizzes.map((quiz) => (
+                        <Col key={quiz._id}>
+                            <Card className="quiz-card"> {/* No onClick here anymore */}
+                                <div className="quiz-card-img-wrapper"> {/* NEW Wrapper for image and overlay */}
+                                    <Card.Img
+                                        variant="top"
+                                        src={`${quiz.posterImg}`}
+                                        className="quiz-card-img"
+                                    />
+                                    <div className="quiz-card-overlay"> {/* NEW Overlay */}
+                                        <div className="quiz-card-overlay-buttons"> {/* NEW Buttons container in overlay */}
+                                            <Link to={`/host/${quiz._id}`}>
+                                                <Button className="quiz-button host-btn">
+                                                    Host
+                                                </Button>
+                                            </Link>
+                                            <Link to={`/createquiz/${quiz._id}`}>
+                                                <Button className="quiz-button edit-btn" onClick={() => handleEditClick(quiz._id)}>
+                                                    Edit
+                                                </Button>
+                                            </Link>
+                                            <Link to={`/takequiz/${quiz._id}`}>
+                                                <Button className="quiz-button play-btn">
+                                                    Play
+                                                </Button>
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </div>
+                                <Card.Body className="quiz-card-body">
+                                    <Card.Title className="quiz-card-title">{quiz.title}</Card.Title>
+                                    <p className="quiz-card-info">Questions: {quiz.questions.length}</p>
+                                    {/* The old bottombuttons div is removed from here */}
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    ))}
+                </Row>
+            )}
+        </div>
+    );
 };
 
 export default QuizListPrivate;

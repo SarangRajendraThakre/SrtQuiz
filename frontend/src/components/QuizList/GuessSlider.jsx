@@ -1,157 +1,134 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Card, Button, Spinner } from 'react-bootstrap';
+import { Button, Spinner } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import Slider from 'react-slick'; // Import react-slick
-import 'slick-carousel/slick/slick.css'; // Import slick carousel styles
-import 'slick-carousel/slick/slick-theme.css'; // Import slick carousel theme styles
-import './QuizList.css';
+import Slider from 'react-slick';
+import { FaPlay, FaCopy, FaEdit } from 'react-icons/fa';
+
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import './QuizList.css'; // Your custom CSS file
 import { baseUrl1 } from "../../utils/services";
 
 const GuessSlider = () => {
-  const [quizzes, setQuizzes] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [showButtonId, setShowButtonId] = useState(null);
-  const navigate = useNavigate(); // Hook for navigation
+    const [quizzes, setQuizzes] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [copyingId, setCopyingId] = useState(null);
+    const navigate = useNavigate();
+    const user = JSON.parse(localStorage.getItem('User'));
 
-  useEffect(() => {
-    const fetchGuessQuizzes = async () => {
-      try {
-        const response = await axios.get(`${baseUrl1}/api/quizzes/all`);
-        const guessQuizzes = response.data.quizzes.filter(quiz => quiz.category === 'Guess'&& quiz.visibility === 'public');
-        await Promise.all(guessQuizzes.map(async (quiz) => {
-          if (quiz.createdBy) {
-            const creator = await axios.get(`${baseUrl1}/api/quizzes/${quiz.createdBy}`);
-            quiz.creatorName = creator.data.name;
-          }
-        }));
-        setQuizzes(guessQuizzes);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching guess quizzes:', error);
-      }
+    useEffect(() => {
+        const fetchGuessQuizzes = async () => {
+            setLoading(true);
+            try {
+                // FIX 1: Fetch ONLY public "Guess" quizzes in one efficient call.
+                const response = await axios.get(`${baseUrl1}/api/quizzes/public?category=Guess`);
+                setQuizzes(response.data.quizzes || []);
+            } catch (error) {
+                console.error('Error fetching Guess quizzes:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        // FIX 2: The slow loop to fetch creator names is no longer needed.
+        fetchGuessQuizzes();
+    }, []);
+
+    // FIX 3: Use the single, efficient backend endpoint for copying.
+    const handleCopyClick = async (quizId) => {
+        setCopyingId(quizId);
+        if (!user || !user._id) {
+            navigate('/login');
+            return;
+        }
+        try {
+            const response = await axios.post(`${baseUrl1}/api/quizzes/${quizId}/copy`, { userId: user._id });
+            navigate(`/createquiz/${response.data.newQuizId}`);
+        } catch (err) {
+            console.error('Error copying quiz:', err);
+            alert('Failed to copy quiz.');
+        } finally {
+            setCopyingId(null);
+        }
+    };
+    
+    const handleEditClick = (quizId) => {
+        navigate(`/createquiz/${quizId}`);
     };
 
-    fetchGuessQuizzes();
-  }, []);
+    const sliderSettings = {
+        dots: false,
+        infinite: quizzes.length > 4,
+        speed: 500,
+        slidesToShow: 4,
+        slidesToScroll: 1,
+        responsive: [
+            { breakpoint: 1280, settings: { slidesToShow: 3 } },
+            { breakpoint: 1024, settings: { slidesToShow: 2 } },
+            { breakpoint: 640, settings: { slidesToShow: 1 } },
+        ],
+    };
 
-  const settings = {
-    dots: false,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 3, // Number of slides to show at once
-    slidesToScroll: 1, // Number of slides to scroll at once
-    autoplay: true, // Enable automatic sliding
-    autoplaySpeed: 3000, // Interval for automatic sliding (in milliseconds)
-    responsive: [
-      {
-        breakpoint: 768,
-        settings: {
-          slidesToShow: 2,
-        },
-      },
-      {
-        breakpoint: 576,
-        settings: {
-          slidesToShow: 1,
-        },
-      },
-    ],
-  };
+    const SkeletonCard = () => (
+        <div className="quiz-card-wrapper">
+            <div className="skeleton-card"></div>
+        </div>
+    );
 
-  const handleCardClick = (quizId) => {
-    setShowButtonId(quizId);
-  };
-
-  const handleCopyClick = async (quizId) => {
-    try {
-      const response = await axios.get(`${baseUrl1}/api/quizzes/quiz/${quizId}`);
-      const originalQuiz = response.data.quiz;
-
-      const user = JSON.parse(localStorage.getItem('User'));
-      if (!user || !user._id) {
-        console.error("User ID not found in local storage or user object is invalid");
-        return;
-      }
-
-      const newQuizData = {
-        ...originalQuiz,
-        _id: undefined,
-        createdBy: user._id,
-        title: `${originalQuiz.title} (Copy)`,
-      };
-
-      const newQuizResponse = await axios.post(`${baseUrl1}/api/quizzes`, newQuizData);
-      const newQuiz = newQuizResponse.data;
-      const newquizid = newQuiz._id;
-
-      for (const question of originalQuiz.questions) {
-        try {
-          const { questionText, options, correctAnswers, questionType, imagePath } = question;
-
-          await axios.post(`${baseUrl1}/api/add-questionss`, {
-            quizId: newquizid,
-            question: {
-              questionText,
-              options,
-              correctAnswers,
-              questionType,
-              imagePath,
-            }
-          });
-        } catch (error) {
-          console.error('Error adding question:', error);
-        }
-      }
-
-      navigate(`/createquiz/${newquizid}`);
-    } catch (error) {
-      console.error('Error creating copy of quiz:', error);
-    }
-  };
-
-  const handleEditClick = (quizId) => {
-    localStorage.setItem('createdQuizId', quizId);
-    navigate(`/createquiz/${quizId}`);
-  };
-
-  const user = JSON.parse(localStorage.getItem('User'));
-
-  return (
-    <div className='mt-40 p-4'>
-      <h1 className='font-semibold'>Guess Quizzes</h1>
-      {loading ? (
-        <Spinner animation="border" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </Spinner>
-      ) : (
-        <Slider {...settings}> {/* Use Slider component from react-slick */}
-          {quizzes.map((quiz) => (
-            <div key={quiz._id} className="slider-card-container">
-              <Card className='p-2' onClick={() => handleCardClick(quiz._id)}>
-                <Card.Img variant="top" src={`${baseUrl1}${quiz.posterImg}`} style={{ height: '200px', objectFit: 'cover' }} />
-                <Card.Body>
-                  <Card.Title className='text-2xl'>{quiz.title}</Card.Title>
-                  <p>Created By: {quiz.creatorName}</p>
-                  <p>Number of Questions: {quiz.questions.length}</p>
-                  <div className='bottombuttons'>
-                    {quiz.createdBy === user._id ? (
-                      <Button className={`quiz-button ${showButtonId === quiz._id ? 'show' : ''}`} variant="primary" onClick={() => handleEditClick(quiz._id)}>Edit</Button>
-                    ) : (
-                      <Button className={`quiz-button ${showButtonId === quiz._id ? 'show' : ''}`} variant="primary" onClick={() => handleCopyClick(quiz._id)}>Copy</Button>
-                    )}
-                    <Link to={`/takequiz/${quiz._id}`}>
-                      <Button className={`quiz-button ${showButtonId === quiz._id ? 'show' : ''}`} variant="primary">Play</Button>
-                    </Link>
-                  </div>
-                </Card.Body>
-              </Card>
+    if (loading) {
+        return (
+            <div className="category-slider-container">
+                <h2 className="category-slider-title">Guess Quizzes</h2>
+                <Slider {...sliderSettings}>
+                    {[...Array(4)].map((_, i) => <SkeletonCard key={i} />)}
+                </Slider>
             </div>
-          ))}
-        </Slider>
-      )}
-    </div>
-  );
+        );
+    }
+    
+    if (quizzes.length === 0) {
+        return null;
+    }
+
+    return (
+        <div className='category-slider-container'>
+            <h2 className='category-slider-title'>Guess Quizzes</h2>
+            <Slider {...sliderSettings}>
+                {quizzes.map((quiz) => (
+                    <div key={quiz._id} className='quiz-card-wrapper'>
+                        <div className='quiz-card'>
+                            <div className='quiz-card-image-container'>
+                                <img src={`${quiz.posterImg}`} alt={quiz.title} className='quiz-card-image' />
+                                <div className="quiz-card-overlay">
+                                    <div className="overlay-buttons">
+                                        {user && quiz.createdBy?._id === user._id ? (
+                                            <Button variant="light" className="overlay-button" onClick={() => handleEditClick(quiz._id)}>
+                                                <FaEdit className="me-2" /> Edit
+                                            </Button>
+                                        ) : (
+                                            <Button variant="light" className="overlay-button" disabled={copyingId === quiz._id} onClick={() => handleCopyClick(quiz._id)}>
+                                                {copyingId === quiz._id ? <Spinner as="span" animation="border" size="sm" /> : <FaCopy className="me-2" />}
+                                                {copyingId === quiz._id ? ' Copying' : ' Copy'}
+                                            </Button>
+                                        )}
+                                        <Link to={`/takequiz/${quiz._id}`} className="flex-grow-1">
+                                            <Button variant="primary" className="overlay-button play-button">
+                                                <FaPlay className="me-2" /> Play
+                                            </Button>
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className='quiz-card-body'>
+                                <h3 className='quiz-card-title'>{quiz.title}</h3>
+                                <p className='quiz-card-info'>By: {quiz.createdBy?.name || 'Unknown'}</p>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </Slider>
+        </div>
+    );
 };
 
 export default GuessSlider;

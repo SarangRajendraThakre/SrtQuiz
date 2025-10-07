@@ -1,7 +1,7 @@
 .category-slider-container {
     padding: 2rem 1rem;
     max-width: 1600px;
-  
+    margin: 4rem auto; /* Add more margin for spacing on the page */
 }
 
 .category-slider-title {
@@ -9,7 +9,7 @@
     font-weight: 700;
     margin-bottom: 2rem;
     color: #1a202c;
-    text-transform: capitalize;
+    text-transform: capitalize; /* Automatically capitalize the category name */
 }
 
 .quiz-card-wrapper {
@@ -82,7 +82,7 @@
 }
 
 .overlay-button.play-button {
-    flex-grow: 1;
+    flex-grow: 1; /* Make play button larger */
 }
 
 .quiz-card-body {
@@ -114,16 +114,4 @@
 
 @keyframes pulse {
     50% { opacity: 0.6; }
-}
-
-/* This is the default style for ALL slider containers */
-.category-slider-container {
-    padding: 2rem 1rem;
-    max-width: 1600px;
-    margin: 2.5rem auto; /* A single, consistent margin for all sliders */
-}
-
-/* Add this new class to give ONLY the first slider extra space at the top */
-.first-slider-margin {
-  
 }

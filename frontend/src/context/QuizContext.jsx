@@ -51,7 +51,6 @@ export const QuizContextProvider = ({ children }) => {
       // Set the quiz data state with the fetched data
       setQuizData(response.data.quiz);
     } catch (error) {
-      console.error("Error fetching quiz:", error);
     }
   };
 

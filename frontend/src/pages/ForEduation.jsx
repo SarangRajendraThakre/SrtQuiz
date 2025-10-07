@@ -20,6 +20,7 @@ import MathsSlider from "../components/QuizList/MathsSlider";
 import HistorySlider from "../components/QuizList/HistorySlider";
 import PhysicsSlider from "../components/QuizList/PhysicsSlider";
 import GkSlider from "../components/QuizList/GkSlider";
+import Headermain from "../components/Header/Headermain";
 
 const ForEducation = () => {
   const flickityRef = useRef(null);
@@ -137,11 +138,12 @@ const ForEducation = () => {
           </div>
         </div>
       </div>
+          <Headermain/>
 
       <main>
-        <div ref={biologySliderRef}>
-          <BiologySlider />
-        </div>
+     <div ref={biologySliderRef} className="first-slider-margin">
+                    <BiologySlider />
+                </div>
         <div ref={geographySliderRef}>
           <GeographySlider />
         </div>
