@@ -7,6 +7,12 @@ import "./Mcq.css";
 import { baseUrl1 } from "../utils/services";
 import Menudots from "../components/MiddleQtype/Menudots";
 
+/* 🔒 SAFE IMAGE URL RESOLVER */
+const resolveImageUrl = (path) => {
+  if (!path) return "";
+  return path.startsWith("http") ? path : `${baseUrl1}${path}`;
+};
+
 const Msq = () => {
   const { updateQuestionById, quizData, questionIdd, getQuestionById } = useQuiz();
 
@@ -14,7 +20,7 @@ const Msq = () => {
   const [answers, setAnswers] = useState(["", "", "", ""]);
   const [correctAnswerIndices, setCorrectAnswerIndices] = useState([]);
   const [imagePath, setImagePath] = useState("");
-  const [questiontype, setQuestiontype] = useState("MSQ");
+  const [questiontype] = useState("MSQ");
 
   const fileInputRef = useRef(null);
   const longPressTimerRef = useRef(null);
@@ -22,106 +28,79 @@ const Msq = () => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
-
+    const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
-
-    // Cleanup function to remove the event listener
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const showmenudots = windowWidth < 900;
 
   useEffect(() => {
-    if (questionIdd && quizData) {
-      const foundQuestion = getQuestionById();
-      setQuestion(foundQuestion ? foundQuestion.questionText : "");
-      setImagePath(foundQuestion ? foundQuestion.imagePath : "");
-      setAnswers(
-        foundQuestion && Array.isArray(foundQuestion.options)
-          ? foundQuestion.options
-          : ["", "", "", ""]
-      );
-    }
+    if (!questionIdd || !quizData) return;
+
+    const foundQuestion = getQuestionById();
+    if (!foundQuestion) return;
+
+    setQuestion(foundQuestion.questionText || "");
+    setImagePath(foundQuestion.imagePath || "");
+    setAnswers(
+      Array.isArray(foundQuestion.options)
+        ? foundQuestion.options
+        : ["", "", "", ""]
+    );
+    setCorrectAnswerIndices(
+      Array.isArray(foundQuestion.correctAnswers)
+        ? foundQuestion.correctAnswers
+        : []
+    );
   }, [questionIdd, quizData]);
 
-  const handleUploadClick = () => {
-    fileInputRef.current.click();
+  /* IMAGE UPLOAD — SINGLE CLICK FIXED */
+  const handleImageChange = async (e) => {
+    try {
+      const file = e.target.files?.[0];
+      if (!file || !file.type.startsWith("image/")) return;
+
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const res = await axios.post(`${baseUrl1}/api/upload`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      setImagePath(res.data.imagePath);
+      e.target.value = "";
+    } catch (err) {
+      console.error("Error uploading image:", err);
+    }
   };
 
-  const handleQuestionChange = (e) => {
-    setQuestion(e.target.value);
+  /* IMAGE REMOVE (LONG PRESS) */
+  const handleImageLongPressStart = () => {
+    longPressTimerRef.current = setTimeout(() => setImagePath(""), 500);
   };
-
-  const handleAnswerChange = (index, updatedAnswer) => {
-    const newAnswers = [...answers];
-    newAnswers[index] = updatedAnswer;
-    setAnswers(newAnswers);
+  const handleImageLongPressEnd = () => {
+    clearTimeout(longPressTimerRef.current);
   };
 
   const handleSelectCorrectAnswer = (index) => {
-    const indexExists = correctAnswerIndices.includes(index);
-    if (indexExists) {
-      const newCorrectAnswerIndices = correctAnswerIndices.filter((i) => i !== index);
-      setCorrectAnswerIndices(newCorrectAnswerIndices);
-    } else {
-      const newCorrectAnswerIndices = [...correctAnswerIndices, index];
-      setCorrectAnswerIndices(newCorrectAnswerIndices);
-    }
-  };
-
-  const handleImageChange = async (e) => {
-    try {
-      const file = e.target.files[0];
-      const formData = new FormData();
-      formData.append("image", file);
-      const uploadResponse = await axios.post(
-        `${baseUrl1}/api/upload`,
-        formData
-      );
-      setImagePath(uploadResponse.data.imagePath);
-    } catch (error) {
-      console.error("Error uploading image:", error);
-    }
+    setCorrectAnswerIndices((prev) =>
+      prev.includes(index)
+        ? prev.filter((i) => i !== index)
+        : [...prev, index]
+    );
   };
 
   const handleUpdateQuestion = async () => {
-    try {
-      if (!questionIdd || !quizData) {
-        console.error("Question ID or quiz data not available");
-        return;
-      }
+    if (!questionIdd) return;
 
-      const filteredCorrectAnswerIndices = correctAnswerIndices.filter(
-        (index) => index !== ""
-      );
-
-      const updatedQuestionData = {
-        question: question,
-        answers: answers,
-        correctAnswerIndices: filteredCorrectAnswerIndices,
-        imagePath: imagePath,
-        questiontype: questiontype,
-      };
-
-      await updateQuestionById(questionIdd, updatedQuestionData);
-    } catch (error) {
-      console.error("Error updating question:", error);
-    }
-  };
-
-  const handleImageLongPressStart = () => {
-    longPressTimerRef.current = setTimeout(() => {
-      setImagePath("");
-    }, 500); // 500ms for a long press
-  };
-
-  const handleImageLongPressEnd = () => {
-    clearTimeout(longPressTimerRef.current);
+    await updateQuestionById(questionIdd, {
+      question,
+      answers,
+      correctAnswerIndices,
+      imagePath,
+      questiontype,
+    });
   };
 
   return (
@@ -130,7 +109,9 @@ const Msq = () => {
         className="questiontext"
         style={{
           objectFit: "contain",
-          backgroundImage: `ur(${baseUrl1}${quizData.posterImg})`,
+          backgroundImage: quizData?.posterImg
+            ? `url(${resolveImageUrl(quizData.posterImg)})`
+            : "none",
         }}
       >
         <div className="advertise">
@@ -145,64 +126,72 @@ const Msq = () => {
                 type="text"
                 placeholder="Type question here"
                 value={question}
-                onChange={handleQuestionChange}
+                onChange={(e) => setQuestion(e.target.value)}
               />
             </div>
           </div>
           {showmenudots && <Menudots />}
         </div>
 
+        {/* IMAGE AREA — SAME STYLING */}
         <div className="mainmiddlearea">
           <div className="mainmiddleareainner">
             <div className="mainmiddleareainnerinner">
-              <div className={imagePath ? "mainmiddleareainnerinnerinnerimg" : "mainmiddleareainnerinnerinner"}>
+              <div
+                className={
+                  imagePath
+                    ? "mainmiddleareainnerinnerinnerimg"
+                    : "mainmiddleareainnerinnerinner"
+                }
+              >
                 {imagePath ? (
                   <div
-                    className={imagePath ? "mainmiddleareainnerinnerinnerimg" : "mainmiddleareainnerinnerinner"}
+                    className="mainmiddleareainnerinnerinnerimg"
                     onMouseDown={handleImageLongPressStart}
                     onMouseUp={handleImageLongPressEnd}
                     onTouchStart={handleImageLongPressStart}
                     onTouchEnd={handleImageLongPressEnd}
                   >
                     <img
-                      className={imagePath && "mainmiddleareainnerinnerinnerimg"}
-                      src={`${baseUrl1}${imagePath}`}
+                      className="mainmiddleareainnerinnerinnerimg"
+                      src={resolveImageUrl(imagePath)}
                       alt=""
                     />
                   </div>
                 ) : (
-                  <div className="mainmiddleareainnerinnerinner">
-                    <div className="mainmiddleareainnerinnerinnerinner">
-                      <div className="uploadinnercontent">
-                        <div className="uploadimg">
-                          <div className="uploadimgurl"></div>
-                          <label htmlFor="fileInput" className="uploadbtn">
-                            <div className="uploadbtninner">
-                              <span className="spanicon">
-                                <BsPlusLg fontSize="25px" />
-                              </span>
-                            </div>
-                          </label>
-                          <input
-                            ref={fileInputRef}
-                            id="fileInput"
-                            type="file"
-                            accept="image/*"
-                            onChange={handleImageChange}
-                            style={{ display: "none" }}
-                          />
-                          <button onClick={handleUploadClick}>
-                            Select Image
-                          </button>
-                        </div>
-                        <div className="uploadingmessage">
-                          <p className="uploaddrag">
-                            <button className="buttonupload">
-                              Upload file
-                            </button>{" "}
-                            or drag here to upload
-                          </p>
-                        </div>
+                  <div className="mainmiddleareainnerinnerinnerinner">
+                    <div className="uploadinnercontent">
+                      <div className="uploadimg">
+                        {/* ✅ LABEL ONLY (NO JS CLICK) */}
+                        <label htmlFor="fileInput" className="uploadbtn">
+                          <div className="uploadbtninner">
+                            <span className="spanicon">
+                              <BsPlusLg fontSize="25px" />
+                            </span>
+                          </div>
+                        </label>
+
+                        <input
+                          ref={fileInputRef}
+                          id="fileInput"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageChange}
+                          style={{ display: "none" }}
+                        />
+
+                        <label
+                          htmlFor="fileInput"
+                          className="buttonupload"
+                        >
+                          Select Image
+                        </label>
+                      </div>
+
+                      <div className="uploadingmessage">
+                        <p className="uploaddrag">
+                          Upload file or drag here to upload
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -212,13 +201,18 @@ const Msq = () => {
           </div>
         </div>
 
+        {/* OPTIONS */}
         <div className="optionmainarea">
           <div className="optionmainareainner">
             <div className="optionmainareainnerinner">
               <div className="optionmainareainnerinnerinner">
                 <ButtonsContainerr
                   answers={answers}
-                  onAnswerChange={handleAnswerChange}
+                  onAnswerChange={(i, v) => {
+                    const a = [...answers];
+                    a[i] = v;
+                    setAnswers(a);
+                  }}
                   onCorrectAnswerChange={handleSelectCorrectAnswer}
                   questiontype={questiontype}
                 />

@@ -4,9 +4,14 @@ import { useQuiz } from "../context/QuizContext";
 import ButtonsContainerr from "../components/options/ButtonsContainerr";
 import { BsPlusLg } from "react-icons/bs";
 import "./Mcq.css";
-import {  baseUrl1 } from "../utils/services";
+import { baseUrl1 } from "../utils/services";
 import Menudots from "../components/MiddleQtype/Menudots";
 
+/* 🔒 SAFE IMAGE URL RESOLVER */
+const resolveImageUrl = (path) => {
+  if (!path) return "";
+  return path.startsWith("http") ? path : `${baseUrl1}${path}`;
+};
 
 const Nat = () => {
   const { updateQuestionById, quizData, questionIdd, getQuestionById } =
@@ -16,222 +21,167 @@ const Nat = () => {
   const [answers, setAnswers] = useState(["", "", "", ""]);
   const [correctAnswerIndices, setCorrectAnswerIndices] = useState([]);
   const [imagePath, setImagePath] = useState("");
-  const [questiontype, setQuestiontype] = useState("NAT");
-  const [explanation , setExplanation] = useState("");
-  const fileInputRef = useRef(null);
+  const [questiontype] = useState("NAT");
+  const [explanation, setExplanation] = useState("");
 
- 
+  const fileInputRef = useRef(null);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
-
+    const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
-    // Cleanup function to remove the event listener
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []); //
   const showmenudots = windowWidth < 900;
 
-
   useEffect(() => {
-    if (questionIdd && quizData) {
-      const foundQuestion = getQuestionById();
-      setQuestion(foundQuestion ? foundQuestion.questionText : "");
-      setImagePath(foundQuestion ? foundQuestion.imagePath : "");
-      setAnswers(
-        foundQuestion && Array.isArray(foundQuestion.options)
-          ? foundQuestion.options
-          : ["", "", "", ""]
-      );
-    
-    }
+    if (!questionIdd || !quizData) return;
+
+    const foundQuestion = getQuestionById();
+    if (!foundQuestion) return;
+
+    setQuestion(foundQuestion.questionText || "");
+    setImagePath(foundQuestion.imagePath || "");
+    setAnswers(
+      Array.isArray(foundQuestion.options)
+        ? foundQuestion.options
+        : ["", "", "", ""]
+    );
+    setCorrectAnswerIndices(
+      Array.isArray(foundQuestion.correctAnswers)
+        ? foundQuestion.correctAnswers
+        : []
+    );
+    setExplanation(foundQuestion.explanationText || "");
   }, [questionIdd, quizData]);
 
-  const handleUploadClick = () => {
-    fileInputRef.current.click();
-  };
-
-  const handleExplanationChange = (e)=>{
-    setExplanation(e.target.value);
-  }
-  const handleQuestionChange = (e) => {
-    setQuestion(e.target.value);
-  };
-  
-
-  const handleAnswerChange = (index, updatedAnswer) => {
-    const newAnswers = [...answers];
-    newAnswers[index] = updatedAnswer;
-    setAnswers(newAnswers);
-  };
-  const handleSelectCorrectAnswer = (index) => {
-    // Check if the index is already in the array
-    const indexExists = correctAnswerIndices.includes(index);
-  
-    // If the index exists, remove it from the array
-    if (indexExists) {
-      const newCorrectAnswerIndices = correctAnswerIndices.filter((i) => i !== index);
-      setCorrectAnswerIndices(newCorrectAnswerIndices);
-    } else {
-      // If the index doesn't exist, add it to the array
-      const newCorrectAnswerIndices = [...correctAnswerIndices, index];
-      setCorrectAnswerIndices(newCorrectAnswerIndices);
-    }
-  };
-  
-  
-
+  /* IMAGE UPLOAD — SINGLE CLICK */
   const handleImageChange = async (e) => {
     try {
-      const file = e.target.files[0];
+      const file = e.target.files?.[0];
+      if (!file || !file.type.startsWith("image/")) return;
+
       const formData = new FormData();
       formData.append("image", file);
-      const uploadResponse = await axios.post(
-        `${baseUrl1}/api/upload`,
-        formData
-      );
-      setImagePath(uploadResponse.data.imagePath);
-    } catch (error) {
-      console.error("Error uploading image:", error);
+
+      const res = await axios.post(`${baseUrl1}/api/upload`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      setImagePath(res.data.imagePath);
+      e.target.value = "";
+    } catch (err) {
+      console.error("Error uploading image:", err);
     }
+  };
+
+  const handleSelectCorrectAnswer = (index) => {
+    setCorrectAnswerIndices((prev) =>
+      prev.includes(index)
+        ? prev.filter((i) => i !== index)
+        : [...prev, index]
+    );
   };
 
   const handleUpdateQuestion = async () => {
-    try {
-      if (!questionIdd || !quizData) {
-        console.error("Question ID or quiz data not available");
-        return;
-      }
-  
-      // Filter out empty correct answer indices
-      const filteredCorrectAnswerIndices = correctAnswerIndices.filter(index => index !== "");
-  
-      const updatedQuestionData = {
-        question: question,
-        answers: answers,
-        correctAnswerIndices: filteredCorrectAnswerIndices,
-        imagePath: imagePath,
-        questiontype: questiontype,
-        explanation:explanation
-      };
-  
-      await updateQuestionById(questionIdd, updatedQuestionData);
-    } catch (error) {
-      console.error("Error updating question:", error);
-    }
+    if (!questionIdd) return;
+
+    await updateQuestionById(questionIdd, {
+      question,
+      answers,
+      correctAnswerIndices,
+      imagePath,
+      questiontype,
+      explanation,
+    });
   };
-  
 
   return (
     <>
-    <div
+      <div
         className="questiontext"
         style={{
           objectFit: "contain",
-          backgroundImage: `urls( ${baseUrl1}${quizData.posterImg})`,
+          backgroundImage: quizData?.posterImg
+            ? `url(${resolveImageUrl(quizData.posterImg)})`
+            : "none",
         }}
       >
         <div className="advertise">
           <div className="advertiseinner"></div>
         </div>
 
-         
-
         <div className="question-title__Container">
           <div className="question-text-field__TitleWrapper">
             <div className="question-text-field__Editor">
-             
-               
-                <input
-                  className="styles__Wrapper innerquestiontextinput styles__ContentEditable styles__Wrapper "
-                  type="text"
-                  name=""
-                  id=""
-                  placeholder="Type question here"
-                  value={question}
-                  onChange={handleQuestionChange}
-                /></div>
-               
-            
-          
+              <input
+                className="styles__Wrapper innerquestiontextinput styles__ContentEditable styles__Wrapper"
+                type="text"
+                placeholder="Type question here"
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+              />
+            </div>
           </div>
-        { showmenudots && <Menudots /> } 
+          {showmenudots && <Menudots />}
         </div>
 
-
-    
-
+        {/* IMAGE AREA — SAME STYLING */}
         <div className="mainmiddlearea">
           <div className="mainmiddleareainner">
             <div className="mainmiddleareainnerinner">
               <div
-                className={`${
+                className={
                   imagePath
                     ? "mainmiddleareainnerinnerinnerimg"
                     : "mainmiddleareainnerinnerinner"
-                }`}
+                }
               >
                 {imagePath ? (
-                  <div
-                    className={`${
-                      imagePath
-                        ? "mainmiddleareainnerinnerinnerimg"
-                        : "mainmiddleareainnerinnerinner"
-                    }`}
-                  >
+                  <div className="mainmiddleareainnerinnerinnerimg">
                     <img
-                      className={` ${
-                        imagePath && "mainmiddleareainnerinnerinnerimg"
-                      }`}
-                      src={`${baseUrl1}${imagePath}`}
+                      className="mainmiddleareainnerinnerinnerimg"
+                      src={resolveImageUrl(imagePath)}
                       alt=""
                     />
                   </div>
                 ) : (
                   <div className="mainmiddleareainnerinnerinner">
                     <div className="mainmiddleareainnerinnerinnerinner">
-                      {imagePath ? (
-                        <div className="uploadinnercontent"></div>
-                      ) : (
-                        <div className="uploadinnercontent">
-                          <div className="uploadimg">
-                            <div className="uploadimgurl"></div>
-                            {/* Trigger file input field click on icon click */}
-                            <label htmlFor="fileInput" className="uploadbtn">
-                              <div className="uploadbtninner">
-                                <span className="spanicon">
-                                  <BsPlusLg fontSize="25px" />
-                                </span>
-                              </div>
-                            </label>
-                            {/* Hidden file input field */}
-                            <input
-                              ref={fileInputRef}
-                              id="fileInput"
-                              type="file"
-                              accept="image/*"
-                              onChange={handleImageChange}
-                              style={{ display: "none" }}
-                            />
-                            <button onClick={handleUploadClick}>
-                              Select Image
-                            </button>
-                          </div>
-                          <div className="uploadingmessage">
-                            <p className="uploaddrag">
-                              <button className="buttonupload">
-                                Upload file
-                              </button>{" "}
-                              or drag here to upload
-                            </p>
-                          </div>
+                      <div className="uploadinnercontent">
+                        <div className="uploadimg">
+                          <div className="uploadimgurl"></div>
+
+                          {/* ✅ LABEL ONLY */}
+                          <label htmlFor="fileInput" className="uploadbtn">
+                            <div className="uploadbtninner">
+                              <span className="spanicon">
+                                <BsPlusLg fontSize="25px" />
+                              </span>
+                            </div>
+                          </label>
+
+                          <input
+                            ref={fileInputRef}
+                            id="fileInput"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageChange}
+                            style={{ display: "none" }}
+                          />
+
+                          <label htmlFor="fileInput" className="buttonupload">
+                            Select Image
+                          </label>
                         </div>
-                      )}
+
+                        <div className="uploadingmessage">
+                          <p className="uploaddrag">
+                            Upload file or drag here to upload
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -240,40 +190,39 @@ const Nat = () => {
           </div>
         </div>
 
+        {/* OPTIONS */}
         <div className="optionmainarea">
           <div className="optionmainareainner">
             <div className="optionmainareainnerinner">
               <div className="optionmainareainnerinnerinner">
-                {/* Render the ButtonsContainerr component */}
                 <ButtonsContainerr
                   answers={answers}
-                  onAnswerChange={handleAnswerChange}
+                  onAnswerChange={(i, v) => {
+                    const a = [...answers];
+                    a[i] = v;
+                    setAnswers(a);
+                  }}
                   onCorrectAnswerChange={handleSelectCorrectAnswer}
                   questiontype={questiontype}
                 />
-            
-                <button className="" onClick={handleUpdateQuestion}>Save Question</button>
+
+                <button onClick={handleUpdateQuestion}>
+                  Save Question
+                </button>
               </div>
             </div>
           </div>
         </div>
 
+        {/* EXPLANATION */}
         <div className="explanation-container position-relative flex align-items-center justify-content-center top-10">
-     
           <textarea
             className="explanation-input w-1/2"
             value={explanation}
-            onChange={handleExplanationChange}
+            onChange={(e) => setExplanation(e.target.value)}
             placeholder="Type the explanation for this question..."
           />
         </div>
-
-        {showmenudots && (
-          <div className="menudots-container">
-            <PiDotsThreeOutlineVerticalFill fontSize="2em" />
-            <Menudots />
-          </div>
-        )}
       </div>
     </>
   );

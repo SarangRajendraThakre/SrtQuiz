@@ -8,6 +8,12 @@ import { baseUrl1 } from "../utils/services";
 import { PiDotsThreeOutlineVerticalFill } from "react-icons/pi";
 import Menudots from "../components/MiddleQtype/Menudots";
 
+/* 🔒 SAFE URL RESOLVER (LOGIC ONLY) */
+const resolveImageUrl = (path) => {
+  if (!path) return "";
+  return path.startsWith("http") ? path : `${baseUrl1}${path}`;
+};
+
 const Mcq = () => {
   const {
     updateQuestionById,
@@ -21,144 +27,91 @@ const Mcq = () => {
   const [answers, setAnswers] = useState([]);
   const [correctAnswerIndices, setCorrectAnswerIndices] = useState([]);
   const [imagePath, setImagePath] = useState("");
-  const [questiontype, setQuestiontype] = useState("MCQ");
+  const [questiontype] = useState("MCQ");
   const [explanation, setExplanation] = useState("");
 
   const fileInputRef = useRef(null);
+  const longPressTimerRef = useRef(null);
+
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [isFocused, setIsFocused] = useState(false);
 
-  const handleFocus = () => {
-    setIsFocused(true);
-  };
-
+  const handleFocus = () => setIsFocused(true);
   const handleBlur = (e) => {
-    if (!e.target.value.trim()) {
-      setIsFocused(false);
-    }
+    if (!e.target.value.trim()) setIsFocused(false);
   };
 
-  const backgroundStyle = {
-    backgroundImage: `url(${selectedImage})`,
-  };
+  /* BACKGROUND — SAME STYLE, SAFE URL */
+  const backgroundStyle = selectedImage
+    ? { backgroundImage: `url(${resolveImageUrl(selectedImage)})` }
+    : {};
 
   useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
-
+    const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const showmenudots = windowWidth < 900;
 
   useEffect(() => {
-    if (questionIdd && quizData) {
-      const foundQuestion = getQuestionById();
-      setQuestion(foundQuestion ? foundQuestion.questionText : "");
-      setImagePath(foundQuestion ? foundQuestion.imagePath : "");
-      setAnswers(
-        foundQuestion && Array.isArray(foundQuestion.options)
-          ? foundQuestion.options
-          : []
-      );
+    if (!questionIdd || !quizData) return;
 
-      // Filter out empty values from the correctAnswers array
-      const filteredCorrectAnswers =
-        foundQuestion && Array.isArray(foundQuestion.correctAnswers)
-          ? foundQuestion.correctAnswers.filter((answer) => answer !== "")
-          : [];
-      setCorrectAnswerIndices(filteredCorrectAnswers);
-      setExplanation(foundQuestion ? foundQuestion.explanationText : ""); // Ensure explanation is set
-    }
+    const foundQuestion = getQuestionById();
+    if (!foundQuestion) return;
+
+    setQuestion(foundQuestion.questionText || "");
+    setImagePath(foundQuestion.imagePath || "");
+    setAnswers(
+      Array.isArray(foundQuestion.options) ? foundQuestion.options : []
+    );
+    setCorrectAnswerIndices(
+      Array.isArray(foundQuestion.correctAnswers)
+        ? foundQuestion.correctAnswers.filter((a) => a !== "")
+        : []
+    );
+    setExplanation(foundQuestion.explanationText || "");
   }, [questionIdd, quizData]);
 
-  const handleUploadClick = () => {
-    fileInputRef.current.click();
-  };
-
-  const longPressTimerRef = useRef(null);
-
-  const handleExplanationChange = (e) => {
-    setExplanation(e.target.value);
-  };
-  const handleQuestionChange = (e) => {
-    setQuestion(e.target.value);
-  };
-
-  const handleAnswerChange = (index, updatedAnswer) => {
-    const newAnswers = [...answers];
-    newAnswers[index] = updatedAnswer;
-    setAnswers(newAnswers);
-  };
-
-  const handleSelectCorrectAnswer = (index) => {
-    const indexExists = correctAnswerIndices.includes(index);
-
-    // If the index exists and there's only one correct answer selected,
-    // remove it from the array
-    if (indexExists && correctAnswerIndices.length === 1) {
-      setCorrectAnswerIndices([]);
-      alert("Only one correct answer can be selected for this question.");
-    } else {
-      setCorrectAnswerIndices([index]);
-    }
-  };
+  const handleUploadClick = () => fileInputRef.current?.click();
 
   const handleImageChange = async (e) => {
     try {
-      const file = e.target.files[0];
+      const file = e.target.files?.[0];
+      if (!file || !file.type.startsWith("image/")) return;
+
       const formData = new FormData();
       formData.append("image", file);
-      const uploadResponse = await axios.post(
-        `${baseUrl1}/api/upload`,
-        formData
-      );
-      setImagePath(uploadResponse.data.imagePath);
-    } catch (error) {
-      console.error("Error uploading image:", error);
+
+      const res = await axios.post(`${baseUrl1}/api/upload`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      setImagePath(res.data.imagePath);
+      e.target.value = "";
+    } catch (err) {
+      console.error("Image upload failed:", err);
     }
+  };
+
+  const handleImageLongPressStart = () => {
+    longPressTimerRef.current = setTimeout(() => setImagePath(""), 500);
+  };
+  const handleImageLongPressEnd = () => {
+    clearTimeout(longPressTimerRef.current);
   };
 
   const handleUpdateQuestion = async () => {
-    try {
-      if (!questionIdd || !quizData) {
-        console.error("Question ID or quiz data not available");
-        return;
-      }
+    if (!questionIdd) return;
 
-      const updatedQuestionData = {
-        question: question,
-        answers: answers,
-        correctAnswerIndices: correctAnswerIndices,
-        imagePath: imagePath,
-        questiontype: questiontype,
-        explanation: explanation,
-      };
-
-      // Clear previous correct answers
-      setCorrectAnswerIndices([]);
-
-      // Update the question
-      await updateQuestionById(questionIdd, updatedQuestionData);
-    } catch (error) {
-      console.error("Error updating question:", error);
-    }
-  };
-  
-
-  const handleImageLongPressStart = () => {
-    longPressTimerRef.current = setTimeout(() => {
-      setImagePath("");
-    }, 500); // 500ms for a long press
-  };
-
-  const handleImageLongPressEnd = () => {
-    clearTimeout(longPressTimerRef.current);
+    await updateQuestionById(questionIdd, {
+      question,
+      answers,
+      correctAnswerIndices,
+      imagePath,
+      questiontype,
+      explanation,
+    });
   };
 
   return (
@@ -168,24 +121,26 @@ const Mcq = () => {
           <div className="advertiseinner"></div>
         </div>
 
+        {/* QUESTION INPUT */}
         <div className="question-container">
           <div className="question-title__Container">
             <div className="question-text-field__TitleWrapper">
               <div className="question-text-field__Editor">
                 <input
-                  className="styles__Wrapper innerquestiontextinput styles__ContentEditable styles__Wrapper "
+                  className="styles__Wrapper innerquestiontextinput styles__ContentEditable styles__Wrapper"
                   type="text"
                   placeholder={!isFocused ? "Type question here" : ""}
                   value={question}
                   onFocus={handleFocus}
                   onBlur={handleBlur}
-                  onChange={handleQuestionChange}
+                  onChange={(e) => setQuestion(e.target.value)}
                 />
               </div>
             </div>
           </div>
         </div>
 
+        {/* IMAGE AREA — SAME STRUCTURE */}
         <div className="mainmiddlearea">
           <div className="mainmiddleareainner">
             <div className="mainmiddleareainnerinner">
@@ -198,58 +153,45 @@ const Mcq = () => {
               >
                 {imagePath ? (
                   <div
-                    className={
-                      imagePath
-                        ? "mainmiddleareainnerinnerinnerimg"
-                        : "mainmiddleareainnerinnerinner"
-                    }
+                    className="mainmiddleareainnerinnerinnerimg"
                     onMouseDown={handleImageLongPressStart}
                     onMouseUp={handleImageLongPressEnd}
                     onTouchStart={handleImageLongPressStart}
                     onTouchEnd={handleImageLongPressEnd}
                   >
                     <img
-                      className={
-                        imagePath && "mainmiddleareainnerinnerinnerimg"
-                      }
-                      src={`${baseUrl1}${imagePath}`}
+                      className="mainmiddleareainnerinnerinnerimg"
+                      src={resolveImageUrl(imagePath)}
                       alt=""
                     />
                   </div>
                 ) : (
-                  <div className="mainmiddleareainnerinnerinner">
-                    <div className="mainmiddleareainnerinnerinnerinner">
-                      <div className="uploadinnercontent">
-                        <div className="uploadimg">
-                          <div className="uploadimgurl"></div>
-                          <label htmlFor="fileInput" className="uploadbtn">
-                            <div className="uploadbtninner">
-                              <span className="spanicon">
-                                <BsPlusLg fontSize="25px" />
-                              </span>
-                            </div>
-                          </label>
-                          <input
-                            ref={fileInputRef}
-                            id="fileInput"
-                            type="file"
-                            accept="image/*"
-                            onChange={handleImageChange}
-                            style={{ display: "none" }}
-                          />
-                          <button onClick={handleUploadClick}>
-                            Select Image
-                          </button>
-                        </div>
-                        <div className="uploadingmessage">
-                          <p className="uploaddrag">
-                            <button className="buttonupload">
-                              Upload file
-                            </button>{" "}
-                            or drag here to upload
-                          </p>
-                        </div>
+                  <div className="mainmiddleareainnerinnerinnerinner">
+                    <div className="uploadinnercontent">
+                      <div className="uploadimg">
+                        <label htmlFor="fileInput" className="uploadbtn">
+                          <div className="uploadbtninner">
+                            <BsPlusLg fontSize="25px" />
+                          </div>
+                        </label>
+
+                        <input
+                          ref={fileInputRef}
+                          id="fileInput"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageChange}
+                          style={{ display: "none" }}
+                        />
+
+                        <label htmlFor="fileInput" className="buttonupload">
+                          Select Image
+                        </label>
                       </div>
+
+                      <p className="uploaddrag">
+                        Upload file or drag here to upload
+                      </p>
                     </div>
                   </div>
                 )}
@@ -258,6 +200,7 @@ const Mcq = () => {
           </div>
         </div>
 
+        {/* OPTIONS */}
         <div className="optionmainarea">
           <div className="optionmainareainner">
             <div className="optionmainareainnerinner">
@@ -265,27 +208,37 @@ const Mcq = () => {
                 {answers.length > 0 && (
                   <ButtonsContainerr
                     answers={answers}
-                    onAnswerChange={handleAnswerChange}
-                    onCorrectAnswerChange={handleSelectCorrectAnswer}
-                    correctAnswerIndices={correctAnswerIndices} // Add this line
+                    onAnswerChange={(i, v) => {
+                      const a = [...answers];
+                      a[i] = v;
+                      setAnswers(a);
+                    }}
+                    onCorrectAnswerChange={(i) => setCorrectAnswerIndices([i])}
+                    correctAnswerIndices={correctAnswerIndices}
                     questiontype={questiontype}
                   />
                 )}
 
                 <button onClick={handleUpdateQuestion}>Save Question</button>
               </div>
+
+              {/* EXPLANATION */}
               <div className="question-container">
                 <div className="question-title__Container">
                   <div className="question-text-field__TitleWrapper">
                     <div className="question-text-field__Editor">
                       <input
-                        className="styles__Wrapper innerquestiontextinput styles__ContentEditable styles__Wrapper "
+                        className="styles__Wrapper innerquestiontextinput styles__ContentEditable styles__Wrapper"
                         type="text"
-                        placeholder={!isFocused ? "Type Explanation of answer or image here" : ""}
+                        placeholder={
+                          !isFocused
+                            ? "Type Explanation of answer or image here"
+                            : ""
+                        }
                         value={explanation}
                         onFocus={handleFocus}
                         onBlur={handleBlur}
-                        onChange={handleExplanationChange}
+                        onChange={(e) => setExplanation(e.target.value)}
                       />
                     </div>
                   </div>
@@ -295,14 +248,7 @@ const Mcq = () => {
           </div>
         </div>
 
-     
-
-        {/* {showmenudots && (
-          <div className="menudots-container">
-            <PiDotsThreeOutlineVerticalFill fontSize="2em" />
-            <Menudots />
-          </div>
-        )} */}
+        {showmenudots && <Menudots />}
       </div>
     </>
   );
